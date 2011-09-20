@@ -1,10 +1,10 @@
 package hu.ppke.itk.nlpg.corpusreader;
 
-import hu.ppke.itk.nlpg.docmodel.Document;
-import hu.ppke.itk.nlpg.docmodel.Paragraph;
-import hu.ppke.itk.nlpg.docmodel.api.IDocument;
-import hu.ppke.itk.nlpg.docmodel.api.ISentence;
-import hu.ppke.itk.nlpg.docmodel.api.IToken;
+import hu.ppke.itk.nlpg.docmodel.IDocument;
+import hu.ppke.itk.nlpg.docmodel.ISentence;
+import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.docmodel.internal.Document;
+import hu.ppke.itk.nlpg.docmodel.internal.Paragraph;
 
 import java.util.ArrayList;
 import java.util.List;

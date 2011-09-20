@@ -8,7 +8,7 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel.api;
+package hu.ppke.itk.nlpg.docmodel;
 
 import java.util.Collection;
 import java.util.List;

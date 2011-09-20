@@ -8,7 +8,7 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel.api;
+package hu.ppke.itk.nlpg.docmodel;
 
 /**
  * Represents a token of a sentence.

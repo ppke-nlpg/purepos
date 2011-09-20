@@ -1,7 +1,7 @@
 package hu.ppke.itk.nlpg.corpusreader;
 
-import hu.ppke.itk.nlpg.docmodel.Token;
-import hu.ppke.itk.nlpg.docmodel.api.IToken;
+import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.docmodel.internal.Token;
 
 /**
  * Reader class for reading a stemmed, tagged token.

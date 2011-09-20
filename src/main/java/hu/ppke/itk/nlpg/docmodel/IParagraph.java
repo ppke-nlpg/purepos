@@ -8,17 +8,14 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel.api;
+package hu.ppke.itk.nlpg.docmodel;
 
 /**
- * Implementors should represent a general document element
+ * Implementors should represent a paragraph of a document
  * 
  * @author György Orosz
  * 
  */
-public interface IDocElement {
-
-	@Override
-	public String toString();
+public interface IParagraph extends IDocElementContainer<ISentence> {
 
 }

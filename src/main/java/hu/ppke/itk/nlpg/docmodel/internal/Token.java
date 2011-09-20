@@ -8,9 +8,9 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel;
+package hu.ppke.itk.nlpg.docmodel.internal;
 
-import hu.ppke.itk.nlpg.docmodel.api.IToken;
+import hu.ppke.itk.nlpg.docmodel.IToken;
 
 /**
  * Class representing a stemmed tagged token in a sentence.

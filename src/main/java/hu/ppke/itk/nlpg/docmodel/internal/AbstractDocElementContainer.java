@@ -8,10 +8,10 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel;
+package hu.ppke.itk.nlpg.docmodel.internal;
 
-import hu.ppke.itk.nlpg.docmodel.api.IDocElement;
-import hu.ppke.itk.nlpg.docmodel.api.IDocElementContainer;
+import hu.ppke.itk.nlpg.docmodel.IDocElement;
+import hu.ppke.itk.nlpg.docmodel.IDocElementContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;

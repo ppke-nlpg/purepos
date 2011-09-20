@@ -1,8 +1,8 @@
 package hu.ppke.itk.nlpg.corpusreader;
 
-import hu.ppke.itk.nlpg.docmodel.Sentence;
-import hu.ppke.itk.nlpg.docmodel.api.ISentence;
-import hu.ppke.itk.nlpg.docmodel.api.IToken;
+import hu.ppke.itk.nlpg.docmodel.ISentence;
+import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.corpusreader;
 
-import hu.ppke.itk.nlpg.docmodel.api.IDocElement;
+import hu.ppke.itk.nlpg.docmodel.IDocElement;
 
 import java.io.File;
 

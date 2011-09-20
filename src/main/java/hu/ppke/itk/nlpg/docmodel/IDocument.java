@@ -10,33 +10,20 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.docmodel;
 
-import hu.ppke.itk.nlpg.docmodel.api.IParagraph;
-import hu.ppke.itk.nlpg.docmodel.api.ISentence;
+import java.util.List;
 
 /**
- * Represents a parapraph of tagged, stemmed sentence.
+ * Implementors should represent a document, which has sentences.
  * 
  * @author György Orosz
  * 
  */
-public class Paragraph extends AbstractDocElementContainer<ISentence> implements
-		IParagraph {
+public interface IDocument extends IDocElementContainer<IParagraph> {
 
-	public Paragraph(Iterable<ISentence> elements) {
-		super(elements);
-	}
-
-	@Override
-	public String toString() {
-		return toString(NL);
-	}
-
-	@Override
-	public String toString(String separator) {
-		StringBuffer ret = new StringBuffer();
-		for (ISentence t : this) {
-			ret.append(t.toString()).append(separator);
-		}
-		return ret.toString();
-	}
+	/**
+	 * Get the sentences in the document.
+	 * 
+	 * @return List of the sentences stored in the document
+	 */
+	public List<ISentence> getSentences();
 }

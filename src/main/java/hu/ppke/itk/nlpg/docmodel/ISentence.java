@@ -8,14 +8,14 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel.api;
+package hu.ppke.itk.nlpg.docmodel;
 
 /**
- * Implementors should represent a paragraph of a document
+ * Interface for storing a POS-tagged, stemmed sentence.
  * 
  * @author György Orosz
  * 
  */
-public interface IParagraph extends IDocElementContainer<ISentence> {
+public interface ISentence extends IDocElementContainer<IToken> {
 
 }

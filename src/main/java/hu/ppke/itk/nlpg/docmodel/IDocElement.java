@@ -8,14 +8,17 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel.api;
+package hu.ppke.itk.nlpg.docmodel;
 
 /**
- * Interface for storing a POS-tagged, stemmed sentence.
+ * Implementors should represent a general document element
  * 
  * @author György Orosz
  * 
  */
-public interface ISentence extends IDocElementContainer<IToken> {
+public interface IDocElement {
+
+	@Override
+	public String toString();
 
 }

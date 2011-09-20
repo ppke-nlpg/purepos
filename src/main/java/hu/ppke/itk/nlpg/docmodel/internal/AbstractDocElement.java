@@ -8,7 +8,7 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.docmodel;
+package hu.ppke.itk.nlpg.docmodel.internal;
 
 /**
  * Abstract class for a document element.
