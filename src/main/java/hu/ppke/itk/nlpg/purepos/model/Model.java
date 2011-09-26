@@ -30,9 +30,9 @@ public class Model<W, T> {
 
 	protected IVocabulary<String, T> tagVocabulary;
 
-	protected ISuffixGuesser lowerCaseSuffixGuesser;
+	protected ISuffixGuesser<W, T> lowerCaseSuffixGuesser;
 
-	protected ISuffixGuesser upperCaseSuffixGuesser;
+	protected ISuffixGuesser<W, T> upperCaseSuffixGuesser;
 
 	protected int eosIndex;
 

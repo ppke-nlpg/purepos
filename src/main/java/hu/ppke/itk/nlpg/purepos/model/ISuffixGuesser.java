@@ -1,5 +1,13 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
-public interface ISuffixGuesser {
+/**
+ * Suffix guesser interface.
+ * 
+ * @author György Orosz
+ * 
+ * @param <W>
+ * @param <T>
+ */
+public interface ISuffixGuesser<W, T> {
 
 }
