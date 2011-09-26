@@ -1,16 +1,16 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
-import hu.ppke.itk.nlpg.purepos.model.ISuffixRepresentation;
+import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.HashMap;
 
-public class HashSuffixRepresentation<T> extends
-		ISuffixRepresentation<String, T> {
+public class HashSuffixTree<T> extends
+		SuffixTree<String, T> {
 	HashMap<String, HashMap<T, Integer>> representation = new HashMap<String, HashMap<T, Integer>>();
 	Integer totalFreq = 0;
 
-	public HashSuffixRepresentation(int maxSuffixLength) {
+	public HashSuffixTree(int maxSuffixLength) {
 		super(maxSuffixLength);
 	}
 

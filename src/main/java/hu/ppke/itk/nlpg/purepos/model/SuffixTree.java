@@ -13,13 +13,13 @@ import java.util.HashMap;
  * @param <T>
  *            Tag type
  */
-public abstract class ISuffixRepresentation<W, T> {
+public abstract class SuffixTree<W, T> {
 	/*
 	 * maximum length of suffixes which are stored
 	 */
 	protected int maxSuffixLength;
 
-	public ISuffixRepresentation(int maxSuffixLength) {
+	public SuffixTree(int maxSuffixLength) {
 		this.maxSuffixLength = maxSuffixLength;
 	}
 
