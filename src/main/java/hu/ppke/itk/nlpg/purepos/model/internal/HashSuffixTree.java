@@ -5,8 +5,7 @@ import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.HashMap;
 
-public class HashSuffixTree<T> extends
-		SuffixTree<String, T> {
+public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	HashMap<String, HashMap<T, Integer>> representation = new HashMap<String, HashMap<T, Integer>>();
 	Integer totalFreq = 0;
 
@@ -53,6 +52,7 @@ public class HashSuffixTree<T> extends
 	@Override
 	public double calculateTheta(HashMap<T, Integer> aprioriProbs) {
 		// TODO: understand how it really works -> weighted average of stddev
+		// TODO: it can be moved to some util class as a static method
 		double pAv = 0;
 		for (Integer val : aprioriProbs.values()) {
 			pAv += Math.pow(val, 2);
