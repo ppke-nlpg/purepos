@@ -6,8 +6,11 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
+
 public class NGramTest extends TestCase {
 
+	@Test
 	public void testNGram() {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		list.add(0);
@@ -17,6 +20,7 @@ public class NGramTest extends TestCase {
 
 	}
 
+	@Test
 	public void testEqualsObject() {
 		ArrayList<Integer> list1 = new ArrayList<Integer>();
 		list1.add(0);

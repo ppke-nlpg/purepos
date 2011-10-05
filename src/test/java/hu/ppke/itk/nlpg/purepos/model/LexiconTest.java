@@ -3,13 +3,17 @@ package hu.ppke.itk.nlpg.purepos.model;
 import hu.ppke.itk.nlpg.purepos.model.internal.Lexicon;
 import junit.framework.TestCase;
 
+import org.junit.Test;
+
 public class LexiconTest extends TestCase {
 
+	@Test
 	public void testLexicon() {
 		Lexicon<String, String> lex = new Lexicon<String, String>();
 		assertEquals(lex.size(), 0);
 	}
 
+	@Test
 	public void testAddToken() {
 		Lexicon<String, String> lex = new Lexicon<String, String>();
 		int size = lex.size();
@@ -21,6 +25,7 @@ public class LexiconTest extends TestCase {
 		assertEquals(size + 3, lex.size());
 	}
 
+	@Test
 	public void testSize() {
 		Lexicon<String, String> lex = new Lexicon<String, String>();
 		assertEquals(lex.size(), 0);
@@ -34,6 +39,7 @@ public class LexiconTest extends TestCase {
 		assertEquals(4, lex.size());
 	}
 
+	@Test
 	public void testGetTags() {
 		Lexicon<String, String> lex = new Lexicon<String, String>();
 		assertNull(lex.getTags("alma"));
@@ -42,6 +48,7 @@ public class LexiconTest extends TestCase {
 		assertTrue(lex.getTags("alma").contains("FN"));
 	}
 
+	@Test
 	public void testGetWordCount() {
 		Lexicon<String, String> lex = new Lexicon<String, String>();
 		assertEquals(lex.getWordCount("alma"), 0);
