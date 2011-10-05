@@ -1,4 +1,4 @@
-package hu.ppke.itk.nlpg.purepos.model;
+package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.IntVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.internal.NGram;

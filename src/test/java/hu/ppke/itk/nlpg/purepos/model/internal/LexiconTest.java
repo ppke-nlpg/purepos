@@ -1,4 +1,4 @@
-package hu.ppke.itk.nlpg.purepos.model;
+package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.Lexicon;
 import junit.framework.TestCase;
