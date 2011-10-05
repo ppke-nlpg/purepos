@@ -17,7 +17,7 @@ public abstract class SuffixTree<W, T> {
 	/*
 	 * maximum length of suffixes which are stored
 	 */
-	protected int maxSuffixLength;
+	protected final int maxSuffixLength;
 
 	public SuffixTree(int maxSuffixLength) {
 		this.maxSuffixLength = maxSuffixLength;
@@ -49,6 +49,6 @@ public abstract class SuffixTree<W, T> {
 	 * @param aprioriProbs
 	 * @return the value of theta
 	 */
-	public abstract double calculateTheta(HashMap<T, Integer> aprioriProbs);
+	public abstract double calculateTheta(HashMap<T, Double> aprioriProbs);
 
 }

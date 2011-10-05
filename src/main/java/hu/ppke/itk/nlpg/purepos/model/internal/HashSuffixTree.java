@@ -20,8 +20,8 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	/**
 	 * A node is: (suffix, ((tag, tag count), suffix count))
 	 */
-	HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> representation = new HashMap<String, MutablePair<HashMap<T, Integer>, Integer>>();
-	Integer totalTagCount = 0;
+	protected HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> representation = new HashMap<String, MutablePair<HashMap<T, Integer>, Integer>>();
+	protected Integer totalTagCount = 0;
 
 	public HashSuffixTree(int maxSuffixLength) {
 		super(maxSuffixLength);
@@ -31,7 +31,7 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	public void addWord(String word, T tag, int count) {
 		int end = word.length();
 		int start = Math.max(0, end - maxSuffixLength);
-		for (int pointer = start; pointer < end; pointer++) {
+		for (int pointer = start; pointer <= end; pointer++) {
 			String suffix = word.substring(pointer);
 			increment(suffix, tag, count);
 		}
@@ -65,18 +65,19 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	}
 
 	/**
-	 * Using weighted average for standard deviation
+	 * Using weighted average for standard deviation: E_{P_t}(P_t()). For
+	 * details see libmoot.
 	 */
 	@Override
-	public double calculateTheta(HashMap<T, Integer> aprioriProbs) {
+	public double calculateTheta(HashMap<T, Double> aprioriProbs) {
 		// TODO: understand how it really works -> weighted average of stddev
 		// TODO: it can be moved to some util class as a static method
 		double pAv = 0;
-		for (Integer val : aprioriProbs.values()) {
+		for (Double val : aprioriProbs.values()) {
 			pAv += Math.pow(val, 2);
 		}
 		double theta = 0;
-		for (Integer aProb : aprioriProbs.values()) {
+		for (Double aProb : aprioriProbs.values()) {
 			theta += aProb * Math.pow(aProb - pAv, 2);
 		}
 
