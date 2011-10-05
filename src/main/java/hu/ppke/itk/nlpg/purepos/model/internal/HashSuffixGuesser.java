@@ -48,18 +48,25 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	 * @param word
 	 *            the word which has the suffix
 	 * @param index
-	 *            starting index of the suffic
+	 *            end position of the suffix (usually the length of the suffix)
 	 * @param tag
 	 *            POS tag
 	 * @return
 	 */
 	protected double getTagProb(String word, int index, T tag) {
-		String suffix = word.substring(index);
-		if (index >= 0 && freqTable.containsKey(suffix)) {
+		if (index >= 0 && freqTable.containsKey(word.substring(index))) {
+			String suffix = word.substring(index);
 			// TODO: how does automatic conversation happen? (should be float!)
-			return (((float) freqTable.get(suffix).getLeft().get(tag) / freqTable
-					.get(suffix).getRight()) + theta
-					* getTagProb(word, index - 1, tag))
+			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
+					.get(suffix);
+			Integer tagSufFreq = suffixValue.getLeft().get(tag);
+			Double tagSufFreqD;
+			if (tagSufFreq == null)
+				tagSufFreqD = 0.0;
+			else
+				tagSufFreqD = tagSufFreq.doubleValue();
+			Double relFreq = tagSufFreqD / suffixValue.getRight();
+			return (relFreq + theta * getTagProb(word, index - 1, tag))
 					/ thetaPlusOne;
 		} else
 			return 0;

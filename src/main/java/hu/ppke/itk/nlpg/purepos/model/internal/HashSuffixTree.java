@@ -35,6 +35,7 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 			String suffix = word.substring(pointer);
 			increment(suffix, tag, count);
 		}
+		totalTagCount += count;
 	}
 
 	protected void increment(String suffix, T tag, int count) {
@@ -55,13 +56,11 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 					tagCounts, count);
 			representation.put(suffix, value);
 		}
-		totalTagCount += count;
 	}
 
 	@Override
-	public ISuffixGuesser<String, T> generateGuesser(float theta) {
-		// TODO Auto-generated method stub
-		return null;
+	public ISuffixGuesser<String, T> generateGuesser(double theta) {
+		return new HashSuffixGuesser<T>(representation, theta);
 	}
 
 	/**

@@ -6,7 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-public class HashSuffixtree {
+public class HashSuffixtreeTest {
 
 	@Test
 	public void testCalculateTheta() {
@@ -35,7 +35,10 @@ public class HashSuffixtree {
 						suffixLength);
 				Integer tag = 1;
 				Integer count = 2;
+				Integer tCount = rep1.totalTagCount;
 				rep1.addWord(word, tag, count);
+				Assert.assertEquals((Integer) (tCount + count),
+						rep1.totalTagCount);
 				for (int i = 0; i <= Math.min(suffixLength, word.length()); i++) {
 					rep2.increment(word.substring(word.length() - i), tag,
 							count);
@@ -63,7 +66,7 @@ public class HashSuffixtree {
 		Assert.assertEquals(st.representation.get(suffix1).getRight(), count1);
 		Assert.assertEquals(st.representation.get(suffix1).getLeft().get(tag1),
 				count1);
-		Assert.assertEquals(st.totalTagCount, count1);
+		// Assert.assertEquals(st.totalTagCount, count1);
 
 		st.increment(suffix1, tag1, count2);
 		Assert.assertFalse(st.representation.containsKey(suffix2));
@@ -72,7 +75,7 @@ public class HashSuffixtree {
 				(Integer) (count1 + count2));
 		Assert.assertEquals(st.representation.get(suffix1).getLeft().get(tag1),
 				(Integer) (count1 + count2));
-		Assert.assertEquals(st.totalTagCount, (Integer) (count1 + count2));
+		// Assert.assertEquals(st.totalTagCount, (Integer) (count1 + count2));
 
 		st.increment(suffix1, tag2, count3);
 		Assert.assertFalse(st.representation.containsKey(suffix2));
@@ -81,8 +84,8 @@ public class HashSuffixtree {
 				(Integer) (count1 + count2 + count3));
 		Assert.assertEquals(st.representation.get(suffix1).getLeft().get(tag2),
 				(count3));
-		Assert.assertEquals(st.totalTagCount,
-				(Integer) (count1 + count2 + count3));
+		// Assert.assertEquals(st.totalTagCount,
+		// (Integer) (count1 + count2 + count3));
 	}
 
 }
