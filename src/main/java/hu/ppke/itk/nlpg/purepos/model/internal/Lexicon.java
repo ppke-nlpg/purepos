@@ -13,7 +13,10 @@ import java.util.Set;
  * 
  * @author György Orosz
  * 
+ * @param <W>
+ *            Word type
  * @param <T>
+ *            Tag type
  */
 public class Lexicon<W, T> implements ILexicon<W, T> {
 	protected HashMap<W, HashMap<T, Integer>> representation;
