@@ -1,9 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Trie node, storing frequencies / probabilities of a given n-gram part
@@ -18,9 +16,11 @@ import java.util.Set;
  *            type for words
  */
 public abstract class TrieNode<I, N extends Number, W> {
+	// TODO: is it worth using berkeleylm, instead of my implementation: it is
+	// said to be fast and small
 	private final I id;
 	private N num;
-	private HashSet<I> childNodes;
+	private HashMap<I, TrieNode<I, N, W>> childNodes;
 	private final HashMap<W, N> words;
 
 	/**
@@ -38,6 +38,8 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 */
 	protected abstract N increment(N n);
 
+	protected abstract TrieNode<I, N, W> createNode(I id);
+
 	/**
 	 * Constructor
 	 * 
@@ -47,10 +49,14 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 *            word to store
 	 */
 	public TrieNode(I id, W word) {
+		this(id);
+		addWord(word);
+	}
+
+	protected TrieNode(I id) {
 		this.id = id;
 		num = zero();
 		words = new HashMap<W, N>();
-		addWord(word);
 	}
 
 	/**
@@ -72,11 +78,17 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 * 
 	 * @param child
 	 */
-	public void addChild(I child) {
+	public TrieNode<I, N, W> addChild(I child) {
 		if (childNodes == null) {
-			childNodes = new HashSet<I>();
+			childNodes = new HashMap<I, TrieNode<I, N, W>>();
 		}
-		childNodes.add(child);
+		if (!childNodes.containsKey(child)) {
+			TrieNode<I, N, W> childNode = createNode(child);
+			childNodes.put(child, childNode);
+			return childNode;
+		} else {
+			return childNodes.get(child);
+		}
 	}
 
 	/**
@@ -102,7 +114,7 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 * 
 	 * @return
 	 */
-	public Set<I> getChildNodes() {
+	public Map<I, TrieNode<I, N, W>> getChildNodes() {
 		return childNodes;
 	}
 
@@ -113,5 +125,51 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 */
 	public Map<W, N> getWords() {
 		return words;
+	}
+
+	/**
+	 * Returns true if has a child node with the specified id.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean hasChild(I id) {
+		return childNodes.containsKey(id);
+	}
+
+	/**
+	 * Returns the node with the specified id.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public TrieNode<I, N, W> getChild(I id) {
+		return childNodes.get(id);
+	}
+
+	/**
+	 * Returns true if this node has the requested word.
+	 * 
+	 * @param word
+	 * @return
+	 */
+	public boolean hasWord(W word) {
+		return words.containsKey(word);
+	}
+
+	/**
+	 * Returns the numeric value according to the word.
+	 * 
+	 * @param word
+	 * @return
+	 */
+	public N getWord(W word) {
+		return words.get(word);
+	}
+
+	@Override
+	public String toString() {
+		return "(id:" + getId() + ", childs:" + childNodes.toString()
+				+ ", words:" + words.toString() + ")";
 	}
 }
