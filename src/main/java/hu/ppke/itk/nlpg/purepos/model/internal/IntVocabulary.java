@@ -7,4 +7,8 @@ public class IntVocabulary<W> extends Vocabulary<W, Integer> {
 		vocabulary.put(element, vocabulary.size() + 1);
 
 	}
+
+	public static Integer getExtremalElement() {
+		return 0;
+	}
 }

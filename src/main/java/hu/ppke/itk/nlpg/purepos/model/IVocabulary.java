@@ -16,13 +16,33 @@ import java.util.List;
  */
 public interface IVocabulary<W, I> {
 
+	/**
+	 * Returns the size of the dictionary
+	 * 
+	 * @return
+	 */
 	public int size();
 
+	/**
+	 * Returns the index for a specific word
+	 * 
+	 * @param word
+	 * @return
+	 */
 	public I getIndex(W word);
 
+	/**
+	 * Returns the word for a specific index
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public W getWord(I index);
 
+	@Deprecated
 	public NGram<I> getIndeces(List<W> words);
 
 	public void addElement(W element);
+
+	// public I getExtremalElement();
 }

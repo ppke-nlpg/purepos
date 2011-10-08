@@ -13,6 +13,7 @@ import java.util.List;
  * 
  * @param <T>
  */
+@Deprecated
 public class NGram<T> implements INGram<T> {
 
 	protected List<T> tokenList;
