@@ -45,8 +45,23 @@ public abstract class INGramFrequencyModel<C, W> {
 	 */
 	public abstract List<Double> getWordFrequency(List<C> context, W word);
 
+	/**
+	 * Calculating lambdas (see Brants(2000) Figure 1.)
+	 */
+	protected abstract void calculateNGramLamdas();
+
+	/**
+	 * Returns total number of n-grams
+	 * 
+	 * @return
+	 */
 	public abstract int getTotalFrequency();
 
+	/**
+	 * Creates a probability model for calculating n-gram probabilities
+	 * 
+	 * @return
+	 */
 	public abstract INGramProbabilityModel<C, W> createProbabilityModel();
 
 }
