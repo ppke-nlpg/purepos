@@ -25,32 +25,6 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 
-	protected static class IntTrieNode<T> extends TrieNode<Integer, Integer, T> {
-		IntTrieNode(Integer id) {
-			super(id);
-		}
-
-		public IntTrieNode(Integer id, T word) {
-			super(id, word);
-		}
-
-		@Override
-		protected Integer zero() {
-			return 0;
-		}
-
-		@Override
-		protected Integer increment(Integer n) {
-			return n + 1;
-		}
-
-		@Override
-		protected TrieNode<Integer, Integer, T> createNode(Integer id) {
-			return new IntTrieNode<T>(id);
-		}
-
-	};
-
 	protected IntTrieNode<W> root;
 	/*
 	 * lambda1 is at position 1 and so on; lamda0 is seen to be used in Hunpos
@@ -123,12 +97,6 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 		return root.getNum();
 	}
 
-	@Override
-	public INGramProbabilityModel<Integer, W> createProbabilityModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	protected double calculateValue(TrieNode<Integer, Integer, W> node, W word) {
 		double nodeFreq = node.getNum();
 		double wFreq = node.getWord(word);
@@ -179,7 +147,7 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 			}
 	}
 
-	public void adjustLamdas() {
+	protected void adjustLamdas() {
 		lambdas = new ArrayList<Double>();
 		for (int i = 0; i < n + 1; ++i) {
 			lambdas.add(0.0);
@@ -206,5 +174,11 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 			}
 		}
 		acc.remove(acc.size() - 1);
+	}
+
+	@Override
+	public INGramProbabilityModel<Integer, W> createProbabilityModel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

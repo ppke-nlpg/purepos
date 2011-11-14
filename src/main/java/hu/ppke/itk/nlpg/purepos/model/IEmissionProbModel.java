@@ -1,7 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
 /**
- * Implemetors should represent emission probability model of an HMM.
+ * Implementors should represent emission probability model of an HMM.
  * 
  * @author György Orosz
  * 

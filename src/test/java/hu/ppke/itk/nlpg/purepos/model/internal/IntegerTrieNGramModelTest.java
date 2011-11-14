@@ -1,6 +1,5 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.internal.IntegerTrieNGramModel.IntTrieNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
