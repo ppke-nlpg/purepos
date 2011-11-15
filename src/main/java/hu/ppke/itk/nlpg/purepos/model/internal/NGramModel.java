@@ -1,7 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.INGramFrequencyModel;
-import hu.ppke.itk.nlpg.purepos.model.INGramProbabilityModel;
+import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,7 +178,7 @@ public class NGramModel<W> extends INGramFrequencyModel<Integer, W> {
 	}
 
 	@Override
-	public INGramProbabilityModel<Integer, W> createProbabilityModel() {
+	public IProbabilityModel<Integer, W> createProbabilityModel() {
 		calculateNGramLamdas();
 		return new ProbModel<W>(root, lambdas);
 	}

@@ -1,6 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.INGramProbabilityModel;
+import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-public class ProbModel<W> implements INGramProbabilityModel<Integer, W> {
+public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 
 	// TODO: use a more memory efficient model for storing these data
 	protected DoubleTrieNode<W> root;
@@ -23,7 +23,7 @@ public class ProbModel<W> implements INGramProbabilityModel<Integer, W> {
 
 	@Override
 	public void save(File modelfile) {
-		// TODO Auto-generated method stub
+		// TODO implement model saving
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import java.util.List;
  * @param <T>
  * @param <W>
  */
-public interface INGramProbabilityModel<T, W> {
+public interface IProbabilityModel<T, W> {
 
 	/**
 	 * Writes the model to a file.

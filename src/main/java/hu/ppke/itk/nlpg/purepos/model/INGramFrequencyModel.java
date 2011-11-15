@@ -62,6 +62,6 @@ public abstract class INGramFrequencyModel<C, W> {
 	 * 
 	 * @return
 	 */
-	public abstract INGramProbabilityModel<C, W> createProbabilityModel();
+	public abstract IProbabilityModel<C, W> createProbabilityModel();
 
 }
