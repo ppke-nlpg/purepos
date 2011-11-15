@@ -23,7 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * @param <W>
  *            word type
  */
-public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
+public class NGramModel<W> extends INGramFrequencyModel<Integer, W> {
 
 	protected IntTrieNode<W> root;
 	/*
@@ -34,7 +34,7 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 	 */
 	protected ArrayList<Double> lambdas;
 
-	public IntegerTrieNGramModel(int n) {
+	public NGramModel(int n) {
 		super(n);
 		root = new IntTrieNode<W>(IntVocabulary.getExtremalElement());
 	}
@@ -60,7 +60,7 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 	public List<Double> getWordFrequency(List<Integer> context, W word) {
 		ArrayList<Double> ret = new ArrayList<Double>();
 
-		ret.add(calculateFreq(root, word));
+		ret.add(root.getAprioriProb(word));
 		if (!(context == null || context.size() == 0)) {
 			ListIterator<Integer> it = context.listIterator(context.size());
 			Integer previous;
@@ -69,7 +69,7 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 				previous = it.previous();
 				if (actNode.hasChild(previous)) {
 					actNode = (IntTrieNode<W>) actNode.getChild(previous);
-					ret.add(calculateFreq(actNode, word));
+					ret.add(root.getAprioriProb(word));
 				} else {
 					ret.add(0.0);
 					while (it.hasPrevious()) {
@@ -84,20 +84,13 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 		return ret;
 	}
 
-	public Double calculateFreq(IntTrieNode<W> node, W word) {
-		if (node.hasWord(word)) {
-			return (double) node.getWord(word) / (double) node.getNum();
-		} else {
-			return 0.0;
-		}
-	}
-
 	@Override
 	public int getTotalFrequency() {
 		return root.getNum();
 	}
 
-	protected double calculateValue(TrieNode<Integer, Integer, W> node, W word) {
+	protected double calculateModifiedFreqVal(
+			TrieNode<Integer, Integer, W> node, W word) {
 		double nodeFreq = node.getNum();
 		double wFreq = node.getWord(word);
 		if (nodeFreq == 1 || wFreq == -1)
@@ -108,16 +101,23 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 
 	}
 
-	public Pair<Integer, Double> findMax(
+	/**
+	 * Finds the maximal frequency element in a nodelist.
+	 * 
+	 * @param list
+	 * @param word
+	 * @return
+	 */
+	protected Pair<Integer, Double> findMax(
 			ArrayList<TrieNode<Integer, Integer, W>> list, W word) {
 
 		Integer maxPos;
 		Double maxVal;
 		if (!(list == null || list.size() == 0)) {
 			maxPos = 0;
-			maxVal = calculateValue(list.get(0), word);
+			maxVal = calculateModifiedFreqVal(list.get(0), word);
 			for (int i = 1; i < list.size(); ++i) {
-				double val = calculateValue(list.get(i), word);
+				double val = calculateModifiedFreqVal(list.get(i), word);
 				if (val >= maxVal) {
 					// equality is important since we need the longest n-gram
 					maxPos = i;
@@ -137,6 +137,7 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 	@Override
 	protected void calculateNGramLamdas() {
 		adjustLamdas();
+		// normalization
 		double sum = 0.0;
 		for (Double e : lambdas) {
 			sum += e;
@@ -178,7 +179,7 @@ public class IntegerTrieNGramModel<W> extends INGramFrequencyModel<Integer, W> {
 
 	@Override
 	public INGramProbabilityModel<Integer, W> createProbabilityModel() {
-		// TODO Auto-generated method stub
-		return null;
+		calculateNGramLamdas();
+		return new ProbModel<W>(root, lambdas);
 	}
 }

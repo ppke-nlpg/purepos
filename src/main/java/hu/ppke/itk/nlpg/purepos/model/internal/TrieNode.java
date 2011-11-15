@@ -17,11 +17,12 @@ import java.util.Map;
  */
 public abstract class TrieNode<I, N extends Number, W> {
 	// TODO: is it worth using berkeleylm, instead of my implementation: it is
-	// said to be fast and small
-	private final I id;
-	private N num;
-	private HashMap<I, TrieNode<I, N, W>> childNodes;
-	private final HashMap<W, N> words;
+	// known to be fast and small
+	protected final I id;
+	// TODO: this is not needed for doubletrienode
+	protected N num;
+	protected HashMap<I, TrieNode<I, N, W>> childNodes;
+	protected final HashMap<W, N> words;
 
 	/**
 	 * Zero element of the given Number type
@@ -64,7 +65,7 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 * 
 	 * @param word
 	 */
-	public void addWord(W word) {
+	protected void addWord(W word) {
 		if (words.containsKey(word)) {
 			words.put(word, increment(words.get(word)));
 		} else {
@@ -134,6 +135,8 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 * @return
 	 */
 	public boolean hasChild(I id) {
+		if (childNodes == null)
+			return false;
 		return childNodes.containsKey(id);
 	}
 
@@ -144,6 +147,8 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 * @return
 	 */
 	public TrieNode<I, N, W> getChild(I id) {
+		if (childNodes == null)
+			return null;
 		return childNodes.get(id);
 	}
 
@@ -154,6 +159,8 @@ public abstract class TrieNode<I, N extends Number, W> {
 	 * @return
 	 */
 	public boolean hasWord(W word) {
+		if (words == null)
+			return false;
 		return words.containsKey(word);
 	}
 
@@ -169,7 +176,7 @@ public abstract class TrieNode<I, N extends Number, W> {
 
 	@Override
 	public String toString() {
-		return "(id:" + getId() + ", childs:" + childNodes.toString()
+		return "(id:" + getId() // + ", childs:" + childNodes.toString()
 				+ ", words:" + words.toString() + ")";
 	}
 }

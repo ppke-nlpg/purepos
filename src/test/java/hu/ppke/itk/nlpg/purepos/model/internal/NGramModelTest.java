@@ -1,6 +1,5 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,12 +10,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IntegerTrieNGramModelTest {
-	IntegerTrieNGramModel<Integer> model;
+public class NGramModelTest {
+	NGramModel<Integer> model;
 
 	@Before
 	public void initialize() {
-		model = new IntegerTrieNGramModel<Integer>(3);
+		model = new NGramModel<Integer>(3);
 	}
 
 	@Test
@@ -181,4 +180,5 @@ public class IntegerTrieNGramModelTest {
 		model.calculateNGramLamdas();
 		Assert.assertEquals(Arrays.asList(0.0, 0.0, 0.0, 1.0), model.lambdas);
 	}
+
 }
