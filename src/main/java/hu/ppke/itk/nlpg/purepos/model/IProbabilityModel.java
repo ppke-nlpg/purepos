@@ -1,7 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
-import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementors should implement a n-gram probability model upon an n-rgam
@@ -15,14 +15,6 @@ import java.util.List;
 public interface IProbabilityModel<T, W> {
 
 	/**
-	 * Writes the model to a file.
-	 * 
-	 * @param modelfile
-	 *            output file name
-	 */
-	public void save(File modelfile);
-
-	/**
 	 * Get probability for a word and its context according to the model.
 	 * 
 	 * @param context
@@ -31,6 +23,13 @@ public interface IProbabilityModel<T, W> {
 	 *            word
 	 * @return probability
 	 */
-	public Double getProbs(List<T> context, W word);
+	public Double getProb(List<T> context, W word);
+
+	/**
+	 * Return a map with the apriori probabilities of the words.
+	 * 
+	 * @return
+	 */
+	public Map<W, Double> getWordAprioriProbs();
 
 }

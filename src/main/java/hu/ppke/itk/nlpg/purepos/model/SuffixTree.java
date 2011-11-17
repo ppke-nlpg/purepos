@@ -1,6 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementors should implement a representation of a tree with word suffixes
@@ -41,7 +41,7 @@ public abstract class SuffixTree<W, T> {
 	 * 
 	 * @return a suffix guesser
 	 */
-	public abstract ISuffixGuesser<W, T> generateGuesser(double theta);
+	public abstract ISuffixGuesser<W, T> createGuesser(double theta);
 
 	/**
 	 * Calculate theta from the apriori probabilities.
@@ -49,6 +49,6 @@ public abstract class SuffixTree<W, T> {
 	 * @param aprioriProbs
 	 * @return the value of theta
 	 */
-	public abstract double calculateTheta(HashMap<T, Double> aprioriProbs);
+	public abstract double calculateTheta(Map<T, Double> aprioriProbs);
 
 }

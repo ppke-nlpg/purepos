@@ -1,28 +1,30 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
 /**
- * An object of this class is represnting the model of a POS tagger.
+ * An object of this class is representing the model of a POS tagger.
  * 
  * @author György Orosz
  * 
  * @param <T>
  *            type parameter for representing tags
  * 
- * @param <T>
+ * @param <W>
  *            type parameter for representing words
  * 
  */
-public class Model<W, T> {
+public abstract class Model<W, T> {
+	protected static final String EOS_TAG = "<EOS>";
+	protected static final String BOS_TAG = "<BOS>";
 
 	protected int taggingOrder;
 
 	protected int emissionOrder;
 
-	protected ITagTransitionProbModel<T> tagTransitionModel;
+	protected IProbabilityModel<T, T> tagTransitionModel;
 
-	protected IEmissionProbModel<T> standardEmissionModel;
+	protected IProbabilityModel<T, W> standardEmissionModel;
 
-	protected IEmissionProbModel<T> specTokensEmissionModel;
+	protected IProbabilityModel<T, W> specTokensEmissionModel;
 
 	protected ILexicon<W, T> standardTokensLexicon;
 
@@ -34,11 +36,12 @@ public class Model<W, T> {
 
 	protected ISuffixGuesser<W, T> upperCaseSuffixGuesser;
 
-	protected int eosIndex;
+	protected T eosIndex;
 
-	protected int bosIndex;
+	protected T bosIndex;
 
-	protected float theta;
+	// protected double theta;
 
-	protected float[] aprioriTagProbs;
+	// protected double[] aprioriTagProbs;
+
 }

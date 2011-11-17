@@ -2,7 +2,6 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -22,12 +21,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 	}
 
 	@Override
-	public void save(File modelfile) {
-		// TODO implement model saving
-	}
-
-	@Override
-	public Double getProbs(List<Integer> context, W word) {
+	public Double getProb(List<Integer> context, W word) {
 		// for a context which is greater then the size of the model, the
 		// context is cut and the greatest context probability is calculated
 		ListIterator<Integer> iterator = context.listIterator(context.size());
@@ -117,5 +111,10 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 			newRoot.addWord(word, tmpPrb);
 		}
 		return newRoot;
+	}
+
+	@Override
+	public Map<W, Double> getWordAprioriProbs() {
+		return root.getWords();
 	}
 }

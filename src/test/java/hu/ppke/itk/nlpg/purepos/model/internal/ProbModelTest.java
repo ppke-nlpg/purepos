@@ -24,58 +24,58 @@ public class ProbModelTest {
 		Double val;
 
 		// unigrams
-		val = model.getProbs(new ArrayList<Integer>(), 3);
+		val = model.getProb(new ArrayList<Integer>(), 3);
 		Assert.assertEquals(0.25, val);
-		val = model.getProbs(new ArrayList<Integer>(), 4);
+		val = model.getProb(new ArrayList<Integer>(), 4);
 		Assert.assertEquals(0.25, val);
-		val = model.getProbs(new ArrayList<Integer>(), 5);
+		val = model.getProb(new ArrayList<Integer>(), 5);
 		Assert.assertEquals(0.25, val);
-		val = model.getProbs(new ArrayList<Integer>(), -1);
+		val = model.getProb(new ArrayList<Integer>(), -1);
 		Assert.assertEquals(null, val);
 
 		// bigrams
-		val = model.getProbs(Arrays.asList(2), 3);
+		val = model.getProb(Arrays.asList(2), 3);
 		Assert.assertEquals(1.25, val);
-		val = model.getProbs(Arrays.asList(2), 5);
+		val = model.getProb(Arrays.asList(2), 5);
 		Assert.assertEquals(1.25, val);
-		val = model.getProbs(Arrays.asList(3), 4);
+		val = model.getProb(Arrays.asList(3), 4);
 		Assert.assertEquals(1.25, val);
-		val = model.getProbs(Arrays.asList(3), 6);
+		val = model.getProb(Arrays.asList(3), 6);
 		Assert.assertEquals(1.25, val);
-		val = model.getProbs(Arrays.asList(3), -1);
+		val = model.getProb(Arrays.asList(3), -1);
 		Assert.assertEquals(null, val);
 		// it is going to be an unigram
-		val = model.getProbs(Arrays.asList(-1), 3);
+		val = model.getProb(Arrays.asList(-1), 3);
 		Assert.assertEquals(0.25, val);
 
 		// trigrams
-		val = model.getProbs(Arrays.asList(1, 2), 3);
+		val = model.getProb(Arrays.asList(1, 2), 3);
 		Assert.assertEquals(3.25, val);
-		val = model.getProbs(Arrays.asList(1, 2), 5);
+		val = model.getProb(Arrays.asList(1, 2), 5);
 		Assert.assertEquals(3.25, val);
-		val = model.getProbs(Arrays.asList(22, 3), 6);
+		val = model.getProb(Arrays.asList(22, 3), 6);
 		Assert.assertEquals(5.25, val);
-		val = model.getProbs(Arrays.asList(2, 3), 4);
+		val = model.getProb(Arrays.asList(2, 3), 4);
 		Assert.assertEquals(5.25, val);
-		val = model.getProbs(Arrays.asList(2, 3), -1);
+		val = model.getProb(Arrays.asList(2, 3), -1);
 		Assert.assertEquals(null, val);
 
 	}
 
 	@Test
-	public void getProbsTest() {
+	public void getProbTest() {
 		DoubleTrieNode<Integer> root = new DoubleTrieNode<Integer>(0);
 		ProbModel<Integer> model = new ProbModel<Integer>(root);
-		Double val = model.getProbs(new ArrayList<Integer>(), 1);
+		Double val = model.getProb(new ArrayList<Integer>(), 1);
 		Assert.assertEquals(val, null);
 
 		root = new DoubleTrieNode<Integer>(0);
 		root.addWord(1, 0.1);
 		root.addWord(2, 0.2);
 		model = new ProbModel<Integer>(root);
-		val = model.getProbs(new ArrayList<Integer>(), 1);
+		val = model.getProb(new ArrayList<Integer>(), 1);
 		Assert.assertEquals(val, 0.1);
-		val = model.getProbs(new ArrayList<Integer>(), 2);
+		val = model.getProb(new ArrayList<Integer>(), 2);
 		Assert.assertEquals(val, 0.2);
 
 		root = new DoubleTrieNode<Integer>(0);
@@ -96,23 +96,23 @@ public class ProbModelTest {
 		root.addChild(c1);
 		root.addChild(c2);
 		model = new ProbModel<Integer>(root);
-		val = model.getProbs(Arrays.asList(11, 1), 3);
+		val = model.getProb(Arrays.asList(11, 1), 3);
 		Assert.assertEquals(0.33, val);
 
-		val = model.getProbs(Arrays.asList(12, 1), 4);
+		val = model.getProb(Arrays.asList(12, 1), 4);
 		Assert.assertEquals(0.44, val);
 
-		val = model.getProbs(Arrays.asList(2), 4);
+		val = model.getProb(Arrays.asList(2), 4);
 		Assert.assertEquals(0.4, val);
 
-		val = model.getProbs(Arrays.asList(2), 5);
+		val = model.getProb(Arrays.asList(2), 5);
 		Assert.assertEquals(0.5, val);
 
 		// too big context
-		val = model.getProbs(Arrays.asList(1, 2), 4);
+		val = model.getProb(Arrays.asList(1, 2), 4);
 		Assert.assertEquals(0.4, val);
 
-		val = model.getProbs(Arrays.asList(1, 2, 3, 4, 12, 1), 4);
+		val = model.getProb(Arrays.asList(1, 2, 3, 4, 12, 1), 4);
 		Assert.assertEquals(0.44, val);
 
 	}

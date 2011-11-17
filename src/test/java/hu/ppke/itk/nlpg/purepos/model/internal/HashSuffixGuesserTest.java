@@ -17,8 +17,7 @@ public class HashSuffixGuesserTest {
 		suffixTree.addWord("alma", 2, 4);
 		suffixTree.addWord("az", 3, 8);
 		suffixTree.addWord("körte", 1, 1);
-		guesser = (HashSuffixGuesser<Integer>) suffixTree
-				.generateGuesser(theta);
+		guesser = (HashSuffixGuesser<Integer>) suffixTree.createGuesser(theta);
 	}
 
 	@Test

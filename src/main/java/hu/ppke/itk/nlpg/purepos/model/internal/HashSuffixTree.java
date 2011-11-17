@@ -4,6 +4,7 @@ import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -59,7 +60,7 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	}
 
 	@Override
-	public ISuffixGuesser<String, T> generateGuesser(double theta) {
+	public ISuffixGuesser<String, T> createGuesser(double theta) {
 		return new HashSuffixGuesser<T>(representation, theta);
 	}
 
@@ -68,7 +69,7 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	 * details see libmoot.
 	 */
 	@Override
-	public double calculateTheta(HashMap<T, Double> aprioriProbs) {
+	public double calculateTheta(Map<T, Double> aprioriProbs) {
 		// TODO: understand how it really works -> weighted average of stddev
 		// TODO: it can be moved to some util class as a static method
 		double pAv = 0;

@@ -2,7 +2,6 @@ package hu.ppke.itk.nlpg.purepos.model;
 
 import java.util.Map;
 
-//TODO: test
 public abstract class SuffixGuesser<W, T> implements ISuffixGuesser<W, T> {
 	public static <T> T getMaxProbabilityTag(Map<T, Double> probabilities) {
 		if (probabilities == null)
