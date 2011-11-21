@@ -1,6 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementors should implement a model which stores N grams, and their
@@ -14,10 +15,10 @@ import java.util.List;
  * @param <W>
  *            word type
  */
-public abstract class INGramFrequencyModel<C, W> {
+public abstract class INGramModel<C, W> {
 	protected final int n;
 
-	public INGramFrequencyModel(int n) {
+	public INGramModel(int n) {
 		this.n = n;
 	}
 
@@ -63,5 +64,12 @@ public abstract class INGramFrequencyModel<C, W> {
 	 * @return
 	 */
 	public abstract IProbabilityModel<C, W> createProbabilityModel();
+
+	/**
+	 * Returns the words which are added to the model, with their frequency.
+	 * 
+	 * @return
+	 */
+	public abstract Map<W, Integer> getWords();
 
 }

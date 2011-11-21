@@ -51,4 +51,15 @@ public abstract class Vocabulary<W, T> implements IVocabulary<W, T> {
 
 	}
 
+	@Override
+	public T addElement(W element) {
+		T key = vocabulary.get(element);
+		if (key == null)
+			return addVocabularyElement(element);
+		else
+			return key;
+	}
+
+	protected abstract T addVocabularyElement(W element);
+
 }

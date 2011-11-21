@@ -1,11 +1,12 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.INGramFrequencyModel;
+import hu.ppke.itk.nlpg.purepos.model.INGramModel;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,7 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * @param <W>
  *            word type
  */
-public class NGramModel<W> extends INGramFrequencyModel<Integer, W> {
+public class NGramModel<W> extends INGramModel<Integer, W> {
 
 	protected IntTrieNode<W> root;
 	/*
@@ -181,5 +182,11 @@ public class NGramModel<W> extends INGramFrequencyModel<Integer, W> {
 	public IProbabilityModel<Integer, W> createProbabilityModel() {
 		calculateNGramLamdas();
 		return new ProbModel<W>(root, lambdas);
+	}
+
+	// TODO: test
+	@Override
+	public Map<W, Integer> getWords() {
+		return root.getWords();
 	}
 }

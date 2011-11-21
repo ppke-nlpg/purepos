@@ -1,10 +1,8 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.internal.IntVocabulary;
-import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
-
 import java.util.ArrayList;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -15,7 +13,9 @@ public class IntVocabularyTest extends TestCase {
 	public void testAddElement() {
 		IntVocabulary<String> v = new IntVocabulary<String>();
 		assertEquals(0, v.size());
-		v.addElement("alma");
+		Integer key = v.addElement("alma");
+		assertEquals(1, v.size());
+		Assert.assertEquals(key, v.addElement("alma"));
 		assertEquals(1, v.size());
 
 	}

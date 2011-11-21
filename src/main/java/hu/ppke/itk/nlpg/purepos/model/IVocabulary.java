@@ -42,7 +42,7 @@ public interface IVocabulary<W, I> {
 	@Deprecated
 	public NGram<I> getIndeces(List<W> words);
 
-	public void addElement(W element);
+	public I addElement(W element);
 
 	// public I getExtremalElement();
 }

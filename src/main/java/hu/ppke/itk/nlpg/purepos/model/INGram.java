@@ -8,6 +8,7 @@ package hu.ppke.itk.nlpg.purepos.model;
  * @param <T>
  *            the type which is used to represent a token
  */
+@Deprecated
 public interface INGram<T> {
 
 }

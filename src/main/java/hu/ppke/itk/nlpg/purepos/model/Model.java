@@ -13,12 +13,21 @@ package hu.ppke.itk.nlpg.purepos.model;
  * 
  */
 public abstract class Model<W, T> {
-	protected static final String EOS_TAG = "<EOS>";
-	protected static final String BOS_TAG = "<BOS>";
+	protected static final String EOS_TAG = "</S>";
+
+	protected static final String BOS_TAG = "<S>";
+
+	protected static final String EOS_TOKEN = "<SE>";
+
+	protected static final String BOS_TOKEN = "<SB>";
 
 	protected int taggingOrder;
 
 	protected int emissionOrder;
+
+	protected int suffixLength;
+
+	protected int rareFreqency;
 
 	protected IProbabilityModel<T, T> tagTransitionModel;
 
