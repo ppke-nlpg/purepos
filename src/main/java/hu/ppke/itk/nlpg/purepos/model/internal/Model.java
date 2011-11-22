@@ -17,6 +17,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+/**
+ * Model represneting a cropus wiht pos tags.
+ * 
+ * Containing n-gram based language models, and suffixguessers as well.
+ * 
+ * @author György Orosz
+ * 
+ */
 public class Model extends
 		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> {
 
@@ -50,15 +58,27 @@ public class Model extends
 		eosIndex = tagVocabulary.getIndex(BOS_TAG);
 	}
 
+	/**
+	 * Trains a POS tagger on the givel corpus with the parameters
+	 * 
+	 * @param document
+	 *            training corpus
+	 * @param tagOrder
+	 *            order of the tag Markov model
+	 * @param emissionOrder
+	 *            order of the emission Markov model
+	 * @param maxSuffixLength
+	 *            max length for building suffixguesser
+	 * @param rareFrequency
+	 *            words used for building the guesser having frequency below
+	 *            this amount
+	 * @return
+	 */
 	public static hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> train(
 			IDocument document, int tagOrder, int emissionOrder,
 			int maxSuffixLength, int rareFrequency) {
-		IProbabilityModel<Integer, Integer> tagTransitionModel;
-		IProbabilityModel<Integer, String> standardEmissionModel;
-		IProbabilityModel<Integer, String> specTokensEmissionModel;
-		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser;
-		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser;
 
+		// build n-gram models
 		INGramModel<Integer, Integer> tagNGramModel = new NGramModel<Integer>(
 				tagOrder);
 		INGramModel<Integer, String> stdEmissionNGramModel = new NGramModel<String>(
@@ -66,39 +86,40 @@ public class Model extends
 		// TODO: in HunPOS the order of spec emission model is always 2
 		INGramModel<Integer, String> specEmissionNGramModel = new NGramModel<String>(
 				emissionOrder);
-		HashSuffixTree<Integer> lowerSuffixTree = new HashSuffixTree<Integer>(
-				maxSuffixLength);
-		HashSuffixTree<Integer> upperSuffixTree = new HashSuffixTree<Integer>(
-				maxSuffixLength);
-
 		ILexicon<String, Integer> standardTokensLexicon = new Lexicon<String, Integer>();
 		ILexicon<String, Integer> specTokensLexicon = new Lexicon<String, Integer>();
 		IVocabulary<String, Integer> tagVocabulary = new IntVocabulary<String>();
-
 		for (ISentence sentence : document.getSentences()) {
 			ISentence mySentence = new Sentence(sentence);
 			mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
 			mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
+			// adding a sentence to the model
 			addSentence(mySentence, tagNGramModel, stdEmissionNGramModel,
 					specEmissionNGramModel, standardTokensLexicon,
 					specTokensLexicon, tagVocabulary);
 		}
-
-		tagTransitionModel = tagNGramModel.createProbabilityModel();
-		standardEmissionModel = stdEmissionNGramModel.createProbabilityModel();
-		specTokensEmissionModel = specEmissionNGramModel
+		IProbabilityModel<Integer, Integer> tagTransitionModel = tagNGramModel
 				.createProbabilityModel();
-		Map<Integer, Double> aprioriProbs = tagTransitionModel
-				.getWordAprioriProbs();
+		IProbabilityModel<Integer, String> standardEmissionModel = stdEmissionNGramModel
+				.createProbabilityModel();
+		IProbabilityModel<Integer, String> specTokensEmissionModel = specEmissionNGramModel
+				.createProbabilityModel();
 
+		// build suffix guessers
+		HashSuffixTree<Integer> lowerSuffixTree = new HashSuffixTree<Integer>(
+				maxSuffixLength);
+		HashSuffixTree<Integer> upperSuffixTree = new HashSuffixTree<Integer>(
+				maxSuffixLength);
 		buildSuffixTrees(standardTokensLexicon, rareFrequency, lowerSuffixTree,
 				upperSuffixTree);
+		Map<Integer, Double> aprioriProbs = tagTransitionModel
+				.getWordAprioriProbs();
+		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser = lowerSuffixTree
+				.createGuesser(lowerSuffixTree.calculateTheta(aprioriProbs));
+		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
+				.createGuesser(upperSuffixTree.calculateTheta(aprioriProbs));
 
-		lowerCaseSuffixGuesser = lowerSuffixTree.createGuesser(lowerSuffixTree
-				.calculateTheta(aprioriProbs));
-
-		upperCaseSuffixGuesser = upperSuffixTree.createGuesser(upperSuffixTree
-				.calculateTheta(aprioriProbs));
+		// create the model
 		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> model = new Model(
 				tagOrder, emissionOrder, maxSuffixLength, rareFrequency,
 				tagTransitionModel, standardEmissionModel,
@@ -112,19 +133,17 @@ public class Model extends
 			ILexicon<String, Integer> standardTokensLexicon, int rareFreq,
 			HashSuffixTree<Integer> lowerSuffixTree,
 			HashSuffixTree<Integer> upperSuffixTree) {
-		// TODO: test
 		for (Entry<String, HashMap<Integer, Integer>> entry : standardTokensLexicon) {
 			String word = entry.getKey();
-			for (Entry<Integer, Integer> tagFreq : entry.getValue().entrySet()) {
-				if (tagFreq.getValue() <= rareFreq) {
-					String lowerWord = word.toLowerCase();
-					boolean isLower = word.equals(lowerWord);
+			Integer wordFreq = standardTokensLexicon.getWordCount(word);
+			if (wordFreq <= rareFreq) {
+				String lowerWord = word.toLowerCase();
+				boolean isLower = word.equals(lowerWord);
+				for (Integer tag : entry.getValue().keySet()) {
 					if (isLower) {
-						lowerSuffixTree.addWord(lowerWord, tagFreq.getKey(),
-								rareFreq);
+						lowerSuffixTree.addWord(lowerWord, tag, wordFreq);
 					} else {
-						upperSuffixTree.addWord(lowerWord, tagFreq.getKey(),
-								rareFreq);
+						upperSuffixTree.addWord(lowerWord, tag, wordFreq);
 					}
 
 				}
