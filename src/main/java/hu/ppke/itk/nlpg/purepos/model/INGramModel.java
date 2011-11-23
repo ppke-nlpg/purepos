@@ -35,7 +35,8 @@ public abstract class INGramModel<C, W> {
 	public abstract void addWord(List<C> context, W word);
 
 	/**
-	 * Returns the frequency of n-grams, starting with the unigram, and etc.
+	 * Returns the frequency of n-grams for a word, starting with the unigram,
+	 * bigram and etc.
 	 * 
 	 * Context must not be null.
 	 * 

@@ -179,4 +179,21 @@ public abstract class TrieNode<I, N extends Number, W> {
 		return "(id:" + getId() // + ", childs:" + childNodes.toString()
 				+ ", words:" + words.toString() + ")";
 	}
+
+	public String getReprString() {
+		return getReprString("\t");
+	}
+
+	public String getReprString(String tab) {
+		String ret = tab;
+		ret += "(id:" + getId();
+		ret += ", words:" + words.toString();
+		if (childNodes != null && childNodes.size() > 0) {
+			ret += ", childs:\n";
+			for (TrieNode<I, N, W> node : childNodes.values())
+				ret += node.getReprString(tab + tab);
+		}
+		ret += tab + ")\n";
+		return ret;
+	}
 }

@@ -25,11 +25,11 @@ import java.util.Vector;
  * @author György Orosz
  * 
  */
-public class Model extends
+public class POSTaggerModel extends
 		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> {
 
-	protected Model(int taggingOrder, int emissionOrder, int suffixLength,
-			int rareFrequency,
+	protected POSTaggerModel(int taggingOrder, int emissionOrder,
+			int suffixLength, int rareFrequency,
 			IProbabilityModel<Integer, Integer> tagTransitionModel,
 			IProbabilityModel<Integer, String> standardEmissionModel,
 			IProbabilityModel<Integer, String> specTokensEmissionModel,
@@ -120,7 +120,7 @@ public class Model extends
 				.createGuesser(upperSuffixTree.calculateTheta(aprioriProbs));
 
 		// create the model
-		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> model = new Model(
+		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> model = new POSTaggerModel(
 				tagOrder, emissionOrder, maxSuffixLength, rareFrequency,
 				tagTransitionModel, standardEmissionModel,
 				specTokensEmissionModel, lowerCaseSuffixGuesser,
@@ -133,17 +133,18 @@ public class Model extends
 			ILexicon<String, Integer> standardTokensLexicon, int rareFreq,
 			HashSuffixTree<Integer> lowerSuffixTree,
 			HashSuffixTree<Integer> upperSuffixTree) {
+		// is integers are uppercase? - HunPOS: yes
 		for (Entry<String, HashMap<Integer, Integer>> entry : standardTokensLexicon) {
 			String word = entry.getKey();
 			Integer wordFreq = standardTokensLexicon.getWordCount(word);
 			if (wordFreq <= rareFreq) {
-				String lowerWord = word.toLowerCase();
-				boolean isLower = word.equals(lowerWord);
+				String upperWord = word.toUpperCase();
+				boolean isLower = !word.equals(upperWord);
 				for (Integer tag : entry.getValue().keySet()) {
 					if (isLower) {
-						lowerSuffixTree.addWord(lowerWord, tag, wordFreq);
+						lowerSuffixTree.addWord(upperWord, tag, wordFreq);
 					} else {
-						upperSuffixTree.addWord(lowerWord, tag, wordFreq);
+						upperSuffixTree.addWord(upperWord, tag, wordFreq);
 					}
 
 				}

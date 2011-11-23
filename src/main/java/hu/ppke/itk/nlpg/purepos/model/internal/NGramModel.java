@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.log4j.Logger;
 
 /**
  * N-gram model implementation which uses tries to store these elements.
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 public class NGramModel<W> extends INGramModel<Integer, W> {
 
+	Logger logger = Logger.getLogger(this.getClass());
 	protected IntTrieNode<W> root;
 	/*
 	 * lambda1 is at position 1 and so on; lamda0 is seen to be used in Hunpos
@@ -70,7 +72,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 				previous = it.previous();
 				if (actNode.hasChild(previous)) {
 					actNode = (IntTrieNode<W>) actNode.getChild(previous);
-					ret.add(root.getAprioriProb(word));
+					ret.add(actNode.getAprioriProb(word));
 				} else {
 					ret.add(0.0);
 					while (it.hasPrevious()) {
@@ -91,14 +93,14 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 	}
 
 	protected double calculateModifiedFreqVal(
-			TrieNode<Integer, Integer, W> node, W word) {
-		double nodeFreq = node.getNum();
-		double wFreq = node.getWord(word);
-		if (nodeFreq == 1 || wFreq == -1)
+			List<TrieNode<Integer, Integer, W>> nodeList, int position, W word) {
+		double contextFreq = nodeList.get(position).getNum();
+		double wordFreq = nodeList.get(position).getWord(word);
+		if (contextFreq == 1 || wordFreq == 1)
 			return -1;
 		else
 			// TODO: what if we would substract 0.5 instead of 1?
-			return (wFreq - 1) / (nodeFreq - 1);
+			return (wordFreq - 1) / (contextFreq - 1);
 
 	}
 
@@ -115,12 +117,11 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 		Integer maxPos;
 		Double maxVal;
 		if (!(list == null || list.size() == 0)) {
-			maxPos = 0;
-			maxVal = calculateModifiedFreqVal(list.get(0), word);
-			for (int i = 1; i < list.size(); ++i) {
-				double val = calculateModifiedFreqVal(list.get(i), word);
-				if (val >= maxVal) {
-					// equality is important since we need the longest n-gram
+			maxPos = -1;
+			maxVal = 0.0;
+			for (int i = list.size() - 1; i >= 0; --i) {
+				double val = calculateModifiedFreqVal(list, i, word);
+				if (val > maxVal) {
 					maxPos = i;
 					maxVal = val;
 				}
@@ -140,15 +141,22 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 		adjustLamdas();
 		// normalization
 		double sum = 0.0;
+		lambdas.set(0, 0.0);
 		for (Double e : lambdas) {
 			sum += e;
 		}
-		if (sum > 0)
+		// logger.debug(lambdas.toString());
+		if (sum > 0) {
 			for (int i = 0; i < lambdas.size(); ++i) {
 				lambdas.set(i, lambdas.get(i) / sum);
 			}
+		}
+		// logger.debug(lambdas.toString());
 	}
 
+	/**
+	 * Calculate the lambdas, without smoothing
+	 */
 	protected void adjustLamdas() {
 		lambdas = new ArrayList<Double>();
 		for (int i = 0; i < n + 1; ++i) {
@@ -165,8 +173,11 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 			for (W word : node.getWords().keySet()) {
 				Pair<Integer, Double> max = findMax(acc, word);
 				int index = max.getKey() + 1;
-				if (max.getValue() != -1)
+				if (max.getValue() != -1) {
 					lambdas.set(index, lambdas.get(index) + node.getWord(word));
+				}
+				// logger.debug("Max:" + max + " add:" + node.getWord(word)
+				// + " to:" + index + " lambdas:" + lambdas);
 			}
 		} else {
 			for (TrieNode<Integer, Integer, W> child : node.getChildNodes()
