@@ -68,15 +68,21 @@ public class ProbModelTest {
 		ProbModel<Integer> model = new ProbModel<Integer>(root);
 		Double val = model.getProb(new ArrayList<Integer>(), 1);
 		Assert.assertEquals(val, null);
+		Double val2 = model.getWordProbs(new ArrayList<Integer>()).get(1);
+		Assert.assertEquals(val2, null);
 
 		root = new DoubleTrieNode<Integer>(0);
 		root.addWord(1, 0.1);
 		root.addWord(2, 0.2);
 		model = new ProbModel<Integer>(root);
 		val = model.getProb(new ArrayList<Integer>(), 1);
+		val2 = model.getWordProbs(new ArrayList<Integer>()).get(1);
 		Assert.assertEquals(val, 0.1);
+		Assert.assertEquals(val, val2);
 		val = model.getProb(new ArrayList<Integer>(), 2);
+		val2 = model.getWordProbs(new ArrayList<Integer>()).get(2);
 		Assert.assertEquals(val, 0.2);
+		Assert.assertEquals(val, val2);
 
 		root = new DoubleTrieNode<Integer>(0);
 		root.addWord(1, 0.1);
@@ -98,22 +104,34 @@ public class ProbModelTest {
 		model = new ProbModel<Integer>(root);
 		val = model.getProb(Arrays.asList(11, 1), 3);
 		Assert.assertEquals(0.33, val);
+		val2 = model.getWordProbs(Arrays.asList(11, 1)).get(3);
+		Assert.assertEquals(val, val2);
 
 		val = model.getProb(Arrays.asList(12, 1), 4);
 		Assert.assertEquals(0.44, val);
+		val2 = model.getWordProbs(Arrays.asList(12, 1)).get(4);
+		Assert.assertEquals(val, val2);
 
 		val = model.getProb(Arrays.asList(2), 4);
 		Assert.assertEquals(0.4, val);
+		val2 = model.getWordProbs(Arrays.asList(2)).get(4);
+		Assert.assertEquals(val, val2);
 
 		val = model.getProb(Arrays.asList(2), 5);
 		Assert.assertEquals(0.5, val);
+		val2 = model.getWordProbs(Arrays.asList(2)).get(5);
+		Assert.assertEquals(val, val2);
 
 		// too big context
 		val = model.getProb(Arrays.asList(1, 2), 4);
 		Assert.assertEquals(0.4, val);
+		val2 = model.getWordProbs(Arrays.asList(1, 2)).get(4);
+		Assert.assertEquals(val, val2);
 
 		val = model.getProb(Arrays.asList(1, 2, 3, 4, 12, 1), 4);
 		Assert.assertEquals(0.44, val);
+		val2 = model.getWordProbs(Arrays.asList(1, 2, 3, 4, 12, 1)).get(4);
+		Assert.assertEquals(val, val2);
 
 	}
 }

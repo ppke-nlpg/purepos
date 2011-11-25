@@ -10,12 +10,17 @@ import java.util.Map;
  * @author György Orosz
  * 
  * @param <T>
+ *            tag type
  * @param <W>
+ *            word type
  */
 public interface IProbabilityModel<T, W> {
 
 	/**
 	 * Get probability for a word and its context according to the model.
+	 * 
+	 * If the given context is too large -- larger then we have in the model --
+	 * the adequate part is used.
 	 * 
 	 * @param context
 	 *            list that must nut be null
@@ -24,6 +29,17 @@ public interface IProbabilityModel<T, W> {
 	 * @return probability
 	 */
 	public Double getProb(List<T> context, W word);
+
+	/**
+	 * Get probability word pairs for a given context
+	 * 
+	 * If the given context is too large -- larger then we have in the model --
+	 * the adequate part is used.
+	 * 
+	 * @param context
+	 *            list of tags, must not be null
+	 */
+	public Map<W, Double> getWordProbs(List<T> context);
 
 	/**
 	 * Return a map with the apriori probabilities of the words.

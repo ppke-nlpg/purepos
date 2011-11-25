@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+/**
+ * Implements a probability model for n-grams. Tags are represented as Integers.
+ * 
+ * @author György Orosz
+ * 
+ * @param <W>
+ */
 public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 
 	// TODO: use a more memory efficient model for storing these data
@@ -26,7 +33,6 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 		// context is cut and the greatest context probability is calculated
 		ListIterator<Integer> iterator = context.listIterator(context.size());
 		TrieNode<Integer, Double, W> node = root;
-		Integer c;
 		Boolean findMore = true;
 		Integer prev = -1;
 		if (iterator.hasPrevious()) {
@@ -48,6 +54,32 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 			return node.getWord(word);
 		else
 			return null;
+	}
+
+	@Override
+	// TODO: implement getProb() using this function
+	public Map<W, Double> getWordProbs(List<Integer> context) {
+		ListIterator<Integer> iterator = context.listIterator(context.size());
+		TrieNode<Integer, Double, W> node = root;
+		Boolean findMore = true;
+		Integer prev = -1;
+		if (iterator.hasPrevious()) {
+			prev = iterator.previous();
+			findMore = node.hasChild(prev);// &&
+											// node.getChild(prev).hasWord(word);
+		} else
+			findMore = false;
+
+		while (findMore) {
+			node = node.getChild(prev);
+			if (iterator.hasPrevious()) {
+				prev = iterator.previous();
+				findMore = node.hasChild(prev);
+				// && node.getChild(prev).hasWord(word);
+			} else
+				findMore = false;
+		}
+		return node.getWords();
 	}
 
 	protected DoubleTrieNode<W> createRoot(IntTrieNode<W> node,
@@ -117,4 +149,5 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 	public Map<W, Double> getWordAprioriProbs() {
 		return root.getWords();
 	}
+
 }
