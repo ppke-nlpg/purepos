@@ -36,6 +36,11 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	}
 
 	@Override
+	public double getTagLogProbability(String word, T tag) {
+		return Math.log(getTagProbability(word, tag));
+	}
+
+	@Override
 	public double getTagProbability(String word, T tag) {
 		// TODO: are you sure to calculate with the empty suffix as well?
 		// (Brants does this, but how about Halácsy?)
@@ -73,18 +78,18 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	}
 
 	@Override
-	public Map<T, Double> getTagProbabilities(String word) {
+	public Map<T, Double> getTagLogProbabilities(String word) {
 		HashMap<T, Double> ret = new HashMap<T, Double>();
 		Set<T> tags = freqTable.get("").getLeft().keySet();
 		for (T tag : tags) {
-			ret.put(tag, getTagProbability(word, tag));
+			ret.put(tag, getTagLogProbability(word, tag));
 		}
 		return ret;
 	}
 
 	@Override
 	public T getMaxProbabilityTag(String word) {
-		return getMaxProbabilityTag(getTagProbabilities(word));
+		return getMaxProbabilityTag(getTagLogProbabilities(word));
 	}
 
 }

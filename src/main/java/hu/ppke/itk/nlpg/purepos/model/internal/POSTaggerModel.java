@@ -10,6 +10,7 @@ import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
+import hu.ppke.itk.nlpg.purepos.model.Model;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +26,7 @@ import java.util.Vector;
  * @author György Orosz
  * 
  */
-public class POSTaggerModel extends
-		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> {
+public class POSTaggerModel extends Model<String, Integer> {
 
 	protected POSTaggerModel(int taggingOrder, int emissionOrder,
 			int suffixLength, int rareFrequency,
@@ -37,7 +37,8 @@ public class POSTaggerModel extends
 			ISuffixGuesser<String, Integer> upperCaseSuffixGuesser,
 			ILexicon<String, Integer> standardTokensLexicon,
 			ILexicon<String, Integer> specTokensLexicon,
-			IVocabulary<String, Integer> tagVocabulary) {
+			IVocabulary<String, Integer> tagVocabulary,
+			Map<Integer, Double> aprioriTagProbs) {
 		this.taggingOrder = taggingOrder;
 		this.emissionOrder = emissionOrder;
 		this.suffixLength = suffixLength;
@@ -51,6 +52,7 @@ public class POSTaggerModel extends
 		this.standardTokensLexicon = standardTokensLexicon;
 		this.specTokensLexicon = specTokensLexicon;
 		this.tagVocabulary = tagVocabulary;
+		this.aprioriTagProbs = aprioriTagProbs;
 
 		// tagVocabulary.addElement(EOS_TAG);
 		// tagVocabulary.addElement(BOS_TAG);
@@ -91,8 +93,7 @@ public class POSTaggerModel extends
 		IVocabulary<String, Integer> tagVocabulary = new IntVocabulary<String>();
 		for (ISentence sentence : document.getSentences()) {
 			ISentence mySentence = new Sentence(sentence);
-			mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
-			mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
+			addSentenceMarkers(mySentence, tagOrder);
 			// adding a sentence to the model
 			addSentence(mySentence, tagNGramModel, stdEmissionNGramModel,
 					specEmissionNGramModel, standardTokensLexicon,
@@ -125,8 +126,15 @@ public class POSTaggerModel extends
 				tagTransitionModel, standardEmissionModel,
 				specTokensEmissionModel, lowerCaseSuffixGuesser,
 				upperCaseSuffixGuesser, standardTokensLexicon,
-				specTokensLexicon, tagVocabulary);
+				specTokensLexicon, tagVocabulary, aprioriProbs);
 		return model;
+	}
+
+	public static void addSentenceMarkers(ISentence mySentence, int tagOrder) {
+		// TODO: its interesting that despite of using n-gram models we only add
+		// one BOS
+		mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
+		mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
 	}
 
 	protected static void buildSuffixTrees(
@@ -142,9 +150,11 @@ public class POSTaggerModel extends
 				boolean isLower = !word.equals(upperWord);
 				for (Integer tag : entry.getValue().keySet()) {
 					if (isLower) {
-						lowerSuffixTree.addWord(upperWord, tag, wordFreq);
+						lowerSuffixTree.addWord(word.toLowerCase(), tag,
+								wordFreq);
 					} else {
-						upperSuffixTree.addWord(upperWord, tag, wordFreq);
+						upperSuffixTree.addWord(word.toLowerCase(), tag,
+								wordFreq);
 					}
 
 				}

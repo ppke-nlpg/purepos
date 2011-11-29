@@ -31,6 +31,20 @@ public interface IProbabilityModel<T, W> {
 	public Double getProb(List<T> context, W word);
 
 	/**
+	 * Get log probability for a word and its context according to the model.
+	 * 
+	 * If the given context is too large -- larger then we have in the model --
+	 * the adequate part is used.
+	 * 
+	 * @param context
+	 *            list that must nut be null
+	 * @param word
+	 *            word
+	 * @return probability
+	 */
+	public Double getLogProb(List<T> context, W word);
+
+	/**
 	 * Get probability word pairs for a given context
 	 * 
 	 * If the given context is too large -- larger then we have in the model --
@@ -39,6 +53,7 @@ public interface IProbabilityModel<T, W> {
 	 * @param context
 	 *            list of tags, must not be null
 	 */
+	@Deprecated
 	public Map<W, Double> getWordProbs(List<T> context);
 
 	/**

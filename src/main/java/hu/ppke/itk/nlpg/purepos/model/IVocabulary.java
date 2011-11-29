@@ -3,6 +3,7 @@ package hu.ppke.itk.nlpg.purepos.model;
 import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Vocabulary mapping between W type elements and Indexing type elements
@@ -43,6 +44,8 @@ public interface IVocabulary<W, I> {
 	public NGram<I> getIndeces(List<W> words);
 
 	public I addElement(W element);
+
+	public Set<I> getTagIndeces();
 
 	// public I getExtremalElement();
 }

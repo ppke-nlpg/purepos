@@ -14,10 +14,42 @@ import java.util.Map;
  */
 public interface ISuffixGuesser<W, T> {
 
+	/**
+	 * Returns the probability of word and tag pair according to the words
+	 * suffixes.
+	 * 
+	 * @param word
+	 * @param tag
+	 * @return
+	 */
 	public double getTagProbability(W word, T tag);
 
-	public Map<T, Double> getTagProbabilities(W word);
+	/**
+	 * Returns the logprobability of word and tag pair according to the words
+	 * suffixes.
+	 * 
+	 * @param word
+	 * @param tag
+	 * @return
+	 */
+	public double getTagLogProbability(W word, T tag);
 
+	/**
+	 * Returns the probabilities of a word with all previously seen tag pair
+	 * according to the words suffixes.
+	 * 
+	 * @param word
+	 * @param tag
+	 * @return
+	 */
+	public Map<T, Double> getTagLogProbabilities(W word);
+
+	/**
+	 * Returns the tag which has the highest probability in the suffix guesser.
+	 * 
+	 * @param word
+	 * @return
+	 */
 	public T getMaxProbabilityTag(W word);
 
 }

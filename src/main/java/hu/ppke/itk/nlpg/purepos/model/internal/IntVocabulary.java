@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+
 public class IntVocabulary<W> extends Vocabulary<W, Integer> {
 
 	@Override
@@ -11,4 +12,5 @@ public class IntVocabulary<W> extends Vocabulary<W, Integer> {
 	public static Integer getExtremalElement() {
 		return 0;
 	}
+
 }

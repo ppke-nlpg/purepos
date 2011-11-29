@@ -57,6 +57,11 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 	}
 
 	@Override
+	public Double getLogProb(List<Integer> context, W word) {
+		return Math.log(getProb(context, word));
+	}
+
+	@Override
 	// TODO: implement getProb() using this function
 	public Map<W, Double> getWordProbs(List<Integer> context) {
 		ListIterator<Integer> iterator = context.listIterator(context.size());

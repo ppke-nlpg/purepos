@@ -4,6 +4,7 @@ import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -19,6 +20,11 @@ import com.google.common.collect.HashBiMap;
  * 
  */
 public abstract class Vocabulary<W, T> implements IVocabulary<W, T> {
+
+	@Override
+	public Set<T> getTagIndeces() {
+		return vocabulary.values();
+	}
 
 	protected BiMap<W, T> vocabulary = HashBiMap.create();
 

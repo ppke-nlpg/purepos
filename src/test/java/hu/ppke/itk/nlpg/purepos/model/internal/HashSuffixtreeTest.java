@@ -10,7 +10,7 @@ public class HashSuffixtreeTest {
 
 	@Test
 	public void testThetaAgainstHunPos() {
-		// TODO
+		// TODO test theta against hunpos
 	}
 
 	@Test
