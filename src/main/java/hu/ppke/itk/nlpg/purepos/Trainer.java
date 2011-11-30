@@ -9,7 +9,7 @@ import hu.ppke.itk.nlpg.purepos.model.internal.POSTaggerModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Trainer {
+public class Trainer implements ITrainer {
 	protected IDocument document;
 
 	public Trainer(File f) throws FileNotFoundException, ParsingException {
@@ -27,6 +27,7 @@ public class Trainer {
 		this.document = document;
 	}
 
+	@Override
 	public Model<String, Integer> trainModel(int tagOrder, int emissionOrder,
 			int maxSuffixLength, int rareFrequency) {
 		return POSTaggerModel.train(document, tagOrder, emissionOrder,

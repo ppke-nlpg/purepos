@@ -2,9 +2,11 @@ package hu.ppke.itk.nlpg.purepos.cli;
 
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itp.nlpg.purepos.morphology.HumorAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +30,8 @@ public class MSZNY2011Demo implements Runnable {
 
 			trainer = new Trainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
-			tagger = new Tagger(model, Math.log(10), 20);
+			tagger = new MorphTagger(model, Math.log(10), 20,
+					HumorAnalyzer.getInstance());
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					System.in));
@@ -50,8 +53,8 @@ public class MSZNY2011Demo implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		// MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
-		MSZNY2011Demo demo = new MSZNY2011Demo(args[0]);
+		MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
+		// MSZNY2011Demo demo = new MSZNY2011Demo(args[0]);
 		demo.run();
 	}
 
