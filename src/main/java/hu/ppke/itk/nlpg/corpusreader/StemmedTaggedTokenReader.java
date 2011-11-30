@@ -4,31 +4,33 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 
 /**
- * Reader class for reading a stemmed, tagged token.
+ * Reader class for reading a tagged, unstemmed token.
  * 
  * @author György Orosz
  * 
  */
 public class StemmedTaggedTokenReader extends AbstractDocElementReader<IToken> {
 
-	StemmedTaggedTokenReader() {
-		separator = "_";
+	public StemmedTaggedTokenReader() {
+		separator = "#";
 	}
 
-	StemmedTaggedTokenReader(String sep) {
-		this.separator = sep;
+	public StemmedTaggedTokenReader(String separator) {
+		this.separator = separator;
 	}
 
 	@Override
 	public IToken read(String text) {
-
-		int pos = text.indexOf(separator);
-		if (pos < 0 || text.equals("_"))
+		try {
+			String[] wordParts = text.split(separator);
+			if (wordParts.length == 0)
+				return null;
+			IToken word = new Token(wordParts[0],
+					wordParts[1].replace('_', ' '), wordParts[2]);
+			return word;
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
-		String tag = text.substring(pos + 1).trim();
-		String word = text.substring(0, pos).trim();
-
-		IToken t = new Token(word, tag);
-		return t;
+		}
 	}
 }

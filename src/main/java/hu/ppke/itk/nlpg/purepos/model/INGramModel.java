@@ -73,4 +73,11 @@ public abstract class INGramModel<C, W> {
 	 */
 	public abstract Map<W, Integer> getWords();
 
+	/**
+	 * Return a map with the apriori probabilities of the words.
+	 * 
+	 * @return
+	 */
+	public abstract Map<W, Double> getWordAprioriProbs();
+
 }

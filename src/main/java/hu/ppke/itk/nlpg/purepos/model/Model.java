@@ -72,7 +72,7 @@ public abstract class Model<W, T> {
 	/**
 	 * @return the eosToken
 	 */
-	public static String getEosToken() {
+	public static String getEOSToken() {
 		return EOS_TOKEN;
 	}
 

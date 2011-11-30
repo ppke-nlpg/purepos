@@ -56,11 +56,4 @@ public interface IProbabilityModel<T, W> {
 	@Deprecated
 	public Map<W, Double> getWordProbs(List<T> context);
 
-	/**
-	 * Return a map with the apriori probabilities of the words.
-	 * 
-	 * @return
-	 */
-	public Map<W, Double> getWordAprioriProbs();
-
 }

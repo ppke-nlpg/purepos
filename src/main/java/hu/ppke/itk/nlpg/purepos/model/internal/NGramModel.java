@@ -4,9 +4,11 @@ import hu.ppke.itk.nlpg.purepos.model.INGramModel;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -199,5 +201,21 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 	@Override
 	public Map<W, Integer> getWords() {
 		return root.getWords();
+	}
+
+	@Override
+	public Map<W, Double> getWordAprioriProbs() {
+		Map<W, Double> ret = new HashMap<W, Double>();
+		double sumFreg = root.getNum();
+		for (Entry<W, Integer> e : root.getWords().entrySet()) {
+			double val = e.getValue();
+			ret.put(e.getKey(), val / sumFreg);
+		}
+		return ret;
+	}
+
+	public String getReprString() {
+		calculateNGramLamdas();
+		return "tree:\n" + root.getReprString() + "lambdas: " + lambdas;
 	}
 }

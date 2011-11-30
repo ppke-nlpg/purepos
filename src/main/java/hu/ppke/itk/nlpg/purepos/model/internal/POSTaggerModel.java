@@ -76,18 +76,17 @@ public class POSTaggerModel extends Model<String, Integer> {
 	 *            this amount
 	 * @return
 	 */
-	public static hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> train(
-			IDocument document, int tagOrder, int emissionOrder,
-			int maxSuffixLength, int rareFrequency) {
+	public static POSTaggerModel train(IDocument document, int tagOrder,
+			int emissionOrder, int maxSuffixLength, int rareFrequency) {
 
 		// build n-gram models
 		INGramModel<Integer, Integer> tagNGramModel = new NGramModel<Integer>(
-				tagOrder);
+				tagOrder + 1);
 		INGramModel<Integer, String> stdEmissionNGramModel = new NGramModel<String>(
-				emissionOrder);
+				emissionOrder + 1);
 		// TODO: in HunPOS the order of spec emission model is always 2
 		INGramModel<Integer, String> specEmissionNGramModel = new NGramModel<String>(
-				emissionOrder);
+				emissionOrder + 1);
 		ILexicon<String, Integer> standardTokensLexicon = new Lexicon<String, Integer>();
 		ILexicon<String, Integer> specTokensLexicon = new Lexicon<String, Integer>();
 		IVocabulary<String, Integer> tagVocabulary = new IntVocabulary<String>();
@@ -113,20 +112,21 @@ public class POSTaggerModel extends Model<String, Integer> {
 				maxSuffixLength);
 		buildSuffixTrees(standardTokensLexicon, rareFrequency, lowerSuffixTree,
 				upperSuffixTree);
-		Map<Integer, Double> aprioriProbs = tagTransitionModel
-				.getWordAprioriProbs();
+		Map<Integer, Double> aprioriProbs = tagNGramModel.getWordAprioriProbs();
 		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser = lowerSuffixTree
 				.createGuesser(lowerSuffixTree.calculateTheta(aprioriProbs));
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
 				.createGuesser(upperSuffixTree.calculateTheta(aprioriProbs));
 
+		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
+		// .getReprString());
 		// create the model
-		hu.ppke.itk.nlpg.purepos.model.Model<String, Integer> model = new POSTaggerModel(
-				tagOrder, emissionOrder, maxSuffixLength, rareFrequency,
-				tagTransitionModel, standardEmissionModel,
-				specTokensEmissionModel, lowerCaseSuffixGuesser,
-				upperCaseSuffixGuesser, standardTokensLexicon,
-				specTokensLexicon, tagVocabulary, aprioriProbs);
+		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
+				maxSuffixLength, rareFrequency, tagTransitionModel,
+				standardEmissionModel, specTokensEmissionModel,
+				lowerCaseSuffixGuesser, upperCaseSuffixGuesser,
+				standardTokensLexicon, specTokensLexicon, tagVocabulary,
+				aprioriProbs);
 		return model;
 	}
 

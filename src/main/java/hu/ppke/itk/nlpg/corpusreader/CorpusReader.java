@@ -19,10 +19,12 @@ public class CorpusReader extends AbstractDocElementReader<IDocument> {
 	/**
 	 * Object which is used for reading tokens inside the corpus.
 	 */
-	protected AbstractDocElementReader<IToken> tokenReader = new StemmedTaggedTokenReader(
-			fileEncoding);
+	protected AbstractDocElementReader<IToken> tokenReader = new StemmedTaggedTokenReader();
 
-	CorpusReader(AbstractDocElementReader<IToken> tokenReader) {
+	public CorpusReader() {
+	}
+
+	public CorpusReader(AbstractDocElementReader<IToken> tokenReader) {
 		this.tokenReader = tokenReader;
 	}
 

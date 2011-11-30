@@ -150,9 +150,8 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 		return newRoot;
 	}
 
-	@Override
-	public Map<W, Double> getWordAprioriProbs() {
-		return root.getWords();
+	public String getReprString() {
+		return root.getReprString();
 	}
 
 }
