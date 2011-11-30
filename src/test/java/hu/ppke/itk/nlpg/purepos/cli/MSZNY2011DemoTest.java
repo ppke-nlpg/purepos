@@ -1,6 +1,11 @@
 package hu.ppke.itk.nlpg.purepos.cli;
 
+import hu.ppke.itk.nlpg.corpusreader.ParsingException;
+
+import java.io.FileNotFoundException;
+
 import org.junit.Before;
+import org.junit.Test;
 
 public class MSZNY2011DemoTest {
 	MSZNY2011Demo demo;
@@ -10,17 +15,16 @@ public class MSZNY2011DemoTest {
 		demo = new MSZNY2011Demo("./res/testCorpus.txt");
 	}
 
-	// @Test
-	// public void readCorpusTest() throws FileNotFoundException,
-	// ParsingException {
-	// IDocument d = demo.readCorpus(demo.corpus);
-	// // for (ISentence s : d.getSentences()) {
-	// // for (IToken t : s) {
-	// // System.out.println(t);
-	// // }
-	// // }
-	// Assert.assertEquals(2, d.getSentences().size());
-	// }
+	@Test
+	public void readCorpusTest() throws FileNotFoundException, ParsingException {
+		// IDocument d = dem
+		// for (ISentence s : d.getSentences()) {
+		// for (IToken t : s) {
+		// System.out.println(t);
+		// }
+		// }
+		// Assert.assertEquals(2, d.getSentences().size());
+	}
 	//
 	// @Test
 	// public void trainModelTest() throws FileNotFoundException,

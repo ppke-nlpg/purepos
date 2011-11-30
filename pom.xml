@@ -4,15 +4,50 @@
 
   <groupId>hu.ppke.itk.nlpg</groupId>
   <artifactId>purepos</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>purepos</name>
-  <url>http://maven.apache.org</url>
+  <url>http://nlpg.itk.ppke.hu/purepos</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+  <build>
+  <plugins>
+  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    <plugin>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <configuration>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+        <archive>
+          <manifest>
+            <mainClass>hu.ppke.itk.nlpg.purepos.cli.MSZNY2011Demo</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
 
   <dependencies>
     <dependency>
@@ -42,4 +77,11 @@
     	<version>1.2.16</version>
     </dependency>
   </dependencies>
+  <organization>
+  	<name>Natural Language Processing Group, Pázmány Péter Catholic Univeristy, Budapest</name>
+  	<url>http://nlpg.itk.ppke.hu</url>
+  </organization>
+  <scm>
+  	<url>ssh://zacs.itk.ppke.hu/home/oroszgy/repos/purepos/purepos.git</url>
+  </scm>
 </project>

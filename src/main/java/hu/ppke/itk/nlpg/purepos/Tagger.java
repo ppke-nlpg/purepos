@@ -27,10 +27,10 @@ public class Tagger implements ITagger {
 
 	@Override
 	public ISentence tagSentence(List<String> sentence) {
-		System.out.println(sentence);
+		// System.out.println(sentence);
 
 		List<Integer> tags = viterbi.decode(sentence);
-		System.out.println(tags);
+		// System.out.println(tags);
 		Iterator<Integer> tagsIt = tags.iterator();
 		Iterator<String> tokensIt = sentence.iterator();
 		List<IToken> tokens = new ArrayList<IToken>();
