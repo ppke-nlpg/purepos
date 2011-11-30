@@ -1,25 +1,36 @@
 package hu.ppke.itk.nlpg.purepos;
 
+import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
+import hu.ppke.itk.nlpg.corpusreader.ParsingException;
 import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.POSTaggerModel;
 
-public class Trainer implements Runnable {
+import java.io.File;
+import java.io.FileNotFoundException;
+
+public class Trainer {
 	protected IDocument document;
 
-	Trainer(IDocument document) {
+	public Trainer(File f) throws FileNotFoundException, ParsingException {
+		document = readCorpus(f);
+	}
+
+	protected IDocument readCorpus(File file) throws FileNotFoundException,
+			ParsingException {
+		CorpusReader reader = new CorpusReader();
+		return reader.readFromFile(file);
+
+	}
+
+	public Trainer(IDocument document) {
 		this.document = document;
 	}
 
-	protected Model<String, Integer> trainModel(IDocument document,
-			int tagOrder, int emissionOrder, int maxSuffixLength,
-			int rareFrequency) {
-		// TODO: implement
-		return null;
-	}
-
-	@Override
-	public void run() {
-
+	public Model<String, Integer> trainModel(int tagOrder, int emissionOrder,
+			int maxSuffixLength, int rareFrequency) {
+		return POSTaggerModel.train(document, tagOrder, emissionOrder,
+				maxSuffixLength, rareFrequency);
 	}
 
 }

@@ -56,8 +56,8 @@ public class POSTaggerModel extends Model<String, Integer> {
 
 		// tagVocabulary.addElement(EOS_TAG);
 		// tagVocabulary.addElement(BOS_TAG);
-		eosIndex = tagVocabulary.getIndex(EOS_TAG);
-		eosIndex = tagVocabulary.getIndex(BOS_TAG);
+		eosIndex = tagVocabulary.addElement(EOS_TAG);
+		bosIndex = tagVocabulary.addElement(BOS_TAG);
 	}
 
 	/**
@@ -134,7 +134,9 @@ public class POSTaggerModel extends Model<String, Integer> {
 		// TODO: its interesting that despite of using n-gram models we only add
 		// one BOS
 		mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
-		mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
+		for (int i = 0; i < tagOrder; ++i) {
+			mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
+		}
 	}
 
 	protected static void buildSuffixTrees(
@@ -180,14 +182,18 @@ public class POSTaggerModel extends Model<String, Integer> {
 		for (int i = sentence.size() - 1; i >= 0; --i) {
 			String word = sentence.get(i).getToken();
 			Integer tag = tags.get(i);
-
-			standardTokensLexicon.addToken(word, tag);
 			List<Integer> context = tags.subList(0, i + 1);
 			tagNGramModel.addWord(context.subList(0, context.size() - 1), tag);
-			stdEmissionNGramModel.addWord(context, word);
-			if (specMatcher.matchLexicalElement(word) != null) {
-				specEmissionNGramModel.addWord(context, word);
-				specTokensLexicon.addToken(word, tag);
+
+			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
+					.getEOSToken()))) {
+				standardTokensLexicon.addToken(word, tag);
+				stdEmissionNGramModel.addWord(context, word);
+
+				if (specMatcher.matchLexicalElement(word) != null) {
+					specEmissionNGramModel.addWord(context, word);
+					specTokensLexicon.addToken(word, tag);
+				}
 			}
 		}
 

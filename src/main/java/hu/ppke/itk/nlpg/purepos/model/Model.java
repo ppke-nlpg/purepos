@@ -79,7 +79,7 @@ public abstract class Model<W, T> {
 	/**
 	 * @return the bosToken
 	 */
-	public static String getBosToken() {
+	public static String getBOSToken() {
 		return BOS_TOKEN;
 	}
 
@@ -177,7 +177,7 @@ public abstract class Model<W, T> {
 	/**
 	 * @return the bosIndex
 	 */
-	public T getBosIndex() {
+	public T getBOSIndex() {
 		return bosIndex;
 	}
 
