@@ -73,7 +73,7 @@ abstract class AbstractDocElementContainer<T extends IDocElement> extends
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public <TT> TT[] toArray(TT[] a) {
 		return elements.toArray(a);
 	}
 

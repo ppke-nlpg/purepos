@@ -10,8 +10,9 @@ public class Trainer implements Runnable {
 		this.document = document;
 	}
 
-	protected Model trainModel(IDocument document, int tagOrder,
-			int emissionOrder, int maxSuffixLength, int rareFrequency) {
+	protected Model<String, Integer> trainModel(IDocument document,
+			int tagOrder, int emissionOrder, int maxSuffixLength,
+			int rareFrequency) {
 		// TODO: implement
 		return null;
 	}
