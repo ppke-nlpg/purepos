@@ -43,8 +43,8 @@ public class HashSuffixGuesserTest {
 
 	@Test
 	public void testGetMaxProbabilityTagMapOfTDouble() {
-		int max1 = guesser.getMaxProbabilityTag("alma");
-		Assert.assertEquals(max1, 2);
+		Integer max1 = guesser.getMaxProbabilityTag("alma");
+		Assert.assertEquals(max1.intValue(), 2);
 		int max2 = guesser.getMaxProbabilityTag("kalma");
 		Assert.assertEquals(max2, 2);
 		int max3 = guesser.getMaxProbabilityTag("nnn");

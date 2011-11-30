@@ -18,6 +18,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
  *            Stored tags type
  */
 public class HashSuffixTree<T> extends SuffixTree<String, T> {
+	// TODO: add how to create stems (use a hashtable for stemming codes)
 	/**
 	 * A node is: (suffix, ((tag, tag count), suffix count))
 	 */
