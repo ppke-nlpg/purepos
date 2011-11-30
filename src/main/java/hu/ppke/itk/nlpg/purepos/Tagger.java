@@ -30,6 +30,7 @@ public class Tagger implements ITagger {
 		System.out.println(sentence);
 
 		List<Integer> tags = viterbi.decode(sentence);
+		System.out.println(tags);
 		Iterator<Integer> tagsIt = tags.iterator();
 		Iterator<String> tokensIt = sentence.iterator();
 		List<IToken> tokens = new ArrayList<IToken>();

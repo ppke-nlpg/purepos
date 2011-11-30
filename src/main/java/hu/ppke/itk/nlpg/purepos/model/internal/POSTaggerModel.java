@@ -133,10 +133,11 @@ public class POSTaggerModel extends Model<String, Integer> {
 	public static void addSentenceMarkers(ISentence mySentence, int tagOrder) {
 		// TODO: its interesting that despite of using n-gram models we only add
 		// one BOS
-		mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
-		for (int i = 0; i < tagOrder; ++i) {
-			mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
-		}
+		// TODO: check how does training works in Hunpos with EOS
+		// mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
+		// for (int i = 0; i < tagOrder; ++i) {
+		mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
+		// }
 	}
 
 	protected static void buildSuffixTrees(
@@ -148,15 +149,13 @@ public class POSTaggerModel extends Model<String, Integer> {
 			String word = entry.getKey();
 			Integer wordFreq = standardTokensLexicon.getWordCount(word);
 			if (wordFreq <= rareFreq) {
-				String upperWord = word.toUpperCase();
-				boolean isLower = !word.equals(upperWord);
+				String lowerWord = word.toLowerCase();
+				boolean isLower = word.equals(lowerWord);
 				for (Integer tag : entry.getValue().keySet()) {
 					if (isLower) {
-						lowerSuffixTree.addWord(word.toLowerCase(), tag,
-								wordFreq);
+						lowerSuffixTree.addWord(lowerWord, tag, wordFreq);
 					} else {
-						upperSuffixTree.addWord(word.toLowerCase(), tag,
-								wordFreq);
+						upperSuffixTree.addWord(lowerWord, tag, wordFreq);
 					}
 
 				}

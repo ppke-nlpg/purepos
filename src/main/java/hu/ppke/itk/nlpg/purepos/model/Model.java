@@ -170,7 +170,7 @@ public abstract class Model<W, T> {
 	/**
 	 * @return the eosIndex
 	 */
-	public T getEosIndex() {
+	public T getEOSIndex() {
 		return eosIndex;
 	}
 
