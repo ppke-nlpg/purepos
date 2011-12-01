@@ -20,5 +20,7 @@ public class HumorAnalyzerTest {
 		Assert.assertEquals(2, humor.analyze("alma").size());
 		// for (IToken t : humor.analyze("alma"))
 		// System.out.println(t);
+		System.out.println(humor.analyze("A"));
+		System.out.println(humor.analyze("Az"));
 	}
 }

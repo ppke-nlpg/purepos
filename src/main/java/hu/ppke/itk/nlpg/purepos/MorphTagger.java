@@ -18,7 +18,7 @@ public class MorphTagger extends Tagger implements ITagger {
 
 	public MorphTagger(Model<String, Integer> model, double logTheta,
 			int maxGuessedTags, IMorphologicalAnalyzer analyzer) {
-		super(model, logTheta, maxGuessedTags);
+		super(model, analyzer, logTheta, maxGuessedTags);
 		this.analyzer = analyzer;
 	}
 
@@ -37,17 +37,25 @@ public class MorphTagger extends Tagger implements ITagger {
 		Set<IToken> stemmedTokens = analyzer.analyze(t);
 		if (stemmedTokens == null || stemmedTokens.size() == 0)
 			return new Token(t.getToken(), t.getToken(), t.getTag());
-		IToken best = Collections.max(stemmedTokens, new Comparator<IToken>() {
 
-			@Override
-			public int compare(IToken o1, IToken o2) {
-				return model.getStandardTokensLexicon().getWordCount(
-						o1.getStem())
-						- model.getStandardTokensLexicon().getWordCount(
-								o2.getStem());
-
+		List<IToken> filteredStemmed = new ArrayList<IToken>();
+		for (IToken ct : stemmedTokens) {
+			if (t.getTag().equals(ct.getTag())) {
+				filteredStemmed.add(ct);
 			}
-		});
+		}
+		IToken best = Collections.max(filteredStemmed,
+				new Comparator<IToken>() {
+
+					@Override
+					public int compare(IToken o1, IToken o2) {
+						return model.getStandardTokensLexicon().getWordCount(
+								o1.getStem())
+								- model.getStandardTokensLexicon()
+										.getWordCount(o2.getStem());
+
+					}
+				});
 
 		return best;
 	}

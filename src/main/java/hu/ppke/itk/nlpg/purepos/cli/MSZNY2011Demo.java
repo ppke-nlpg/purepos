@@ -53,8 +53,8 @@ public class MSZNY2011Demo implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
-		// MSZNY2011Demo demo = new MSZNY2011Demo(args[0]);
+		// MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
+		MSZNY2011Demo demo = new MSZNY2011Demo(args[0]);
 		demo.run();
 	}
 

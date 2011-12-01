@@ -37,8 +37,9 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 		protected double weight = 0;
 
-		public State createNext(Integer newStep, double newWeight) {
-			State s = new State(new ArrayList<Integer>(this.path), newWeight);
+		public State createNext(Integer newStep, double plusWeight) {
+			State s = new State(new ArrayList<Integer>(this.path), this.weight
+					+ plusWeight);
 			s.path.add(newStep);
 			return s;
 		}
@@ -98,7 +99,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 					}
 				});
 		List<Integer> ret = maximalState.getPath();
-		System.out.println(ret);
+		// System.out.println(ret);
 		return ret.subList(model.getTaggingOrder(), ret.size() - 1);
 	}
 
@@ -108,6 +109,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 		boolean isFirst = true;
 		for (String obs : observations) {
+			System.out.println(obs);
 			nextWeights.clear();
 			// if (isFirst) {
 			// Map<Integer, Double> fProbs = getNextProb(
@@ -208,7 +210,12 @@ public class Viterbi extends IViterbi<String, Integer> {
 			isOOV = false;
 			anals = new ArrayList<Integer>();
 			for (String tag : strAnals) {
-				anals.add(model.getTagVocabulary().getIndex(tag));
+				// TODO: what should we do with those tags, that are not seen
+				// previously, but returned by the MA? - Hunpos adds it with -99
+				// weight
+				if (model.getTagVocabulary().getIndex(tag) != null) {
+					anals.add(model.getTagVocabulary().getIndex(tag));
+				}
 			}
 		}
 		/* check whether we have lexicon info */

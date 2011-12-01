@@ -7,6 +7,7 @@ import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.decoder.Viterbi;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itp.nlpg.purepos.morphology.NullAnalyzer;
 
 import java.util.ArrayList;
@@ -20,9 +21,13 @@ public class Tagger implements ITagger {
 
 	public Tagger(final Model<String, Integer> model, double logTheta,
 			int maxGuessedTags) {
+		this(model, new NullAnalyzer(), logTheta, maxGuessedTags);
+	}
+
+	public Tagger(final Model<String, Integer> model,
+			IMorphologicalAnalyzer analyzer, double logTheta, int maxGuessedTags) {
 		this.model = model;
-		this.viterbi = new Viterbi(model, new NullAnalyzer(), logTheta,
-				maxGuessedTags);
+		this.viterbi = new Viterbi(model, analyzer, logTheta, maxGuessedTags);
 	}
 
 	@Override
