@@ -189,9 +189,10 @@ public class POSTaggerModel extends Model<String, Integer> {
 				standardTokensLexicon.addToken(word, tag);
 				stdEmissionNGramModel.addWord(context, word);
 
-				if (specMatcher.matchLexicalElement(word) != null) {
-					specEmissionNGramModel.addWord(context, word);
-					specTokensLexicon.addToken(word, tag);
+				String specName;
+				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
+					specEmissionNGramModel.addWord(context, specName);
+					specTokensLexicon.addToken(specName, tag);
 				}
 			}
 		}
