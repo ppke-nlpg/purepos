@@ -2,24 +2,22 @@ package hu.ppke.itk.nlpg.purepos.cli;
 
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
-import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
-import hu.ppke.itp.nlpg.purepos.morphology.HumorAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-public class MSZNY2011Demo implements Runnable {
+public class SimpleTest implements Runnable {
 
 	protected Model<String, Integer> model;
 	protected Tagger tagger;
 	protected Trainer trainer;
 	protected final String trainingCorpusPath;
 
-	public MSZNY2011Demo(String trainingCorpusPath) {
+	public SimpleTest(String trainingCorpusPath) {
 		this.trainingCorpusPath = trainingCorpusPath;
 	}
 
@@ -30,8 +28,7 @@ public class MSZNY2011Demo implements Runnable {
 
 			trainer = new Trainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
-			tagger = new MorphTagger(model, Math.log(10), 20,
-					HumorAnalyzer.getInstance());
+			tagger = new Tagger(model, Math.log(10), 20);
 
 			BufferedReader is = new BufferedReader(new InputStreamReader(
 					System.in));
@@ -57,7 +54,7 @@ public class MSZNY2011Demo implements Runnable {
 
 	public static void main(String[] args) {
 		// MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
-		MSZNY2011Demo demo = new MSZNY2011Demo(args[0]);
+		SimpleTest demo = new SimpleTest(args[0]);
 		demo.run();
 	}
 
