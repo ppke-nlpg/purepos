@@ -37,14 +37,21 @@ public class MSZNY2011Demo implements Runnable {
 					System.in));
 			// tagger.tagSentence(Arrays.asList("elmentem", "a", "boltba",
 			// "."));
-			while (true) {
-				String line = br.readLine();
-				ISentence s = tagger.tagSentence(line);
-				for (IToken t : s) {
-					System.out.print(t + " ");
+			BufferedReader is = new BufferedReader(new InputStreamReader(
+					System.in));
+			String inputLine;
+
+			while ((inputLine = is.readLine()) != null) {
+
+				ISentence s = tagger.tagSentence(inputLine);
+				if (s != null) {
+					for (IToken t : s) {
+						System.out.print(t + " ");
+					}
 				}
 				System.out.println();
 			}
+			is.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;

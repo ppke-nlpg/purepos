@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -90,17 +91,24 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 		forward(obs);
 		// find maximal element
-		State maximalState = Collections.max(trellis.values(),
-				new Comparator<State>() {
-					@Override
-					public int compare(State first, State second) {
-						return Double.compare(first.getWeight(),
-								second.getWeight());
-					}
-				});
-		List<Integer> ret = maximalState.getPath();
-		// System.out.println(ret);
-		return ret.subList(model.getTaggingOrder(), ret.size() - 1);
+		try {
+			State maximalState = Collections.max(trellis.values(),
+					new Comparator<State>() {
+						@Override
+						public int compare(State first, State second) {
+							return Double.compare(first.getWeight(),
+									second.getWeight());
+						}
+					});
+			List<Integer> ret = maximalState.getPath();
+			// System.out.println(ret);
+			return ret.subList(model.getTaggingOrder(), ret.size() - 1);
+		} catch (java.util.NoSuchElementException e) {
+			System.err.println(observations);
+			System.err.println(trellis);
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	protected void forward(List<String> observations) {
@@ -109,38 +117,55 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 		boolean isFirst = true;
 		for (String obs : observations) {
-			System.out.println(obs);
-			nextWeights.clear();
-			// if (isFirst) {
-			// Map<Integer, Double> fProbs = getNextProb(
-			// new ArrayList<Integer>(), Model.getBOSToken(), false);
-			// nextWeights.put(model.getBOSIndex(), fProbs);
-			// } else {
+			try {
+				// System.out.println(obs);
+				nextWeights.clear();
+				// if (isFirst) {
+				// Map<Integer, Double> fProbs = getNextProb(
+				// new ArrayList<Integer>(), Model.getBOSToken(), false);
+				// nextWeights.put(model.getBOSIndex(), fProbs);
+				// } else {
 
-			for (Integer fromTag : model.getTagVocabulary().getTagIndeces()) {
-				State s = trellis.get(fromTag);
-				if (s != null) {
-					Map<Integer, Double> nextProb = getNextProb(s.getPath(),
-							obs, isFirst);
-					nextWeights.put(fromTag, nextProb);
+				for (Integer fromTag : model.getTagVocabulary().getTagIndeces()) {
+					State s = trellis.get(fromTag);
+					if (s != null) {
+						Map<Integer, Double> nextProb = getNextProb(
+								s.getPath(), obs, isFirst);
+						nextWeights.put(fromTag, nextProb);
+					}
 				}
-			}
-			// }
-			Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
-			for (Integer nextTag : model.getTagVocabulary().getTagIndeces()) {
-				int fromTag = findMaxFor(nextTag, nextWeights);
-				Double plusWeight = nextWeights.get(fromTag).get(nextTag);
+				// }
+				Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
+				for (Integer nextTag : model.getTagVocabulary().getTagIndeces()) {
+					try {
+						Integer fromTag = findMaxFor(nextTag, nextWeights);
+						Double plusWeight = nextWeights.get(fromTag).get(
+								nextTag);
 
-				if (plusWeight != null) {
-					trellisTmp.put(nextTag,
-							trellis.get(fromTag)
+						if (plusWeight != null) {
+							trellisTmp.put(nextTag, trellis.get(fromTag)
 									.createNext(nextTag, plusWeight));
+						}
+					} catch (NoSuchElementException e) {
+						// skip
+					}
 				}
-			}
-			// TODO: it could be really slow
-			trellis = trellisTmp;
 
-			isFirst = false;
+				if (trellisTmp.size() == 0) {
+					System.err.println(nextWeights);
+					System.err.println(trellis);
+					System.err.println(obs);
+				}
+				// TODO: it could be really slow
+				trellis = trellisTmp;
+
+				isFirst = false;
+			} catch (Throwable t) {
+				System.err.println(obs + " " + observations.indexOf(obs) + " "
+						+ " in: " + observations);
+				t.printStackTrace();
+				throw new RuntimeException(t);
+			}
 		}
 
 	}
@@ -209,6 +234,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		if (isNotEmpty(strAnals)) {
 			isOOV = false;
 			anals = new ArrayList<Integer>();
+			// seen = SeenType.Seen;
 			for (String tag : strAnals) {
 				// TODO: what should we do with those tags, that are not seen
 				// previously, but returned by the MA? - Hunpos adds it with -99
@@ -216,7 +242,15 @@ public class Viterbi extends IViterbi<String, Integer> {
 				if (model.getTagVocabulary().getIndex(tag) != null) {
 					anals.add(model.getTagVocabulary().getIndex(tag));
 				}
+				// else {
+				// anals.add(model.getTagVocabulary().addElement(tag));
+				// }
 			}
+			// TODO: quick hack for surviving (match the MA output with the tag
+			// vocabulary!)
+			if (anals.size() == 0)
+				isOOV = true;
+
 		}
 		/* check whether we have lexicon info */
 		tags = model.getStandardTokensLexicon().getTags(word);
@@ -238,7 +272,11 @@ public class Viterbi extends IViterbi<String, Integer> {
 				if (isSpec) {
 					wordProbModel = model.getSpecTokensEmissionModel();
 					tags = model.getSpecTokensLexicon().getTags(specName);
-					seen = SeenType.SpecialToken;
+					if (isNotEmpty(tags)) {
+						seen = SeenType.SpecialToken;
+					} else {
+						seen = SeenType.Unseen;
+					}
 					wordForm = specName;
 				} else {
 					seen = SeenType.Unseen;

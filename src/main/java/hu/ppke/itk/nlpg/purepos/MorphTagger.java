@@ -44,6 +44,9 @@ public class MorphTagger extends Tagger implements ITagger {
 				filteredStemmed.add(ct);
 			}
 		}
+		if (filteredStemmed == null || filteredStemmed.size() == 0)
+			return t;
+
 		IToken best = Collections.max(filteredStemmed,
 				new Comparator<IToken>() {
 

@@ -49,6 +49,8 @@ public class Tagger implements ITagger {
 
 	@Override
 	public ISentence tagSentence(String sentence) {
+		if (sentence == null || sentence.trim().equals(""))
+			return null;
 		return tagSentence(Arrays.asList(sentence.split("\\s")));
 	}
 }
