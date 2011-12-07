@@ -55,8 +55,8 @@ public class NGramModelTest {
 		Assert.assertTrue(mymodel.root.getChild(3).hasChild(4));
 		Assert.assertTrue(mymodel.root.getChild(3).hasChild(1));
 		Assert.assertEquals(Arrays.asList(0.0, 0.0, 0.0, 1.0), mymodel.lambdas);
-		logger.debug("\n" + mymodel.root.getReprString());
-		logger.debug(mymodel.lambdas.toString());
+		// logger.debug("\n" + mymodel.root.getReprString());
+		// logger.debug(mymodel.lambdas.toString());
 	}
 
 	@Test

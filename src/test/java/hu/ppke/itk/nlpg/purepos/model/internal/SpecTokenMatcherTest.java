@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import junit.framework.Assert;
 
 import org.junit.Test;

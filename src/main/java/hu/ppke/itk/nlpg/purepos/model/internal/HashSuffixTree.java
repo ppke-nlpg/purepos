@@ -4,7 +4,6 @@ import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -65,23 +64,4 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 		return new HashSuffixGuesser<T>(representation, theta);
 	}
 
-	/**
-	 * Using weighted average for standard deviation: E_{P_t}(P_t()). For
-	 * details see libmoot.
-	 */
-	@Override
-	public double calculateTheta(Map<T, Double> aprioriProbs) {
-		// TODO: understand how it really works -> weighted average of stddev
-		// TODO: it can be moved to some util class as a static method
-		double pAv = 0;
-		for (Double val : aprioriProbs.values()) {
-			pAv += Math.pow(val, 2);
-		}
-		double theta = 0;
-		for (Double aProb : aprioriProbs.values()) {
-			theta += aProb * Math.pow(aProb - pAv, 2);
-		}
-
-		return Math.sqrt(theta);
-	}
 }

@@ -1,14 +1,14 @@
 package hu.ppke.itk.nlpg.purepos.decoder;
 
+import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
+import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
-import hu.ppke.itk.nlpg.purepos.model.internal.SpecTokenMatcher;
 import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,7 +20,11 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+
 public class Viterbi extends IViterbi<String, Integer> {
+
+	protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
 
 	protected static enum SeenType {
@@ -104,8 +108,8 @@ public class Viterbi extends IViterbi<String, Integer> {
 			// System.out.println(ret);
 			return ret.subList(model.getTaggingOrder(), ret.size() - 1);
 		} catch (java.util.NoSuchElementException e) {
-			System.err.println(observations);
-			System.err.println(trellis);
+			logger.debug(observations);
+			logger.debug(trellis);
 			throw new RuntimeException(e);
 		}
 
@@ -134,6 +138,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 						nextWeights.put(fromTag, nextProb);
 					}
 				}
+				logger.debug("nw: " + nextWeights);
 				// }
 				Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
 				for (Integer nextTag : model.getTagVocabulary().getTagIndeces()) {
@@ -143,27 +148,31 @@ public class Viterbi extends IViterbi<String, Integer> {
 								nextTag);
 
 						if (plusWeight != null) {
+							logger.debug("trans:" + fromTag + "->" + nextTag
+									+ " (" + plusWeight + ")");
 							trellisTmp.put(nextTag, trellis.get(fromTag)
 									.createNext(nextTag, plusWeight));
 						}
 					} catch (NoSuchElementException e) {
-						// skip
+						logger.debug(e.getStackTrace());
 					}
 				}
 
+				logger.debug("trellis:" + trellisTmp);
 				if (trellisTmp.size() == 0) {
-					System.err.println(nextWeights);
-					System.err.println(trellis);
-					System.err.println(obs);
+					logger.debug("Tellis is empty!");
+					logger.debug(nextWeights);
+					logger.debug(trellis);
+					logger.debug(obs);
 				}
 				// TODO: it could be really slow
 				trellis = trellisTmp;
 
 				isFirst = false;
 			} catch (Throwable t) {
-				System.err.println(obs + " " + observations.indexOf(obs) + " "
+				logger.debug(obs + " " + observations.indexOf(obs) + " "
 						+ " in: " + observations);
-				t.printStackTrace();
+				logger.debug(t.getStackTrace());
 				throw new RuntimeException(t);
 			}
 		}
@@ -185,8 +194,11 @@ public class Viterbi extends IViterbi<String, Integer> {
 						if (o2.getValue() == null
 								|| o2.getValue().get(nextTag) == null)
 							return -1;
-						return Double.compare(o1.getValue().get(nextTag), o2
-								.getValue().get(nextTag));
+						return Double.compare(
+								o1.getValue().get(nextTag)
+										+ trellis.get(o1.getKey()).getWeight(),
+								o2.getValue().get(nextTag)
+										+ trellis.get(o2.getKey()).getWeight());
 					}
 				});
 		return max.getKey();
@@ -214,9 +226,9 @@ public class Viterbi extends IViterbi<String, Integer> {
 		if (word.equals(Model.getEOSToken())) {
 			return getNextForEOSToken(prevTags);
 		}
-		String lWord = word.toLowerCase();
+		String lWord = Util.toLower(word);
 		/* has any uppercased character */
-		boolean isUpper = !lWord.equals(word);
+		boolean isUpper = Util.isUpper(lWord);
 		/* possible analysis list from MA */
 		List<Integer> anals = null;
 
@@ -231,7 +243,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 		/* tags to integers */
 		Set<String> strAnals = morphologicalAnalyzer.getTags(word);
-		if (isNotEmpty(strAnals)) {
+		if (Util.isNotEmpty(strAnals)) {
 			isOOV = false;
 			anals = new ArrayList<Integer>();
 			// seen = SeenType.Seen;
@@ -254,14 +266,14 @@ public class Viterbi extends IViterbi<String, Integer> {
 		}
 		/* check whether we have lexicon info */
 		tags = model.getStandardTokensLexicon().getTags(word);
-		if (isNotEmpty(tags)) {
+		if (Util.isNotEmpty(tags)) {
 			wordProbModel = model.getStandardEmissionModel();
 			wordForm = word;
 			seen = SeenType.Seen;
 			/* whether if it a sentence starting word */
 		} else {
 			tags = model.getStandardTokensLexicon().getTags(lWord);
-			if (isFirst && isUpper && isNotEmpty(tags)) {
+			if (isFirst && isUpper && Util.isNotEmpty(tags)) {
 				wordProbModel = model.getStandardEmissionModel();
 				wordForm = lWord;
 				seen = SeenType.LowerCasedSeen;
@@ -272,7 +284,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 				if (isSpec) {
 					wordProbModel = model.getSpecTokensEmissionModel();
 					tags = model.getSpecTokensLexicon().getTags(specName);
-					if (isNotEmpty(tags)) {
+					if (Util.isNotEmpty(tags)) {
 						seen = SeenType.SpecialToken;
 					} else {
 						seen = SeenType.Unseen;
@@ -287,7 +299,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		if (seen != SeenType.Unseen) {
 			return getNextForSeenToken(prevTags, wordProbModel, wordForm, tags);
 		} else {
-			if (isNotEmpty(anals) && anals.size() == 1) {
+			if (Util.isNotEmpty(anals) && anals.size() == 1) {
 				return getNextForSingleTaggedToken(prevTags, anals);
 			} else {
 				return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
@@ -300,8 +312,8 @@ public class Viterbi extends IViterbi<String, Integer> {
 	protected Map<Integer, Double> getNextForGuessedToken(
 			final List<Integer> prevTags, String lWord, boolean isUpper,
 			List<Integer> anals, boolean isOOV) {
-		Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
-		List<Integer> possibleTags;
+		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
+		// List<Integer> possibleTags;
 		ISuffixGuesser<String, Integer> guesser = null;
 		if (isUpper)
 			guesser = model.getUpperCaseSuffixGuesser();
@@ -427,7 +439,4 @@ public class Viterbi extends IViterbi<String, Integer> {
 		return set;
 	}
 
-	protected static <E> boolean isNotEmpty(Collection<E> c) {
-		return c != null && c.size() > 0;
-	}
 }

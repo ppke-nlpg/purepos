@@ -1,5 +1,8 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -50,6 +53,26 @@ public class HashSuffixGuesserTest {
 		int max3 = guesser.getMaxProbabilityTag("nnn");
 		Assert.assertEquals(max3, 3);
 
+	}
+
+	@Test
+	public void testAgainstHunPos() {
+		HashSuffixTree<Integer> suffixTree = new HashSuffixTree<Integer>(3);
+		Map<Integer, Double> m = new HashMap<Integer, Double>();
+		suffixTree.addWord("bementem", 1, 1);
+		suffixTree.addWord("1", 2, 1);
+		suffixTree.addWord("a", 3, 1);
+		suffixTree.addWord("bartomhoz", 4, 1);
+		suffixTree.addWord("1", 2, 1);
+
+		m.put(1, 0.2);
+		m.put(2, 0.4);
+		m.put(3, 0.2);
+		m.put(4, 0.2);
+
+		guesser = (HashSuffixGuesser<Integer>) suffixTree
+				.createGuesser(suffixTree.calculateTheta(m));
+		// Assert.assertEquals(3, (int) guesser.getMaxProbabilityTag("alma"));
 	}
 
 }

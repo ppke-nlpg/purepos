@@ -4,6 +4,9 @@ import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
+import hu.ppke.itk.nlpg.purepos.common.Statistics;
+import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.ILexicon;
 import hu.ppke.itk.nlpg.purepos.model.INGramModel;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
@@ -11,12 +14,15 @@ import hu.ppke.itk.nlpg.purepos.model.ISpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
+
+import org.apache.log4j.Logger;
 
 /**
  * Model represneting a cropus wiht pos tags.
@@ -27,6 +33,13 @@ import java.util.Vector;
  * 
  */
 public class POSTaggerModel extends Model<String, Integer> {
+	protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
+
+	protected static Statistics stat;
+
+	public static Statistics getLastStat() {
+		return stat;
+	}
 
 	protected POSTaggerModel(int taggingOrder, int emissionOrder,
 			int suffixLength, int rareFrequency,
@@ -78,7 +91,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 	 */
 	public static POSTaggerModel train(IDocument document, int tagOrder,
 			int emissionOrder, int maxSuffixLength, int rareFrequency) {
-
+		stat = new Statistics();
 		// build n-gram models
 		INGramModel<Integer, Integer> tagNGramModel = new NGramModel<Integer>(
 				tagOrder + 1);
@@ -113,10 +126,12 @@ public class POSTaggerModel extends Model<String, Integer> {
 		buildSuffixTrees(standardTokensLexicon, rareFrequency, lowerSuffixTree,
 				upperSuffixTree);
 		Map<Integer, Double> aprioriProbs = tagNGramModel.getWordAprioriProbs();
+		Double theta = SuffixTree.calculateTheta(aprioriProbs);
+		stat.setTheta(theta);
 		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser = lowerSuffixTree
-				.createGuesser(lowerSuffixTree.calculateTheta(aprioriProbs));
+				.createGuesser(theta);
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
-				.createGuesser(upperSuffixTree.calculateTheta(aprioriProbs));
+				.createGuesser(theta);
 
 		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
 		// .getReprString());
@@ -130,7 +145,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 		return model;
 	}
 
-	public static void addSentenceMarkers(ISentence mySentence, int tagOrder) {
+	protected static void addSentenceMarkers(ISentence mySentence, int tagOrder) {
 		// TODO: its interesting that despite of using n-gram models we only add
 		// one BOS
 		// TODO: check how does training works in Hunpos with EOS
@@ -146,16 +161,22 @@ public class POSTaggerModel extends Model<String, Integer> {
 			HashSuffixTree<Integer> upperSuffixTree) {
 		// is integers are uppercase? - HunPOS: yes
 		for (Entry<String, HashMap<Integer, Integer>> entry : standardTokensLexicon) {
+
 			String word = entry.getKey();
 			Integer wordFreq = standardTokensLexicon.getWordCount(word);
 			if (wordFreq <= rareFreq) {
-				String lowerWord = word.toLowerCase();
-				boolean isLower = word.equals(lowerWord);
+				// TODO: it is not really efficient
+				String lowerWord = Util.toLower(word);
+				boolean isLower = !Util.isUpper(word);
 				for (Integer tag : entry.getValue().keySet()) {
 					if (isLower) {
+						logger.debug("Lower: " + lowerWord + "\n");
 						lowerSuffixTree.addWord(lowerWord, tag, wordFreq);
+						stat.incrementLowerGuesserItems(wordFreq);
 					} else {
+						logger.debug("Upper: " + lowerWord + "\n");
 						upperSuffixTree.addWord(lowerWord, tag, wordFreq);
+						stat.incrementUpperGuesserItems(wordFreq);
 					}
 
 				}
@@ -171,6 +192,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			ILexicon<String, Integer> standardTokensLexicon,
 			ILexicon<String, Integer> specTokensLexicon,
 			IVocabulary<String, Integer> tagVocabulary) {
+		stat.incrementSentenceCount();
 		// sentence is random accessible
 		ISpecTokenMatcher specMatcher = new SpecTokenMatcher();
 		Vector<Integer> tags = new Vector<Integer>();
@@ -179,6 +201,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			tags.add(tagID);
 		}
 		for (int i = sentence.size() - 1; i >= 0; --i) {
+			stat.incrementTokenCount();
 			String word = sentence.get(i).getToken();
 			Integer tag = tags.get(i);
 			List<Integer> context = tags.subList(0, i + 1);

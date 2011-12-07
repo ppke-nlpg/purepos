@@ -46,9 +46,25 @@ public abstract class SuffixTree<W, T> {
 	/**
 	 * Calculate theta from the apriori probabilities.
 	 * 
+	 * Using weighted average for standard deviation: E_{P_t}(P_t()). For
+	 * details see libmoot.
+	 * 
 	 * @param aprioriProbs
 	 * @return the value of theta
 	 */
-	public abstract double calculateTheta(Map<T, Double> aprioriProbs);
+	public static <T> double calculateTheta(Map<T, Double> aprioriProbs) {
+		// TODO: understand how it really works -> weighted average of stddev
+		// TODO: it can be moved to some util class as a static method
+		double pAv = 0;
+		for (Double val : aprioriProbs.values()) {
+			pAv += Math.pow(val, 2);
+		}
+		double theta = 0;
+		for (Double aProb : aprioriProbs.values()) {
+			theta += aProb * Math.pow(aProb - pAv, 2);
+		}
+
+		return Math.sqrt(theta);
+	}
 
 }

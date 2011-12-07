@@ -3,6 +3,7 @@ package hu.ppke.itk.nlpg.purepos;
 import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.corpusreader.ParsingException;
 import hu.ppke.itk.nlpg.docmodel.IDocument;
+import hu.ppke.itk.nlpg.purepos.common.Statistics;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.internal.POSTaggerModel;
 
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Trainer implements ITrainer {
+	protected Statistics stat;
 	protected IDocument document;
 
 	public Trainer(File f) throws FileNotFoundException, ParsingException {
@@ -27,11 +29,17 @@ public class Trainer implements ITrainer {
 		this.document = document;
 	}
 
+	public Statistics getStat() {
+		return stat;
+	}
+
 	@Override
 	public Model<String, Integer> trainModel(int tagOrder, int emissionOrder,
 			int maxSuffixLength, int rareFrequency) {
-		return POSTaggerModel.train(document, tagOrder, emissionOrder,
-				maxSuffixLength, rareFrequency);
+		Model<String, Integer> m = POSTaggerModel.train(document, tagOrder,
+				emissionOrder, maxSuffixLength, rareFrequency);
+		stat = POSTaggerModel.getLastStat();
+		return m;
 	}
 
 }

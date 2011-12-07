@@ -1,4 +1,4 @@
-package hu.ppke.itk.nlpg.purepos.model.internal;
+package hu.ppke.itk.nlpg.purepos.common;
 
 import hu.ppke.itk.nlpg.purepos.model.ISpecTokenMatcher;
 
