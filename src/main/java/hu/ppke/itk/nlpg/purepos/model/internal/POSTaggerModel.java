@@ -136,6 +136,9 @@ public class POSTaggerModel extends Model<String, Integer> {
 		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
 		// .getReprString());
 		// create the model
+		logger.trace("tag vocabulary: " + tagVocabulary);
+		logger.trace("upper guesser: " + upperCaseSuffixGuesser);
+		logger.trace("lower guesser: " + lowerCaseSuffixGuesser);
 		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
 				maxSuffixLength, rareFrequency, tagTransitionModel,
 				standardEmissionModel, specTokensEmissionModel,
@@ -159,7 +162,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			ILexicon<String, Integer> standardTokensLexicon, int rareFreq,
 			HashSuffixTree<Integer> lowerSuffixTree,
 			HashSuffixTree<Integer> upperSuffixTree) {
-		// is integers are uppercase? - HunPOS: yes
+		// TODO is integers are uppercase? - HunPOS: yes
 		for (Entry<String, HashMap<Integer, Integer>> entry : standardTokensLexicon) {
 
 			String word = entry.getKey();
@@ -170,11 +173,13 @@ public class POSTaggerModel extends Model<String, Integer> {
 				boolean isLower = !Util.isUpper(word);
 				for (Integer tag : entry.getValue().keySet()) {
 					if (isLower) {
-						logger.debug("Lower: " + lowerWord + "\n");
+						logger.trace("word is added to lower suffixguesser:"
+								+ lowerWord);
 						lowerSuffixTree.addWord(lowerWord, tag, wordFreq);
 						stat.incrementLowerGuesserItems(wordFreq);
 					} else {
-						logger.debug("Upper: " + lowerWord + "\n");
+						logger.trace("word is added to upper suffixguesser:"
+								+ lowerWord);
 						upperSuffixTree.addWord(lowerWord, tag, wordFreq);
 						stat.incrementUpperGuesserItems(wordFreq);
 					}
@@ -201,7 +206,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			tags.add(tagID);
 		}
 		for (int i = sentence.size() - 1; i >= 0; --i) {
-			stat.incrementTokenCount();
+
 			String word = sentence.get(i).getToken();
 			Integer tag = tags.get(i);
 			List<Integer> context = tags.subList(0, i + 1);
@@ -209,6 +214,8 @@ public class POSTaggerModel extends Model<String, Integer> {
 
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
+				stat.incrementTokenCount();
+				logger.trace("token is added:" + word);
 				standardTokensLexicon.addToken(word, tag);
 				stdEmissionNGramModel.addWord(context, word);
 

@@ -59,6 +59,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	 * @return
 	 */
 	protected double getTagProb(String word, int index, T tag) {
+		// TODO: calculate imperatively instead of recursively
 		if (index >= 0 && freqTable.containsKey(word.substring(index))) {
 			String suffix = word.substring(index);
 			// TODO: how does automatic conversation happen? (should be float!)
@@ -66,13 +67,18 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 					.get(suffix);
 			Integer tagSufFreq = suffixValue.getLeft().get(tag);
 			Double tagSufFreqD;
-			if (tagSufFreq == null)
+			int newindex = index - 1;
+			if (tagSufFreq == null) {
+				newindex = -1;
 				tagSufFreqD = 0.0;
-			else
+			} else {
 				tagSufFreqD = tagSufFreq.doubleValue();
+			}
 			Double relFreq = tagSufFreqD / suffixValue.getRight();
-			return (relFreq + theta * getTagProb(word, index - 1, tag))
-					/ thetaPlusOne;
+			double nTagProb = getTagProb(word, newindex, tag);
+			// TODO: Brants vs. Halácsy: Brants multiply nTagProb with theta
+			// instead of Brants
+			return (theta * relFreq + nTagProb) / thetaPlusOne;
 		} else
 			return 0;
 	}
@@ -90,6 +96,11 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	@Override
 	public T getMaxProbabilityTag(String word) {
 		return getMaxProbabilityTag(getTagLogProbabilities(word));
+	}
+
+	@Override
+	public String toString() {
+		return freqTable.toString();
 	}
 
 }

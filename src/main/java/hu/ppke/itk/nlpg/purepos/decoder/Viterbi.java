@@ -108,8 +108,8 @@ public class Viterbi extends IViterbi<String, Integer> {
 			// System.out.println(ret);
 			return ret.subList(model.getTaggingOrder(), ret.size() - 1);
 		} catch (java.util.NoSuchElementException e) {
-			logger.debug(observations);
-			logger.debug(trellis);
+			logger.trace(observations);
+			logger.trace(trellis);
 			throw new RuntimeException(e);
 		}
 
@@ -120,7 +120,9 @@ public class Viterbi extends IViterbi<String, Integer> {
 		Map<Integer, Map<Integer, Double>> nextWeights = new HashMap<Integer, Map<Integer, Double>>();
 
 		boolean isFirst = true;
+		String tab = "\t";
 		for (String obs : observations) {
+			logger.trace("current observation: " + obs);
 			try {
 				// System.out.println(obs);
 				nextWeights.clear();
@@ -138,7 +140,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 						nextWeights.put(fromTag, nextProb);
 					}
 				}
-				logger.debug("nw: " + nextWeights);
+				logger.trace(tab + "nextweights: " + nextWeights);
 				// }
 				Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
 				for (Integer nextTag : model.getTagVocabulary().getTagIndeces()) {
@@ -148,31 +150,30 @@ public class Viterbi extends IViterbi<String, Integer> {
 								nextTag);
 
 						if (plusWeight != null) {
-							logger.debug("trans:" + fromTag + "->" + nextTag
-									+ " (" + plusWeight + ")");
+							logger.trace(tab + "transition:" + fromTag + "->"
+									+ nextTag + " (" + plusWeight + ")");
 							trellisTmp.put(nextTag, trellis.get(fromTag)
 									.createNext(nextTag, plusWeight));
 						}
 					} catch (NoSuchElementException e) {
-						logger.debug(e.getStackTrace());
+						logger.trace(e.getStackTrace());
 					}
 				}
 
-				logger.debug("trellis:" + trellisTmp);
+				logger.trace(tab + "trellis:" + trellisTmp);
 				if (trellisTmp.size() == 0) {
-					logger.debug("Tellis is empty!");
-					logger.debug(nextWeights);
-					logger.debug(trellis);
-					logger.debug(obs);
+					logger.trace(tab + "Tellis is empty!");
+					logger.trace(tab + nextWeights);
+					logger.trace(tab + trellis);
 				}
 				// TODO: it could be really slow
 				trellis = trellisTmp;
 
 				isFirst = false;
 			} catch (Throwable t) {
-				logger.debug(obs + " " + observations.indexOf(obs) + " "
+				logger.trace(obs + " " + observations.indexOf(obs) + " "
 						+ " in: " + observations);
-				logger.debug(t.getStackTrace());
+				logger.trace(t.getStackTrace());
 				throw new RuntimeException(t);
 			}
 		}
@@ -228,7 +229,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		}
 		String lWord = Util.toLower(word);
 		/* has any uppercased character */
-		boolean isUpper = Util.isUpper(lWord);
+		boolean isUpper = Util.isUpper(word);
 		/* possible analysis list from MA */
 		List<Integer> anals = null;
 
@@ -297,9 +298,12 @@ public class Viterbi extends IViterbi<String, Integer> {
 		}
 		/* if the token is somehow known then use the models */
 		if (seen != SeenType.Unseen) {
+			logger.trace("obs is seen");
 			return getNextForSeenToken(prevTags, wordProbModel, wordForm, tags);
 		} else {
+			logger.trace("obs is unseen");
 			if (Util.isNotEmpty(anals) && anals.size() == 1) {
+				logger.trace("obs is in voc and has only one possible tag");
 				return getNextForSingleTaggedToken(prevTags, anals);
 			} else {
 				return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
@@ -315,14 +319,18 @@ public class Viterbi extends IViterbi<String, Integer> {
 		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
 		// List<Integer> possibleTags;
 		ISuffixGuesser<String, Integer> guesser = null;
-		if (isUpper)
+		if (isUpper) {
+			logger.trace("using upper guesser");
 			guesser = model.getUpperCaseSuffixGuesser();
-		else
+		} else {
+			logger.trace("using lower guesser");
 			guesser = model.getLowerCaseSuffixGuesser();
-
+		}
 		if (!isOOV) {
+			logger.trace("obs is in voc");
 			return getNextForGuessedVocToken(prevTags, lWord, anals, guesser);
 		} else {
+			logger.trace("obs is oov");
 			return getNextForGuessedOOVToken(prevTags, lWord, guesser);
 
 		}

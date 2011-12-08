@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 public class SimpleTest implements Runnable {
@@ -17,6 +18,7 @@ public class SimpleTest implements Runnable {
 		PropertyConfigurator.configure("log4j.properties");
 	}
 
+	protected Logger logger = Logger.getLogger(this.getClass());
 	protected Model<String, Integer> model;
 	protected Tagger tagger;
 	protected Trainer trainer;
@@ -41,8 +43,8 @@ public class SimpleTest implements Runnable {
 
 			System.out.println(trainer.getStat().getStat(model));
 			while ((inputLine = is.readLine()) != null) {
-
-				ISentence s = tagger.tagSentence(inputLine);
+				// logger.trace("sentence: " + inputLine);
+				ISentence s = tagger.tagSentence(inputLine.trim());
 				if (s != null) {
 					for (IToken t : s) {
 						System.out.print(t + " ");

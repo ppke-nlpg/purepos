@@ -66,6 +66,11 @@ public abstract class Vocabulary<W, T> implements IVocabulary<W, T> {
 			return key;
 	}
 
+	@Override
+	public String toString() {
+		return vocabulary.toString();
+	}
+
 	protected abstract T addVocabularyElement(W element);
 
 }
