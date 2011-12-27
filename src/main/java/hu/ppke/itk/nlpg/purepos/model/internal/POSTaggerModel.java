@@ -212,16 +212,21 @@ public class POSTaggerModel extends Model<String, Integer> {
 		// sentence is random accessible
 		ISpecTokenMatcher specMatcher = new SpecTokenMatcher();
 		Vector<Integer> tags = new Vector<Integer>();
+		// creating tag list
 		for (int j = 0; j < sentence.size(); ++j) {
 			Integer tagID = tagVocabulary.addElement(sentence.get(j).getTag());
 			tags.add(tagID);
 		}
+		// add EOS tag to the model
+		tagNGramModel.addWord(tags, tagVocabulary.addElement(getEOSTag()));
+
 		for (int i = sentence.size() - 1; i >= 0; --i) {
 
 			String word = sentence.get(i).getToken();
 			Integer tag = tags.get(i);
 			List<Integer> context = tags.subList(0, i + 1);
-			tagNGramModel.addWord(context.subList(0, context.size() - 1), tag);
+			List<Integer> prevTags = context.subList(0, context.size() - 1);
+			tagNGramModel.addWord(prevTags, tag);
 
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {

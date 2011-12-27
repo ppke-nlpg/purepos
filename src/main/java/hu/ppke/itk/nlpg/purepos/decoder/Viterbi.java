@@ -406,7 +406,8 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 	protected HashMap<Integer, Double> getNextForEOSToken(
 			final List<Integer> prevTags) {
-		Double eosProb = 0.0; // model.getTagTransitionModel().getLogProb(prevTags,model.getEOSIndex());
+		Double eosProb = model.getTagTransitionModel().getLogProb(prevTags,
+				model.getEOSIndex());
 		HashMap<Integer, Double> ret = new HashMap<Integer, Double>();
 		ret.put(model.getEOSIndex(), eosProb);
 		return ret;

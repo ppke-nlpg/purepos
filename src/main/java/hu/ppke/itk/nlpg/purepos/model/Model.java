@@ -58,7 +58,7 @@ public abstract class Model<W, T> {
 	/**
 	 * @return the eosTag
 	 */
-	public static String getEosTag() {
+	public static String getEOSTag() {
 		return EOS_TAG;
 	}
 
