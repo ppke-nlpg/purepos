@@ -141,6 +141,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 	@Override
 	protected void calculateNGramLamdas() {
 		adjustLamdas();
+		logger.trace("lambdas: " + lambdas);
 		// normalization
 		double sum = 0.0;
 		lambdas.set(0, 0.0);
@@ -153,6 +154,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 				lambdas.set(i, lambdas.get(i) / sum);
 			}
 		}
+		logger.trace("normalized lambdas: " + lambdas);
 		// logger.debug(lambdas.toString());
 	}
 
@@ -193,6 +195,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 
 	@Override
 	public IProbabilityModel<Integer, W> createProbabilityModel() {
+		// logger.trace("NGramModel: " + getReprString());
 		calculateNGramLamdas();
 		return new ProbModel<W>(root, lambdas);
 	}

@@ -186,7 +186,7 @@ public abstract class TrieNode<I, N extends Number, W> {
 
 	public String getReprString(String tab) {
 		String ret = tab;
-		ret += "(id:" + getId();
+		ret += "(id:" + getId() + ", freq:" + num;
 		ret += ", words:" + words.toString();
 		if (childNodes != null && childNodes.size() > 0) {
 			ret += ", childs:\n";

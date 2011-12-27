@@ -111,10 +111,13 @@ public class POSTaggerModel extends Model<String, Integer> {
 					specEmissionNGramModel, standardTokensLexicon,
 					specTokensLexicon, tagVocabulary);
 		}
+		logger.trace("tagTransitionLamda:");
 		IProbabilityModel<Integer, Integer> tagTransitionModel = tagNGramModel
 				.createProbabilityModel();
+		logger.trace("stdEmissionLamda:");
 		IProbabilityModel<Integer, String> standardEmissionModel = stdEmissionNGramModel
 				.createProbabilityModel();
+		logger.trace("specEmissionLamda:");
 		IProbabilityModel<Integer, String> specTokensEmissionModel = specEmissionNGramModel
 				.createProbabilityModel();
 
@@ -139,6 +142,12 @@ public class POSTaggerModel extends Model<String, Integer> {
 		logger.trace("tag vocabulary: " + tagVocabulary);
 		logger.trace("upper guesser: " + upperCaseSuffixGuesser);
 		logger.trace("lower guesser: " + lowerCaseSuffixGuesser);
+		logger.trace("tagTransModel:\n"
+				+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
+		logger.trace("seenTokModel:\n"
+				+ ((ProbModel<String>) standardEmissionModel).getReprString());
+		logger.trace("specTokModel:\n"
+				+ ((ProbModel<String>) specTokensEmissionModel).getReprString());
 		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
 				maxSuffixLength, rareFrequency, tagTransitionModel,
 				standardEmissionModel, specTokensEmissionModel,
