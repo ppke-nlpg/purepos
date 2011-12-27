@@ -2,8 +2,9 @@ package hu.ppke.itk.nlpg.purepos.cli;
 
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.purepos.HunPosTrainer;
+import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.Tagger;
-import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ public class SimpleTest implements Runnable {
 	protected Logger logger = Logger.getLogger(this.getClass());
 	protected Model<String, Integer> model;
 	protected Tagger tagger;
-	protected Trainer trainer;
+	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
 
 	public SimpleTest(String trainingCorpusPath) {
@@ -33,12 +34,13 @@ public class SimpleTest implements Runnable {
 
 		try {
 
-			trainer = new Trainer(new File(trainingCorpusPath));
+			trainer = new HunPosTrainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
 			tagger = new Tagger(model, Math.log(10), 20);
 
+			// fully compatible with hunpos
 			BufferedReader is = new BufferedReader(new InputStreamReader(
-					System.in));
+					System.in, "ISO-8859-2"));
 			String inputLine;
 
 			System.out.println(trainer.getStat().getStat(model));
@@ -47,7 +49,7 @@ public class SimpleTest implements Runnable {
 				ISentence s = tagger.tagSentence(inputLine.trim());
 				if (s != null) {
 					for (IToken t : s) {
-						System.out.print(t + " ");
+						System.out.println(t.getToken() + "\t" + t.getTag());
 					}
 				}
 				System.out.println();

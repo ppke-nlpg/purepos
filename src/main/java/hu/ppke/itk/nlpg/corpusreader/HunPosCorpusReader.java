@@ -18,7 +18,12 @@ import java.util.List;
 public class HunPosCorpusReader extends AbstractDocElementReader<IDocument> {
 	private final AbstractDocElementReader<IToken> wordParser;
 
-	HunPosCorpusReader(AbstractDocElementReader<IToken> wordParser) {
+	public HunPosCorpusReader() {
+		this(new TaggedTokenReader("\t"));
+		this.fileEncoding = "ISO-8859-2";
+	}
+
+	protected HunPosCorpusReader(AbstractDocElementReader<IToken> wordParser) {
 		this.wordParser = wordParser;
 	}
 

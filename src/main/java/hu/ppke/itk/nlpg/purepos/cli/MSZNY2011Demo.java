@@ -2,6 +2,7 @@ package hu.ppke.itk.nlpg.purepos.cli;
 
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
@@ -16,7 +17,7 @@ public class MSZNY2011Demo implements Runnable {
 
 	protected Model<String, Integer> model;
 	protected Tagger tagger;
-	protected Trainer trainer;
+	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
 
 	public MSZNY2011Demo(String trainingCorpusPath) {

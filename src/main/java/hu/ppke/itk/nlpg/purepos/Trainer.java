@@ -29,6 +29,7 @@ public class Trainer implements ITrainer {
 		this.document = document;
 	}
 
+	@Override
 	public Statistics getStat() {
 		return stat;
 	}
