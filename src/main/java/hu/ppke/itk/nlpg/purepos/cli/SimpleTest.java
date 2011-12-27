@@ -10,6 +10,7 @@ import hu.ppke.itk.nlpg.purepos.model.Model;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -42,8 +43,8 @@ public class SimpleTest implements Runnable {
 			BufferedReader is = new BufferedReader(new InputStreamReader(
 					System.in, "ISO-8859-2"));
 			String inputLine;
-
-			System.out.println(trainer.getStat().getStat(model));
+			PrintStream ps = new PrintStream(System.out, true, "ISO-8859-2");
+			System.err.println(trainer.getStat().getStat(model));
 			String sentence = "";
 			while ((inputLine = is.readLine()) != null) {
 				inputLine = inputLine.trim();
@@ -52,11 +53,10 @@ public class SimpleTest implements Runnable {
 					ISentence s = tagger.tagSentence(sentence);
 					if (s != null) {
 						for (IToken t : s) {
-							System.out
-									.println(t.getToken() + "\t" + t.getTag());
+							ps.println(t.getToken() + "\t" + t.getTag() + "\t");
 						}
 					}
-					System.out.println();
+					ps.println();
 					sentence = "";
 				} else {
 					sentence += inputLine + " ";
