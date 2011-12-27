@@ -46,12 +46,21 @@ public interface ILexicon<W, T> extends
 	public Set<T> getTags(W word);
 
 	/**
-	 * Returns all occurrences of a word
+	 * Returns total occurrences of a word
 	 * 
 	 * @param word
 	 * @return
 	 */
 	public int getWordCount(W word);
+
+	/**
+	 * Return total count of a word with a tag
+	 * 
+	 * @param word
+	 * @param tag
+	 * @return
+	 */
+	public int getWordCountForTag(W word, T tag);
 
 	// TODO: possible getTagCount for a word is needed
 

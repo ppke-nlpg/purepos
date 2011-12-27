@@ -141,7 +141,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 	@Override
 	protected void calculateNGramLamdas() {
 		adjustLamdas();
-		logger.trace("lambdas: " + lambdas);
+		logger.trace("pure lambdas: " + lambdas);
 		// normalization
 		double sum = 0.0;
 		lambdas.set(0, 0.0);
@@ -154,7 +154,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 				lambdas.set(i, lambdas.get(i) / sum);
 			}
 		}
-		logger.trace("normalized lambdas: " + lambdas);
+		logger.debug(lambdas);
 		// logger.debug(lambdas.toString());
 	}
 

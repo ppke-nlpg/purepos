@@ -76,4 +76,9 @@ public class Lexicon<W, T> implements ILexicon<W, T> {
 		return representation.entrySet().iterator();
 	}
 
+	@Override
+	public int getWordCountForTag(W word, T tag) {
+		return representation.get(word).get(tag);
+	}
+
 }

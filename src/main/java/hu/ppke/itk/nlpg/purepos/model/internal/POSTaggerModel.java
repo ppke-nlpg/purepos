@@ -111,13 +111,13 @@ public class POSTaggerModel extends Model<String, Integer> {
 					specEmissionNGramModel, standardTokensLexicon,
 					specTokensLexicon, tagVocabulary);
 		}
-		logger.trace("tagTransitionLamda:");
+		logger.debug("tagTransitionLamda:");
 		IProbabilityModel<Integer, Integer> tagTransitionModel = tagNGramModel
 				.createProbabilityModel();
-		logger.trace("stdEmissionLamda:");
+		logger.debug("stdEmissionLamda:");
 		IProbabilityModel<Integer, String> standardEmissionModel = stdEmissionNGramModel
 				.createProbabilityModel();
-		logger.trace("specEmissionLamda:");
+		logger.debug("specEmissionLamda:");
 		IProbabilityModel<Integer, String> specTokensEmissionModel = specEmissionNGramModel
 				.createProbabilityModel();
 
@@ -139,15 +139,19 @@ public class POSTaggerModel extends Model<String, Integer> {
 		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
 		// .getReprString());
 		// create the model
-		logger.trace("tag vocabulary: " + tagVocabulary);
-		logger.trace("upper guesser: " + upperCaseSuffixGuesser);
-		logger.trace("lower guesser: " + lowerCaseSuffixGuesser);
-		logger.trace("tagTransModel:\n"
-				+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
-		logger.trace("seenTokModel:\n"
-				+ ((ProbModel<String>) standardEmissionModel).getReprString());
-		logger.trace("specTokModel:\n"
-				+ ((ProbModel<String>) specTokensEmissionModel).getReprString());
+		if (logger.isTraceEnabled()) {
+			logger.trace("tag vocabulary: " + tagVocabulary);
+			logger.trace("upper guesser: " + upperCaseSuffixGuesser);
+			logger.trace("lower guesser: " + lowerCaseSuffixGuesser);
+			logger.trace("tagTransModel:\n"
+					+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
+			logger.trace("seenTokModel:\n"
+					+ ((ProbModel<String>) standardEmissionModel)
+							.getReprString());
+			logger.trace("specTokModel:\n"
+					+ ((ProbModel<String>) specTokensEmissionModel)
+							.getReprString());
+		}
 		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
 				maxSuffixLength, rareFrequency, tagTransitionModel,
 				standardEmissionModel, specTokensEmissionModel,
@@ -175,22 +179,22 @@ public class POSTaggerModel extends Model<String, Integer> {
 		for (Entry<String, HashMap<Integer, Integer>> entry : standardTokensLexicon) {
 
 			String word = entry.getKey();
-			Integer wordFreq = standardTokensLexicon.getWordCount(word);
+			int wordFreq = standardTokensLexicon.getWordCount(word);
 			if (wordFreq <= rareFreq) {
 				// TODO: it is not really efficient
 				String lowerWord = Util.toLower(word);
 				boolean isLower = !Util.isUpper(word);
 				for (Integer tag : entry.getValue().keySet()) {
+					int wordTagFreq = standardTokensLexicon.getWordCountForTag(
+							word, tag);
 					if (isLower) {
-						logger.trace("word is added to lower suffixguesser:"
-								+ lowerWord);
-						lowerSuffixTree.addWord(lowerWord, tag, wordFreq);
-						stat.incrementLowerGuesserItems(wordFreq);
+						logger.debug("Lower: " + word + " " + wordTagFreq);
+						lowerSuffixTree.addWord(lowerWord, tag, wordTagFreq);
+						stat.incrementLowerGuesserItems(wordTagFreq);
 					} else {
-						logger.trace("word is added to upper suffixguesser:"
-								+ lowerWord);
-						upperSuffixTree.addWord(lowerWord, tag, wordFreq);
-						stat.incrementUpperGuesserItems(wordFreq);
+						logger.debug("Upper: " + word + " " + wordTagFreq);
+						upperSuffixTree.addWord(lowerWord, tag, wordTagFreq);
+						stat.incrementUpperGuesserItems(wordTagFreq);
 					}
 
 				}
@@ -224,7 +228,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
 				stat.incrementTokenCount();
-				logger.trace("token is added:" + word);
+				// logger.trace("token is added:" + word);
 				standardTokensLexicon.addToken(word, tag);
 				stdEmissionNGramModel.addWord(context, word);
 
