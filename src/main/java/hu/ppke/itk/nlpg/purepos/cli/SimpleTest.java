@@ -44,15 +44,23 @@ public class SimpleTest implements Runnable {
 			String inputLine;
 
 			System.out.println(trainer.getStat().getStat(model));
+			String sentence = "";
 			while ((inputLine = is.readLine()) != null) {
-				// logger.trace("sentence: " + inputLine);
-				ISentence s = tagger.tagSentence(inputLine.trim());
-				if (s != null) {
-					for (IToken t : s) {
-						System.out.println(t.getToken() + "\t" + t.getTag());
+				inputLine = inputLine.trim();
+				if (inputLine.equals("")) {
+					sentence = sentence.substring(0, sentence.length() - 1);
+					ISentence s = tagger.tagSentence(sentence);
+					if (s != null) {
+						for (IToken t : s) {
+							System.out
+									.println(t.getToken() + "\t" + t.getTag());
+						}
 					}
+					System.out.println();
+					sentence = "";
+				} else {
+					sentence += inputLine + " ";
 				}
-				System.out.println();
 			}
 			is.close();
 		} catch (Exception e) {
