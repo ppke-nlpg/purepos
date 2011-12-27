@@ -79,6 +79,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 
 	@Override
 	public List<Integer> decode(final List<String> observations) {
+		trellis.clear();
 		List<String> obs = new ArrayList<String>(observations);
 		obs.add(Model.getEOSToken());
 		int n = model.getTaggingOrder();
