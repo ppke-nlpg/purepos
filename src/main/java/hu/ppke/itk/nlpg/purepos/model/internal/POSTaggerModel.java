@@ -99,7 +99,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 				emissionOrder + 1);
 		// TODO: in HunPOS the order of spec emission model is always 2
 		INGramModel<Integer, String> specEmissionNGramModel = new NGramModel<String>(
-				emissionOrder + 1);
+				2);
 		ILexicon<String, Integer> standardTokensLexicon = new Lexicon<String, Integer>();
 		ILexicon<String, Integer> specTokensLexicon = new Lexicon<String, Integer>();
 		IVocabulary<String, Integer> tagVocabulary = new IntVocabulary<String>();
@@ -164,11 +164,9 @@ public class POSTaggerModel extends Model<String, Integer> {
 	protected static void addSentenceMarkers(ISentence mySentence, int tagOrder) {
 		// TODO: its interesting that despite of using n-gram models we only add
 		// one BOS
-		// TODO: check how does training works in Hunpos with EOS
-		// mySentence.add(new Token(EOS_TOKEN, EOS_TAG));
-		// for (int i = 0; i < tagOrder; ++i) {
+
 		mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
-		// }
+
 	}
 
 	protected static void buildSuffixTrees(

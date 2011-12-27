@@ -81,6 +81,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 	public List<Integer> decode(final List<String> observations) {
 		trellis.clear();
 		List<String> obs = new ArrayList<String>(observations);
+		// 1 EOS marker as in HunPos
 		obs.add(Model.getEOSToken());
 		int n = model.getTaggingOrder();
 		// Map<Integer, Double> startProbs = model.getAprioriTagProbs();
