@@ -226,10 +226,10 @@ public class POSTaggerModel extends Model<String, Integer> {
 			Integer tag = tags.get(i);
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
-			tagNGramModel.addWord(prevTags, tag);
 
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
+				tagNGramModel.addWord(prevTags, tag);
 				stat.incrementTokenCount();
 				// logger.trace("token is added:" + word);
 				standardTokensLexicon.addToken(word, tag);
