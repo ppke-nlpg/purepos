@@ -178,8 +178,35 @@ public class Viterbi extends IViterbi<String, Integer> {
 				logger.trace(t.getStackTrace());
 				throw new RuntimeException(t);
 			}
+
+			trellis = doBeamPruning(trellis);
+			logger.trace(tab + "pruned trellis:" + trellis);
 		}
 
+	}
+
+	protected Map<Integer, State> doBeamPruning(Map<Integer, State> trellis) {
+		Map<Integer, State> ret = new HashMap<Integer, State>();
+		Map.Entry<Integer, State> maxElement = Collections.max(
+				trellis.entrySet(),
+				new Comparator<Map.Entry<Integer, State>>() {
+
+					@Override
+					public int compare(Entry<Integer, State> o1,
+							Entry<Integer, State> o2) {
+						return Double.compare(o1.getValue().getWeight(), o2
+								.getValue().getWeight());
+					}
+				});
+		Double maxWeight = maxElement.getValue().getWeight();
+		for (Integer key : trellis.keySet()) {
+			Double w = trellis.get(key).getWeight();
+			if (!(w < maxWeight - logTheta)) {
+				ret.put(key, trellis.get(key));
+			}
+		}
+
+		return ret;
 	}
 
 	protected int findMaxFor(final Integer nextTag,
@@ -225,6 +252,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		 * if EOS then the returning probability is the probability of that the
 		 * next tag is EOS_TAG
 		 */
+		logger.trace("nextProb for:" + word);
 		SpecTokenMatcher spectokenMatcher = new SpecTokenMatcher();
 		if (word.equals(Model.getEOSToken())) {
 			return getNextForEOSToken(prevTags);
@@ -320,6 +348,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 			List<Integer> anals, boolean isOOV) {
 		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
 		// List<Integer> possibleTags;
+		logger.trace("guessing for:" + lWord);
 		ISuffixGuesser<String, Integer> guesser = null;
 		if (isUpper) {
 			logger.trace("using upper guesser");
@@ -427,7 +456,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 				else if (o1.getValue() < o2.getValue())
 					return 1;
 				else
-					return 0;
+					return Double.compare(o1.getKey(), o2.getKey());
 			}
 		});
 
