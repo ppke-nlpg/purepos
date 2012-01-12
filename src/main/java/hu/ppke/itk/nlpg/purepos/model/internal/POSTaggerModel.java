@@ -133,17 +133,17 @@ public class POSTaggerModel extends Model<String, Integer> {
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
 		stat.setTheta(theta);
 		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser = lowerSuffixTree
-				.createGuesser(theta);
+				.createGuesser(theta, aprioriProbs);
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
-				.createGuesser(theta);
+				.createGuesser(theta, aprioriProbs);
 
 		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
 		// .getReprString());
 		// create the model
 		// if (logger.isTraceEnabled()) {
-		logger.trace("tag vocabulary: " + tagVocabulary);
+		logger.debug("tag vocabulary: " + tagVocabulary);
 		// logger.trace("upper guesser: " + upperCaseSuffixGuesser);
-		logger.trace("lower guesser: " + lowerCaseSuffixGuesser);
+		logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
 		// logger.trace("tagTransModel:\n"
 		// + ((ProbModel<Integer>) tagTransitionModel).getReprString());
 		// logger.trace("seenTokModel:\n"

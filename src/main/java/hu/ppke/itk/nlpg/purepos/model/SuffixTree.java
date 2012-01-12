@@ -44,7 +44,8 @@ public abstract class SuffixTree<W, T> {
 	 * 
 	 * @return a suffix guesser
 	 */
-	public abstract ISuffixGuesser<W, T> createGuesser(double theta);
+	public abstract ISuffixGuesser<W, T> createGuesser(double theta,
+			Map<T, Double> apriori);
 
 	/**
 	 * Calculate theta from the apriori probabilities.

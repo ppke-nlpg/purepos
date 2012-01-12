@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.log4j.Logger;
 
 /**
  * Suffix guesser implementation for String suffixes with a HashTable
@@ -23,13 +24,16 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	private final HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable;
 	private final double theta;
 	private final double thetaPlusOne;
+	private final Map<T, Double> aprioriProbs;
+	protected Logger logger = Logger.getLogger(this.getClass());
 
 	HashSuffixGuesser(
 			HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable,
-			double theta) {
+			Map<T, Double> aprioriProbs, double theta) {
 		// TODO: interesting why Brants and Halácsy assumes that the shortest
 		// suffix has the greatest power instead of the longest suffix. It would
 		// be good to investigate the other case.
+		this.aprioriProbs = aprioriProbs;
 		this.freqTable = freqTable;
 		this.theta = theta;
 		this.thetaPlusOne = theta + 1;
@@ -37,14 +41,40 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 	@Override
 	public double getTagLogProbability(String word, T tag) {
-		return Math.log(getTagProbability(word, tag));
+		double logProb = Math.log(getTagProbability(word, tag));
+		return logProb - Math.log(aprioriProbs.get(tag));
 	}
 
 	@Override
 	public double getTagProbability(String word, T tag) {
 		// TODO: are you sure to calculate with the empty suffix as well?
 		// (Brants does this, but how about Halácsy?)
-		return getTagProb(word, word.length(), tag);
+		// return getTagProbTnT(word, word.length(), tag);
+		return getTagProbHunPOS(word, tag);
+	}
+
+	protected double getTagProbHunPOS(String word, T tag) {
+		Double ret = 0.0;
+		for (int i = word.length(); i >= 0; --i) {
+			String suff = word.substring(i);
+			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
+					.get(suff);
+			if (suffixValue != null) {
+				Integer tagSufFreq = suffixValue.getLeft().get(tag);
+				Double relFreq = 0.0;
+				if (tagSufFreq != null) {
+					Double tagSufFreqD = tagSufFreq.doubleValue();
+					relFreq = tagSufFreqD / suffixValue.getRight();
+
+					Double retP = ret;
+					ret = (ret + (relFreq * theta)) / thetaPlusOne;
+					logger.debug("accu(" + tag + ") = (prev(" + retP
+							+ ") + relfreq(" + relFreq + ") * theta(" + theta
+							+ "))/thetaPO(" + thetaPlusOne + ") =" + ret);
+				}
+			}
+		}
+		return ret;
 	}
 
 	/**
@@ -58,7 +88,9 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	 *            POS tag
 	 * @return
 	 */
-	protected double getTagProb(String word, int index, T tag) {
+	// TODO: Brants vs. Halácsy: Brants multiply nTagProb with theta
+	// instead of Brants - investigate which works better and why?!
+	protected double getTagProbTnT(String word, int index, T tag) {
 		// TODO: calculate imperatively instead of recursively
 		if (index >= 0 && freqTable.containsKey(word.substring(index))) {
 			String suffix = word.substring(index);
@@ -75,9 +107,8 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 				tagSufFreqD = tagSufFreq.doubleValue();
 			}
 			Double relFreq = tagSufFreqD / suffixValue.getRight();
-			double nTagProb = getTagProb(word, newindex, tag);
-			// TODO: Brants vs. Halácsy: Brants multiply nTagProb with theta
-			// instead of Brants
+			double nTagProb = getTagProbTnT(word, newindex, tag);
+
 			return (theta * relFreq + nTagProb) / thetaPlusOne;
 		} else
 			return 0;

@@ -4,6 +4,7 @@ import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -60,8 +61,9 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	}
 
 	@Override
-	public ISuffixGuesser<String, T> createGuesser(double theta) {
-		return new HashSuffixGuesser<T>(representation, theta);
+	public ISuffixGuesser<String, T> createGuesser(double theta,
+			Map<T, Double> aprioriProbs) {
+		return new HashSuffixGuesser<T>(representation, aprioriProbs, theta);
 	}
 
 }

@@ -252,7 +252,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		 * if EOS then the returning probability is the probability of that the
 		 * next tag is EOS_TAG
 		 */
-		logger.trace("nextProb for:" + word);
+		logger.debug("==>word " + word);
 		SpecTokenMatcher spectokenMatcher = new SpecTokenMatcher();
 		if (word.equals(Model.getEOSToken())) {
 			return getNextForEOSToken(prevTags);
@@ -379,8 +379,14 @@ public class Viterbi extends IViterbi<String, Integer> {
 		tagProbs = new HashMap<Integer, Double>();
 		for (Entry<Integer, Double> guess : prunedGuessedTags) {
 			Double guessedVal = guess.getValue();
+			// logger.debug("trans "
+			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
+			// + guessedVal);
 			Double tagVal = model.getTagTransitionModel().getLogProb(prevTags,
 					guess.getKey());
+			logger.debug("emission "
+					+ model.getTagVocabulary().getWord(guess.getKey()) + " "
+					+ guessedVal);
 			tagProbs.put(guess.getKey(), tagVal + guessedVal);
 		}
 		return tagProbs;
