@@ -144,8 +144,8 @@ public class POSTaggerModel extends Model<String, Integer> {
 		logger.debug("tag vocabulary: " + tagVocabulary);
 		// logger.trace("upper guesser: " + upperCaseSuffixGuesser);
 		logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
-		// logger.trace("tagTransModel:\n"
-		// + ((ProbModel<Integer>) tagTransitionModel).getReprString());
+		logger.trace("tagTransModel:\n"
+				+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
 		// logger.trace("seenTokModel:\n"
 		// + ((ProbModel<String>) standardEmissionModel)
 		// .getReprString());

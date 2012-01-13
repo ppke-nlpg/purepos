@@ -67,6 +67,8 @@ public class Viterbi extends IViterbi<String, Integer> {
 	IMorphologicalAnalyzer morphologicalAnalyzer;
 	double logTheta;
 	int maxGuessedTags;
+	Set<Integer> tags;
+	String tab = "\t";
 
 	public Viterbi(Model<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
@@ -75,6 +77,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		this.morphologicalAnalyzer = morphologicalAnalyzer;
 		this.logTheta = logTheta;
 		this.maxGuessedTags = maxGuessedTags;
+		this.tags = model.getTagVocabulary().getTagIndeces();
 	}
 
 	@Override
@@ -122,67 +125,72 @@ public class Viterbi extends IViterbi<String, Integer> {
 		Map<Integer, Map<Integer, Double>> nextWeights = new HashMap<Integer, Map<Integer, Double>>();
 
 		boolean isFirst = true;
-		String tab = "\t";
+
 		for (String obs : observations) {
 			logger.trace("current observation: " + obs);
-			try {
-				// System.out.println(obs);
-				nextWeights.clear();
-				// if (isFirst) {
-				// Map<Integer, Double> fProbs = getNextProb(
-				// new ArrayList<Integer>(), Model.getBOSToken(), false);
-				// nextWeights.put(model.getBOSIndex(), fProbs);
-				// } else {
+			// try {
+			nextWeights = computeNextWeights(isFirst, obs);
+			logger.trace(tab + "nextweights: " + nextWeights);
 
-				for (Integer fromTag : model.getTagVocabulary().getTagIndeces()) {
-					State s = trellis.get(fromTag);
-					if (s != null) {
-						Map<Integer, Double> nextProb = getNextProb(
-								s.getPath(), obs, isFirst);
-						nextWeights.put(fromTag, nextProb);
-					}
-				}
-				logger.trace(tab + "nextweights: " + nextWeights);
-				// }
-				Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
-				for (Integer nextTag : model.getTagVocabulary().getTagIndeces()) {
-					try {
-						Integer fromTag = findMaxFor(nextTag, nextWeights);
-						Double plusWeight = nextWeights.get(fromTag).get(
-								nextTag);
+			trellis = updateTrellis(nextWeights);
 
-						if (plusWeight != null) {
-							logger.trace(tab + "transition:" + fromTag + "->"
-									+ nextTag + " (" + plusWeight + ")");
-							trellisTmp.put(nextTag, trellis.get(fromTag)
-									.createNext(nextTag, plusWeight));
-						}
-					} catch (NoSuchElementException e) {
-						logger.trace(e.getStackTrace());
-					}
-				}
-
-				logger.trace(tab + "trellis:" + trellisTmp);
-				if (trellisTmp.size() == 0) {
-					logger.trace(tab + "Tellis is empty!");
-					logger.trace(tab + nextWeights);
-					logger.trace(tab + trellis);
-				}
-				// TODO: it could be really slow
-				trellis = trellisTmp;
-
-				isFirst = false;
-			} catch (Throwable t) {
-				logger.trace(obs + " " + observations.indexOf(obs) + " "
-						+ " in: " + observations);
-				logger.trace(t.getStackTrace());
-				throw new RuntimeException(t);
-			}
+			isFirst = false;
 
 			trellis = doBeamPruning(trellis);
 			logger.trace(tab + "pruned trellis:" + trellis);
+			// } catch (Throwable t) {
+			// logger.trace(obs + " " + observations.indexOf(obs) + " "
+			// + " in: " + observations);
+			// logger.trace(t.getStackTrace());
+			// throw new RuntimeException(t);
+			// }
 		}
 
+	}
+
+	public Map<Integer, State> updateTrellis(
+			Map<Integer, Map<Integer, Double>> nextWeights) {
+		Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
+		for (Integer nextTag : tags) {
+			try {
+				Integer fromTag = findMaxFor(nextTag, nextWeights);
+				Double plusWeight = nextWeights.get(fromTag).get(nextTag);
+
+				if (plusWeight != null) {
+					logger.trace(tab + "transition:" + fromTag + "->" + nextTag
+							+ " (" + plusWeight + ")");
+					trellisTmp.put(nextTag,
+							trellis.get(fromTag)
+									.createNext(nextTag, plusWeight));
+				}
+			} catch (NoSuchElementException e) {
+				logger.trace(e.getStackTrace());
+			}
+		}
+
+		logger.trace(tab + "trellis:" + trellisTmp);
+		if (trellisTmp.size() == 0) {
+			logger.trace(tab + "Tellis is empty!");
+			logger.trace(tab + nextWeights);
+			logger.trace(tab + trellis);
+		}
+		// TODO: it could be really slow
+		return trellisTmp;
+	}
+
+	public Map<Integer, Map<Integer, Double>> computeNextWeights(
+			boolean isFirst, String obs) {
+		Map<Integer, Map<Integer, Double>> nextWeights = new HashMap<Integer, Map<Integer, Double>>();
+
+		for (Integer fromTag : tags) {
+			State s = trellis.get(fromTag);
+			if (s != null) {
+				Map<Integer, Double> nextProb = getNextProb(s.getPath(), obs,
+						isFirst);
+				nextWeights.put(fromTag, nextProb);
+			}
+		}
+		return nextWeights;
 	}
 
 	protected Map<Integer, State> doBeamPruning(Map<Integer, State> trellis) {
@@ -252,7 +260,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		 * if EOS then the returning probability is the probability of that the
 		 * next tag is EOS_TAG
 		 */
-		logger.debug("==>word " + word);
+		// logger.debug("==>word " + word);
 		SpecTokenMatcher spectokenMatcher = new SpecTokenMatcher();
 		if (word.equals(Model.getEOSToken())) {
 			return getNextForEOSToken(prevTags);
@@ -328,12 +336,12 @@ public class Viterbi extends IViterbi<String, Integer> {
 		}
 		/* if the token is somehow known then use the models */
 		if (seen != SeenType.Unseen) {
-			logger.trace("obs is seen");
+			// logger.trace("obs is seen");
 			return getNextForSeenToken(prevTags, wordProbModel, wordForm, tags);
 		} else {
-			logger.trace("obs is unseen");
+			// logger.trace("obs is unseen");
 			if (Util.isNotEmpty(anals) && anals.size() == 1) {
-				logger.trace("obs is in voc and has only one possible tag");
+				// logger.trace("obs is in voc and has only one possible tag");
 				return getNextForSingleTaggedToken(prevTags, anals);
 			} else {
 				return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
@@ -348,20 +356,20 @@ public class Viterbi extends IViterbi<String, Integer> {
 			List<Integer> anals, boolean isOOV) {
 		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
 		// List<Integer> possibleTags;
-		logger.trace("guessing for:" + lWord);
+		// logger.trace("guessing for:" + lWord);
 		ISuffixGuesser<String, Integer> guesser = null;
 		if (isUpper) {
-			logger.trace("using upper guesser");
+			// logger.trace("using upper guesser");
 			guesser = model.getUpperCaseSuffixGuesser();
 		} else {
-			logger.trace("using lower guesser");
+			// logger.trace("using lower guesser");
 			guesser = model.getLowerCaseSuffixGuesser();
 		}
 		if (!isOOV) {
-			logger.trace("obs is in voc");
+			// logger.trace("obs is in voc");
 			return getNextForGuessedVocToken(prevTags, lWord, anals, guesser);
 		} else {
-			logger.trace("obs is oov");
+			// logger.trace("obs is oov");
 			return getNextForGuessedOOVToken(prevTags, lWord, guesser);
 
 		}
@@ -384,9 +392,9 @@ public class Viterbi extends IViterbi<String, Integer> {
 			// + guessedVal);
 			Double tagVal = model.getTagTransitionModel().getLogProb(prevTags,
 					guess.getKey());
-			logger.debug("emission "
-					+ model.getTagVocabulary().getWord(guess.getKey()) + " "
-					+ guessedVal);
+			// logger.debug("emission "
+			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
+			// + guessedVal);
 			tagProbs.put(guess.getKey(), tagVal + guessedVal);
 		}
 		return tagProbs;

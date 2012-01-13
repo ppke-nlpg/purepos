@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * Implements a probability model for n-grams. Tags are represented as Integers.
  * 
@@ -16,6 +18,7 @@ import java.util.Map;
  */
 public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 
+	protected Logger logger = Logger.getLogger(getClass());
 	// TODO: use a more memory efficient model for storing these data
 	protected DoubleTrieNode<W> root;
 
@@ -58,7 +61,11 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 
 	@Override
 	public Double getLogProb(List<Integer> context, W word) {
-		return Math.log(getProb(context, word));
+		double lp = Math.log(getProb(context, word));
+		// logger.trace("\tlogprob for " + word + " and context " + context +
+		// ":"
+		// + lp);
+		return lp;
 	}
 
 	@Override

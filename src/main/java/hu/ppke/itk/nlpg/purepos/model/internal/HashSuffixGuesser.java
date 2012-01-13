@@ -68,9 +68,9 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 					Double retP = ret;
 					ret = (ret + (relFreq * theta)) / thetaPlusOne;
-					logger.debug("accu(" + tag + ") = (prev(" + retP
-							+ ") + relfreq(" + relFreq + ") * theta(" + theta
-							+ "))/thetaPO(" + thetaPlusOne + ") =" + ret);
+					// logger.debug("accu(" + tag + ") = (prev(" + retP
+					// + ") + relfreq(" + relFreq + ") * theta(" + theta
+					// + "))/thetaPO(" + thetaPlusOne + ") =" + ret);
 				}
 			}
 		}
