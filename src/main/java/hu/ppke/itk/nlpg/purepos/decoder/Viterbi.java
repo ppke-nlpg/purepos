@@ -125,19 +125,22 @@ public class Viterbi extends IViterbi<String, Integer> {
 		Map<Integer, Map<Integer, Double>> nextWeights = new HashMap<Integer, Map<Integer, Double>>();
 
 		boolean isFirst = true;
-
 		for (String obs : observations) {
+
 			logger.trace("current observation: " + obs);
 			// try {
 			nextWeights = computeNextWeights(isFirst, obs);
-			logger.trace(tab + "nextweights: " + nextWeights);
+			// logger.trace(tab + "nextweights: " + nextWeights);
+			logger.trace("\tcurrent states:");
+			for (State s : trellis.values())
+				logger.trace("\t\t" + s.getPath() + " - " + s.getWeight());
 
 			trellis = updateTrellis(nextWeights);
 
 			isFirst = false;
 
 			trellis = doBeamPruning(trellis);
-			logger.trace(tab + "pruned trellis:" + trellis);
+			// logger.trace(tab + "pruned trellis:" + trellis);
 			// } catch (Throwable t) {
 			// logger.trace(obs + " " + observations.indexOf(obs) + " "
 			// + " in: " + observations);
@@ -157,8 +160,11 @@ public class Viterbi extends IViterbi<String, Integer> {
 				Double plusWeight = nextWeights.get(fromTag).get(nextTag);
 
 				if (plusWeight != null) {
-					logger.trace(tab + "transition:" + fromTag + "->" + nextTag
-							+ " (" + plusWeight + ")");
+					logger.trace(tab + "next state: .." + fromTag + ","
+							+ nextTag + " :" + (/*
+												 * trellis.get(fromTag).getWeight
+												 * () +
+												 */plusWeight) + "");
 					trellisTmp.put(nextTag,
 							trellis.get(fromTag)
 									.createNext(nextTag, plusWeight));
@@ -168,7 +174,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 			}
 		}
 
-		logger.trace(tab + "trellis:" + trellisTmp);
+		// logger.trace(tab + "trellis:" + trellisTmp);
 		if (trellisTmp.size() == 0) {
 			logger.trace(tab + "Tellis is empty!");
 			logger.trace(tab + nextWeights);
@@ -260,7 +266,6 @@ public class Viterbi extends IViterbi<String, Integer> {
 		 * if EOS then the returning probability is the probability of that the
 		 * next tag is EOS_TAG
 		 */
-		// logger.debug("==>word " + word);
 		SpecTokenMatcher spectokenMatcher = new SpecTokenMatcher();
 		if (word.equals(Model.getEOSToken())) {
 			return getNextForEOSToken(prevTags);
