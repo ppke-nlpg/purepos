@@ -214,17 +214,17 @@ public class POSTaggerModel extends Model<String, Integer> {
 		ISpecTokenMatcher specMatcher = new SpecTokenMatcher();
 		Vector<Integer> tags = new Vector<Integer>();
 
-		// add EOS tag to the model
 		logger.trace("Tags added:");
-		tagNGramModel.addWord(tags, tagVocabulary.addElement(getEOSTag()));
-		logger.trace(tagVocabulary.getIndex(getEOSTag()));
-
 		// creating tag list
+		Integer eosTag = tagVocabulary.addElement(getEOSTag());
 		for (int j = sentence.size() - 1; j >= 0; --j) {
 			Integer tagID = tagVocabulary.addElement(sentence.get(j).getTag());
 			tags.add(tagID);
 		}
 		Collections.reverse(tags);
+		// add EOS tag to the model
+		tagNGramModel.addWord(tags, eosTag);
+		logger.trace(tagVocabulary.getIndex(getEOSTag()));
 
 		for (int i = sentence.size() - 1; i >= 0; --i) {
 
@@ -244,7 +244,10 @@ public class POSTaggerModel extends Model<String, Integer> {
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
 					specEmissionNGramModel.addWord(context, specName);
-					specTokensLexicon.addToken(specName, tag);
+					// TODO: this is how it should have been used:
+					// specTokensLexicon.addToken(specName, tag);
+					// this is how it is used in HunPOS
+					specTokensLexicon.addToken(word, tag);
 				}
 			}
 		}
