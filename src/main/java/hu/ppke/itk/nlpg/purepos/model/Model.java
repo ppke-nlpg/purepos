@@ -65,7 +65,7 @@ public abstract class Model<W, T> {
 	/**
 	 * @return the bosTag
 	 */
-	public static String getBosTag() {
+	public static String getBOSTag() {
 		return BOS_TAG;
 	}
 

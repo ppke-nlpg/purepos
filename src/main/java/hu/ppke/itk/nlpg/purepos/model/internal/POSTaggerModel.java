@@ -142,14 +142,13 @@ public class POSTaggerModel extends Model<String, Integer> {
 		// create the model
 		// if (logger.isTraceEnabled()) {
 		logger.debug("tag vocabulary: " + tagVocabulary);
-		// logger.trace("upper guesser: " + upperCaseSuffixGuesser);
-		logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
-		logger.trace("tagTransModel:\n"
-				+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
+		logger.trace("upper guesser: " + upperCaseSuffixGuesser);
+		// logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
+		// logger.trace("tagTransModel:\n"
+		// + ((ProbModel<Integer>) tagTransitionModel).getReprString());
 		// logger.trace("seenTokModel:\n"
-		// + ((ProbModel<String>) standardEmissionModel)
-		// .getReprString());
-		// logger.trace("specTokModel:\n"
+		// + ((ProbModel<String>) standardEmissionModel).getReprString());
+		// // logger.trace("specTokModel:\n"
 		// + ((ProbModel<String>) specTokensEmissionModel)
 		// .getReprString());
 		// }
@@ -214,17 +213,20 @@ public class POSTaggerModel extends Model<String, Integer> {
 		ISpecTokenMatcher specMatcher = new SpecTokenMatcher();
 		Vector<Integer> tags = new Vector<Integer>();
 
-		logger.trace("Tags added:");
+		// logger.trace("Tags added:");
 		// creating tag list
+		Integer eosTag = tagVocabulary.addElement(getBOSTag());
 		Integer eosTag = tagVocabulary.addElement(getEOSTag());
+
 		for (int j = sentence.size() - 1; j >= 0; --j) {
 			Integer tagID = tagVocabulary.addElement(sentence.get(j).getTag());
 			tags.add(tagID);
 		}
 		Collections.reverse(tags);
 		// add EOS tag to the model
+
 		tagNGramModel.addWord(tags, eosTag);
-		logger.trace(tagVocabulary.getIndex(getEOSTag()));
+		// logger.trace(tagVocabulary.getIndex(getEOSTag()));
 
 		for (int i = sentence.size() - 1; i >= 0; --i) {
 

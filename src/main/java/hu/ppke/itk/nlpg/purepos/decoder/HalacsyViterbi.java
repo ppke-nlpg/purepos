@@ -16,13 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 
-public class Viterbi extends IViterbi<String, Integer> {
+public class HalacsyViterbi extends IViterbi<String, Integer> {
 
 	protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
@@ -34,7 +35,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 	Set<Integer> tags;
 	String tab = "\t";
 
-	public Viterbi(Model<String, Integer> model,
+	public HalacsyViterbi(Model<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
 			int maxGuessedTags) {
 		super(model);
@@ -48,23 +49,24 @@ public class Viterbi extends IViterbi<String, Integer> {
 	public List<Integer> decode(final List<String> observations) {
 		trellis.clear();
 		List<String> obs = new ArrayList<String>(observations);
-		// 1 EOS marker as in HunPos
-		obs.add(Model.getEOSToken());
+
+		obs.add(Model.getEOSToken()); // adds 1 EOS marker as in HunPos
 		int n = model.getTaggingOrder();
 
-		ArrayList<Integer> startTags = new ArrayList<Integer>();// TODO:n?*
-		for (int j = 0; j < n; ++j) {
+		ArrayList<Integer> startTags = new ArrayList<Integer>();
+
+		for (int j = 0; j < n; ++j) { // TODO:n?*
 			startTags.add(model.getBOSIndex());
 		}
 
-		// TODO: hunpos worlflow is a bit different here*
-		State s = new State(startTags, 0.0);
+		State s = new State(startTags, 0.0); // TODO: hunpos worlflow is a bit
+												// different here*
 
 		trellis.put(model.getBOSIndex(), s);
 
 		forward(obs);
-		// find maximal element
-		try {
+
+		try { // find maximal element
 			State maximalState = Collections.max(trellis.values(),
 					new Comparator<State>() {
 						@Override
@@ -74,9 +76,9 @@ public class Viterbi extends IViterbi<String, Integer> {
 						}
 					});
 			List<Integer> ret = maximalState.getPath();
-			// System.out.println(ret);
 			return ret.subList(model.getTaggingOrder(), ret.size() - 1);
 		} catch (java.util.NoSuchElementException e) {
+			// TODO: is it really needed?
 			logger.trace(observations);
 			logger.trace(trellis);
 			throw new RuntimeException(e);
@@ -85,14 +87,13 @@ public class Viterbi extends IViterbi<String, Integer> {
 	}
 
 	protected void forward(List<String> observations) {
-		// Table<Integer, Integer, Double> nw = HashBasedTable.create();
-		Map<Integer, Map<Integer, Double>> nextWeights = new HashMap<Integer, Map<Integer, Double>>();
+		Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights = new HashMap<Integer, Map<Integer, Pair<Double, Double>>>();
 
 		boolean isFirst = true;
 		for (String obs : observations) {
 
 			logger.trace("current observation: " + obs);
-			// try {
+
 			nextWeights = computeNextWeights(isFirst, obs);
 			// logger.trace(tab + "nextweights: " + nextWeights);
 			logger.trace("\tcurrent states:");
@@ -104,63 +105,65 @@ public class Viterbi extends IViterbi<String, Integer> {
 			isFirst = false;
 
 			trellis = doBeamPruning(trellis);
-			// logger.trace(tab + "pruned trellis:" + trellis);
-			// } catch (Throwable t) {
-			// logger.trace(obs + " " + observations.indexOf(obs) + " "
-			// + " in: " + observations);
-			// logger.trace(t.getStackTrace());
-			// throw new RuntimeException(t);
-			// }
+
 		}
 
+	}
+
+	public Map<Integer, Map<Integer, Pair<Double, Double>>> computeNextWeights(
+			boolean isFirst, String obs) {
+		Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights = new HashMap<Integer, Map<Integer, Pair<Double, Double>>>();
+
+		for (Integer fromTag : trellis.keySet()) {
+			State s = trellis.get(fromTag);
+			Map<Integer, Pair<Double, Double>> nextProb = getNextProb(
+					s.getPath(), obs, isFirst);
+			nextWeights.put(fromTag, nextProb);
+
+		}
+		return nextWeights;
 	}
 
 	public Map<Integer, State> updateTrellis(
-			Map<Integer, Map<Integer, Double>> nextWeights) {
+			Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights) {
 		Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
+		// Set<Integer> tags = nextWeights
 		for (Integer nextTag : tags) {
-			try {
-				Integer fromTag = findMaxFor(nextTag, nextWeights);
-				Double plusWeight = nextWeights.get(fromTag).get(nextTag);
+			Integer fromTag = findMaxFor(nextTag, nextWeights);
+			// transition prob
+			Pair<Double, Double> plusWeightpair = nextWeights.get(fromTag).get(
+					nextTag);
 
-				if (plusWeight != null) {
-					logger.trace(tab + "next state: .." + fromTag + ","
-							+ nextTag + " :" + (/*
-												 * trellis.get(fromTag).getWeight
-												 * () +
-												 */plusWeight) + "");
-					trellisTmp.put(nextTag,
-							trellis.get(fromTag)
-									.createNext(nextTag, plusWeight));
+			if (plusWeightpair != null) {
+				// emission prob
+				Double plusWeight = plusWeightpair.getLeft();
+				if (nextNodesNum(nextWeights) > 1) {
+					plusWeight += plusWeightpair.getRight();
 				}
-			} catch (NoSuchElementException e) {
-				logger.trace(e.getStackTrace());
+				// logger.trace(tab
+				// + "next state: .."
+				// + fromTag
+				// + ","
+				// + nextTag
+				// + " :"
+				// + ((plusWeightpair.getLeft())
+				// + +plusWeightpair.getRight() + trellis.get(
+				// fromTag).getWeight()));
+				trellisTmp.put(nextTag,
+						trellis.get(fromTag).createNext(nextTag, plusWeight));
 			}
-		}
 
-		// logger.trace(tab + "trellis:" + trellisTmp);
-		if (trellisTmp.size() == 0) {
-			logger.trace(tab + "Tellis is empty!");
-			logger.trace(tab + nextWeights);
-			logger.trace(tab + trellis);
 		}
-		// TODO: it could be really slow
 		return trellisTmp;
 	}
 
-	public Map<Integer, Map<Integer, Double>> computeNextWeights(
-			boolean isFirst, String obs) {
-		Map<Integer, Map<Integer, Double>> nextWeights = new HashMap<Integer, Map<Integer, Double>>();
-
-		for (Integer fromTag : tags) {
-			State s = trellis.get(fromTag);
-			if (s != null) {
-				Map<Integer, Double> nextProb = getNextProb(s.getPath(), obs,
-						isFirst);
-				nextWeights.put(fromTag, nextProb);
-			}
+	protected int nextNodesNum(
+			Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights) {
+		int num = 0;
+		for (Map<Integer, Pair<Double, Double>> t : nextWeights.values()) {
+			num += t.keySet().size();
 		}
-		return nextWeights;
+		return num;
 	}
 
 	protected Map<Integer, State> doBeamPruning(Map<Integer, State> trellis) {
@@ -188,27 +191,31 @@ public class Viterbi extends IViterbi<String, Integer> {
 	}
 
 	protected int findMaxFor(final Integer nextTag,
-			final Map<Integer, Map<Integer, Double>> nextWeights) {
-		Entry<Integer, Map<Integer, Double>> max = Collections.max(
-				nextWeights.entrySet(),
-				new Comparator<Map.Entry<Integer, Map<Integer, Double>>>() {
+			final Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights) {
 
-					@Override
-					public int compare(Entry<Integer, Map<Integer, Double>> o1,
-							Entry<Integer, Map<Integer, Double>> o2) {
-						if (o1.getValue() == null
-								|| o1.getValue().get(nextTag) == null)
-							return 1;
-						if (o2.getValue() == null
-								|| o2.getValue().get(nextTag) == null)
-							return -1;
-						return Double.compare(
-								o1.getValue().get(nextTag)
+		// find maximum according to tag transition probabilities
+		Entry<Integer, Map<Integer, Pair<Double, Double>>> max = Collections
+				.max(nextWeights.entrySet(),
+						new Comparator<Map.Entry<Integer, Map<Integer, Pair<Double, Double>>>>() {
+
+							@Override
+							public int compare(
+									Entry<Integer, Map<Integer, Pair<Double, Double>>> o1,
+									Entry<Integer, Map<Integer, Pair<Double, Double>>> o2) {
+								if (o1.getValue() == null
+										|| o1.getValue().get(nextTag) == null)
+									return 1;
+								if (o2.getValue() == null
+										|| o2.getValue().get(nextTag) == null)
+									return -1;
+								return Double.compare(o1.getValue()
+										.get(nextTag).getLeft()
 										+ trellis.get(o1.getKey()).getWeight(),
-								o2.getValue().get(nextTag)
-										+ trellis.get(o2.getKey()).getWeight());
-					}
-				});
+										o2.getValue().get(nextTag).getLeft()
+												+ trellis.get(o2.getKey())
+														.getWeight());
+							}
+						});
 		return max.getKey();
 		//
 		// double max = Double.MIN_VALUE;
@@ -224,8 +231,18 @@ public class Viterbi extends IViterbi<String, Integer> {
 		// return maxTag;
 	}
 
-	protected Map<Integer, Double> getNextProb(final List<Integer> prevTags,
-			final String word, final boolean isFirst) {
+	/**
+	 * Calculates the next probabilities (tag transition probability and
+	 * observation probability) for the given tag sequence, for the given word.
+	 * 
+	 * @param prevTags
+	 * @param word
+	 * @param isFirst
+	 * @return
+	 */
+	protected Map<Integer, Pair<Double, Double>> getNextProb(
+			final List<Integer> prevTags, final String word,
+			final boolean isFirst) {
 		/*
 		 * if EOS then the returning probability is the probability of that the
 		 * next tag is EOS_TAG
@@ -320,7 +337,7 @@ public class Viterbi extends IViterbi<String, Integer> {
 		}
 	}
 
-	protected Map<Integer, Double> getNextForGuessedToken(
+	protected Map<Integer, Pair<Double, Double>> getNextForGuessedToken(
 			final List<Integer> prevTags, String lWord, boolean isUpper,
 			List<Integer> anals, boolean isOOV) {
 		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
@@ -344,84 +361,88 @@ public class Viterbi extends IViterbi<String, Integer> {
 		}
 	}
 
-	protected Map<Integer, Double> getNextForGuessedOOVToken(
+	protected Map<Integer, Pair<Double, Double>> getNextForGuessedOOVToken(
 			final List<Integer> prevTags, String lWord,
 			ISuffixGuesser<String, Integer> guesser) {
-		Map<Integer, Double> tagProbs;
+		Map<Integer, Pair<Double, Double>> tagProbs;
 		Map<Integer, Double> guessedTags = guesser
 				.getTagLogProbabilities(lWord);
 
 		Set<Entry<Integer, Double>> prunedGuessedTags = pruneGuessedTags(guessedTags);
 
-		tagProbs = new HashMap<Integer, Double>();
+		tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		for (Entry<Integer, Double> guess : prunedGuessedTags) {
-			Double guessedVal = guess.getValue();
+			Double emissionProb = guess.getValue();
 			// logger.debug("trans "
 			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
 			// + guessedVal);
-			Double tagVal = model.getTagTransitionModel().getLogProb(prevTags,
-					guess.getKey());
+			Double tagTransProb = model.getTagTransitionModel().getLogProb(
+					prevTags, guess.getKey());
 			// logger.debug("emission "
 			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
 			// + guessedVal);
-			tagProbs.put(guess.getKey(), tagVal + guessedVal);
+			tagProbs.put(guess.getKey(), new ImmutablePair<Double, Double>(
+					tagTransProb, emissionProb));
 		}
 		return tagProbs;
 	}
 
-	protected Map<Integer, Double> getNextForGuessedVocToken(
+	protected Map<Integer, Pair<Double, Double>> getNextForGuessedVocToken(
 			final List<Integer> prevTags, String lWord, List<Integer> anals,
 			ISuffixGuesser<String, Integer> guesser) {
-		Map<Integer, Double> tagProbs;
+		Map<Integer, Pair<Double, Double>> tagProbs;
 		List<Integer> possibleTags;
 		possibleTags = anals;
-		tagProbs = new HashMap<Integer, Double>();
+		tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		for (Integer tag : possibleTags) {
-			Double lexProb = 0.0;
+			Double emissionProb = 0.0;
 			if (model.getTagVocabulary().getWord(tag) == null) {
-				lexProb = UNKNOWN_TAG_WEIGHT;
+				emissionProb = UNKNOWN_TAG_WEIGHT;
 			} else {
-				lexProb = guesser.getTagLogProbability(lWord, tag)
+				emissionProb = guesser.getTagLogProbability(lWord, tag)
 						- Math.log(model.getAprioriTagProbs().get(tag));
 			}
-			tagProbs.put(tag,
-					model.getTagTransitionModel().getLogProb(prevTags, tag)
-							+ lexProb);
+			tagProbs.put(tag, new ImmutablePair<Double, Double>(model
+					.getTagTransitionModel().getLogProb(prevTags, tag),
+					emissionProb));
 		}
 		return tagProbs;
 	}
 
-	protected Map<Integer, Double> getNextForSingleTaggedToken(
+	protected Map<Integer, Pair<Double, Double>> getNextForSingleTaggedToken(
 			final List<Integer> prevTags, List<Integer> anals) {
-		Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
+		Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		Integer tag = anals.get(0);
-		tagProbs.put(tag,
-				model.getTagTransitionModel().getLogProb(prevTags, tag));
+		tagProbs.put(tag, new ImmutablePair<Double, Double>(model
+				.getTagTransitionModel().getLogProb(prevTags, tag), 0.0));
 		return tagProbs;
 	}
 
-	protected Map<Integer, Double> getNextForSeenToken(
+	protected Map<Integer, Pair<Double, Double>> getNextForSeenToken(
 			final List<Integer> prevTags,
 			IProbabilityModel<Integer, String> wordProbModel, String wordForm,
 			Set<Integer> tags) {
-		Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
+		Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		for (Integer tag : tags) {
-			Double tagModelVal = model.getTagTransitionModel().getLogProb(
-					prevTags, tag);
+			Double tagProb = model.getTagTransitionModel().getLogProb(prevTags,
+					tag);
 			List<Integer> actTags = new ArrayList<Integer>(prevTags);
 			actTags.add(tag);
-			Double wordModelVal = wordProbModel.getLogProb(actTags, wordForm);
-			tagProbs.put(tag, tagModelVal + wordModelVal);
+			Double emissionProb = wordProbModel.getLogProb(actTags, wordForm);
+			tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb,
+					emissionProb));
 		}
 		return tagProbs;
 	}
 
-	protected HashMap<Integer, Double> getNextForEOSToken(
+	protected HashMap<Integer, Pair<Double, Double>> getNextForEOSToken(
 			final List<Integer> prevTags) {
 		Double eosProb = model.getTagTransitionModel().getLogProb(prevTags,
 				model.getEOSIndex());
-		HashMap<Integer, Double> ret = new HashMap<Integer, Double>();
-		ret.put(model.getEOSIndex(), eosProb);
+		HashMap<Integer, Pair<Double, Double>> ret = new HashMap<Integer, Pair<Double, Double>>();
+		// TODO: this 1.0 can be anything, it is better to be zero
+		ret.put(model.getEOSIndex(), new ImmutablePair<Double, Double>(eosProb,
+				1.0));
 		return ret;
 	}
 
