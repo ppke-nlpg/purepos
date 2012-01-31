@@ -33,7 +33,7 @@ public class IntVocabularyTest extends TestCase {
 		IntVocabulary<String> v = new IntVocabulary<String>();
 		assertEquals(null, v.getIndex("alma"));
 		v.addElement("alma");
-		assertEquals(new Integer(1), v.getIndex("alma"));
+		assertEquals(new Integer(0), v.getIndex("alma"));
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class IntVocabularyTest extends TestCase {
 		assertEquals(null, v.getWord(0));
 		assertEquals(null, v.getWord(1));
 		v.addElement("alma");
-		assertEquals("alma", v.getWord(1));
+		assertEquals("alma", v.getWord(0));
 	}
 
 	@Test
@@ -56,8 +56,8 @@ public class IntVocabularyTest extends TestCase {
 		assertEquals(null, v.getIndeces(strs));
 		v.addElement("körte");
 		ArrayList<Integer> idcs = new ArrayList<Integer>();
+		idcs.add(0);
 		idcs.add(1);
-		idcs.add(2);
 		assertEquals(v.getIndeces(strs), new NGram<Integer>(idcs));
 	}
 }
