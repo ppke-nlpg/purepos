@@ -215,9 +215,9 @@ public class POSTaggerModel extends Model<String, Integer> {
 
 		// logger.trace("Tags added:");
 		// creating tag list
-		Integer eosTag = tagVocabulary.addElement(getBOSTag());
-		Integer eosTag = tagVocabulary.addElement(getEOSTag());
 
+		Integer eosTag = tagVocabulary.addElement(getEOSTag());
+		Integer bosTag = tagVocabulary.addElement(getBOSTag());
 		for (int j = sentence.size() - 1; j >= 0; --j) {
 			Integer tagID = tagVocabulary.addElement(sentence.get(j).getTag());
 			tags.add(tagID);
