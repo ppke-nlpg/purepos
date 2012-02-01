@@ -34,6 +34,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 	public Double getProb(List<Integer> context, W word) {
 		// for a context which is greater then the size of the model, the
 		// context is cut and the greatest context probability is calculated
+		String d = context.toString() + " " + word.toString();
 		ListIterator<Integer> iterator = context.listIterator(context.size());
 		TrieNode<Integer, Double, W> node = root;
 		Boolean findMore = true;

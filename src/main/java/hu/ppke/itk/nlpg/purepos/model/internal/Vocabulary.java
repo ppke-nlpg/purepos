@@ -19,7 +19,8 @@ import com.google.common.collect.HashBiMap;
  *            the type which is used to map words
  * 
  */
-public abstract class Vocabulary<W, T> implements IVocabulary<W, T> {
+public abstract class Vocabulary<W, T extends Comparable<T>> implements
+		IVocabulary<W, T> {
 
 	@Override
 	public Set<T> getTagIndeces() {

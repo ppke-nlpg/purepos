@@ -1,5 +1,9 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
+import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
+
+import java.util.List;
+
 /**
  * Implementors should represent n-grams of a corpus.
  * 
@@ -8,7 +12,6 @@ package hu.ppke.itk.nlpg.purepos.model;
  * @param <T>
  *            the type which is used to represent a token
  */
-@Deprecated
-public interface INGram<T> {
-
+public interface INGram<T extends Comparable<T>> extends Comparable<NGram<T>> {
+	public List<T> toList();
 }

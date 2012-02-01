@@ -15,7 +15,7 @@ import java.util.Set;
  * @param <W>
  *            Mapped type
  */
-public interface IVocabulary<W, I> {
+public interface IVocabulary<W, I extends Comparable<I>> {
 
 	/**
 	 * Returns the size of the dictionary

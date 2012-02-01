@@ -4,7 +4,8 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
-import hu.ppke.itk.nlpg.purepos.decoder.HalacsyViterbi;
+import hu.ppke.itk.nlpg.purepos.decoder.FastDecoder;
+import hu.ppke.itk.nlpg.purepos.decoder.MessedViterbi;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
@@ -16,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Tagger implements ITagger {
-	protected final HalacsyViterbi viterbi;
+	protected final FastDecoder viterbi;
 	protected final Model<String, Integer> model;
 
 	public Tagger(final Model<String, Integer> model, double logTheta,
@@ -27,7 +28,7 @@ public class Tagger implements ITagger {
 	public Tagger(final Model<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, int maxGuessedTags) {
 		this.model = model;
-		this.viterbi = new HalacsyViterbi(model, analyzer, logTheta, maxGuessedTags);
+		this.viterbi = new MessedViterbi(model, analyzer, logTheta, maxGuessedTags);
 	}
 
 	@Override

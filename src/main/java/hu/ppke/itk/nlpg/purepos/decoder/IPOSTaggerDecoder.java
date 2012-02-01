@@ -9,7 +9,7 @@ import java.util.List;
  * @author György Orosz
  * 
  */
-public interface IPOSTaggerDecoder<W, T> {
+public interface IPOSTaggerDecoder<W, T extends Comparable<T>> {
 	/**
 	 * Finds corresponding tags for observations
 	 * 

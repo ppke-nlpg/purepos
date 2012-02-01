@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-public class Viterbi extends IViterbi<String, Integer> {
+public class Viterbi extends Decoder<String, Integer> {
 
 	protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;

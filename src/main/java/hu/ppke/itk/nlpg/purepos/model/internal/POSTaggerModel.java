@@ -144,8 +144,8 @@ public class POSTaggerModel extends Model<String, Integer> {
 		logger.debug("tag vocabulary: " + tagVocabulary);
 		logger.trace("upper guesser: " + upperCaseSuffixGuesser);
 		// logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
-		// logger.trace("tagTransModel:\n"
-		// + ((ProbModel<Integer>) tagTransitionModel).getReprString());
+		logger.trace("tagTransModel:\n"
+				+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
 		// logger.trace("seenTokModel:\n"
 		// + ((ProbModel<String>) standardEmissionModel).getReprString());
 		// // logger.trace("specTokModel:\n"
@@ -237,7 +237,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
 				tagNGramModel.addWord(prevTags, tag);
-				logger.trace(tag);
+				// logger.trace(tag);
 				stat.incrementTokenCount();
 				// logger.trace("token is added:" + word);
 				standardTokensLexicon.addToken(word, tag);

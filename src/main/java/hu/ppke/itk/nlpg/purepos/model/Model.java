@@ -14,7 +14,7 @@ import java.util.Map;
  *            type parameter for representing words
  * 
  */
-public abstract class Model<W, T> {
+public abstract class Model<W, T extends Comparable<T>> {
 	protected static final String EOS_TAG = "</S>";
 
 	protected static final String BOS_TAG = "<S>";
