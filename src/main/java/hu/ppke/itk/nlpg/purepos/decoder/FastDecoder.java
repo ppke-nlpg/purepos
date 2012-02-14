@@ -20,22 +20,26 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.log4j.Logger;
 
 public abstract class FastDecoder extends Decoder<String, Integer> {
 
+	protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
 	protected IMorphologicalAnalyzer morphologicalAnalyzer;
 	protected double logTheta;
+	protected double sufTheta;
 	protected int maxGuessedTags;
 	protected Set<Integer> tags;
 	String tab = "\t";
 
 	public FastDecoder(Model<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
-			int maxGuessedTags) {
+			double sufTheta, int maxGuessedTags) {
 		super(model);
 		this.morphologicalAnalyzer = morphologicalAnalyzer;
 		this.logTheta = logTheta;
+		this.sufTheta = sufTheta;
 		this.maxGuessedTags = maxGuessedTags;
 		this.tags = model.getTagVocabulary().getTagIndeces();
 	}
@@ -146,7 +150,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		}
 	}
 
-	protected Map<Integer, Pair<Double, Double>> getNextForGuessedToken(
+	private Map<Integer, Pair<Double, Double>> getNextForGuessedToken(
 			final List<Integer> prevTags, String lWord, boolean isUpper,
 			List<Integer> anals, boolean isOOV) {
 		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
@@ -160,22 +164,28 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 			// logger.trace("using lower guesser");
 			guesser = model.getLowerCaseSuffixGuesser();
 		}
+		Map<Integer, Pair<Double, Double>> ret;
 		if (!isOOV) {
 			// logger.trace("obs is in voc");
-			return getNextForGuessedVocToken(prevTags, lWord, anals, guesser);
+			ret = getNextForGuessedVocToken(prevTags, lWord, anals, guesser);
 		} else {
 			// logger.trace("obs is oov");
-			return getNextForGuessedOOVToken(prevTags, lWord, guesser);
-
+			ret = getNextForGuessedOOVToken(prevTags, lWord, guesser);
 		}
+
+		return ret;
 	}
 
-	protected Map<Integer, Pair<Double, Double>> getNextForGuessedOOVToken(
+	private Map<Integer, Pair<Double, Double>> getNextForGuessedOOVToken(
 			final List<Integer> prevTags, String lWord,
 			ISuffixGuesser<String, Integer> guesser) {
 		Map<Integer, Pair<Double, Double>> tagProbs;
 		Map<Integer, Double> guessedTags = guesser
 				.getTagLogProbabilities(lWord);
+		// for (Integer key : guessedTags.keySet()) {
+		//
+		// logger.trace("\ttag " + key + " " + guessedTags.get(key));
+		// }
 
 		Set<Entry<Integer, Double>> prunedGuessedTags = pruneGuessedTags(guessedTags);
 
@@ -185,18 +195,23 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 			// logger.debug("trans "
 			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
 			// + guessedVal);
+			Integer tag = guess.getKey();
 			Double tagTransProb = model.getTagTransitionModel().getLogProb(
-					prevTags, guess.getKey());
+					prevTags, tag);
 			// logger.debug("emission "
 			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
 			// + guessedVal);
-			tagProbs.put(guess.getKey(), new ImmutablePair<Double, Double>(
-					tagTransProb, emissionProb));
+			tagProbs.put(
+					tag,
+					new ImmutablePair<Double, Double>(tagTransProb,
+							emissionProb
+									- Math.log(model.getAprioriTagProbs().get(
+											tag))));
 		}
 		return tagProbs;
 	}
 
-	protected Map<Integer, Pair<Double, Double>> getNextForGuessedVocToken(
+	private Map<Integer, Pair<Double, Double>> getNextForGuessedVocToken(
 			final List<Integer> prevTags, String lWord, List<Integer> anals,
 			ISuffixGuesser<String, Integer> guesser) {
 		Map<Integer, Pair<Double, Double>> tagProbs;
@@ -211,14 +226,18 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 				emissionProb = guesser.getTagLogProbability(lWord, tag)
 						- Math.log(model.getAprioriTagProbs().get(tag));
 			}
-			tagProbs.put(tag, new ImmutablePair<Double, Double>(model
-					.getTagTransitionModel().getLogProb(prevTags, tag),
-					emissionProb));
+			tagProbs.put(
+					tag,
+					new ImmutablePair<Double, Double>(model
+							.getTagTransitionModel().getLogProb(prevTags, tag),
+							emissionProb
+									- Math.log(model.getAprioriTagProbs().get(
+											tag))));
 		}
 		return tagProbs;
 	}
 
-	protected Map<Integer, Pair<Double, Double>> getNextForSingleTaggedToken(
+	private Map<Integer, Pair<Double, Double>> getNextForSingleTaggedToken(
 			final List<Integer> prevTags, List<Integer> anals) {
 		Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		Integer tag = anals.get(0);
@@ -227,7 +246,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		return tagProbs;
 	}
 
-	protected Map<Integer, Pair<Double, Double>> getNextForSeenToken(
+	private Map<Integer, Pair<Double, Double>> getNextForSeenToken(
 			final List<Integer> prevTags,
 			IProbabilityModel<Integer, String> wordProbModel, String wordForm,
 			Set<Integer> tags) {
@@ -244,7 +263,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		return tagProbs;
 	}
 
-	protected HashMap<Integer, Pair<Double, Double>> getNextForEOSToken(
+	private HashMap<Integer, Pair<Double, Double>> getNextForEOSToken(
 			final List<Integer> prevTags) {
 		Double eosProb = model.getTagTransitionModel().getLogProb(prevTags,
 				model.getEOSIndex());
@@ -275,7 +294,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 
 		int maxTag = SuffixGuesser.getMaxProbabilityTag(guessedTags);
 		double maxVal = guessedTags.get(maxTag);
-		double minval = maxVal - logTheta;
+		double minval = maxVal - sufTheta;
 		for (Entry<Integer, Double> entry : guessedTags.entrySet()) {
 			if (entry.getValue() > minval) {
 				set.add(entry);
@@ -283,7 +302,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		}
 		if (set.size() > maxGuessedTags) {
 			Iterator<Entry<Integer, Double>> it = set.descendingIterator();
-			while (set.size() > 20) {
+			while (set.size() > maxGuessedTags) {
 				it.next();
 				it.remove();
 			}

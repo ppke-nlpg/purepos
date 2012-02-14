@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.log4j.Logger;
 
 /**
  * Suffix guesser implementation for String suffixes with a HashTable
@@ -24,8 +23,10 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	private final HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable;
 	private final double theta;
 	private final double thetaPlusOne;
+	@SuppressWarnings("unused")
 	private final Map<T, Double> aprioriProbs;
-	protected Logger logger = Logger.getLogger(this.getClass());
+
+	// protected Logger logger = Logger.getLogger(this.getClass());
 
 	HashSuffixGuesser(
 			HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable,
@@ -42,7 +43,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	@Override
 	public double getTagLogProbability(String word, T tag) {
 		double logProb = Math.log(getTagProbability(word, tag));
-		return logProb - Math.log(aprioriProbs.get(tag));
+		return logProb;// - Math.log(aprioriProbs.get(tag));
 	}
 
 	@Override
@@ -66,7 +67,6 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 					Double tagSufFreqD = tagSufFreq.doubleValue();
 					relFreq = tagSufFreqD / suffixValue.getRight();
 
-					Double retP = ret;
 					ret = (ret + (relFreq * theta)) / thetaPlusOne;
 					// logger.debug("accu(" + tag + ") = (prev(" + retP
 					// + ") + relfreq(" + relFreq + ") * theta(" + theta

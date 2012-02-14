@@ -14,4 +14,8 @@ import java.util.List;
  */
 public interface INGram<T extends Comparable<T>> extends Comparable<NGram<T>> {
 	public List<T> toList();
+
+	public NGram<T> add(T e);
+
+	public T getLast();
 }

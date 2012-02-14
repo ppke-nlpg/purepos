@@ -140,18 +140,18 @@ public class POSTaggerModel extends Model<String, Integer> {
 		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
 		// .getReprString());
 		// create the model
-		// if (logger.isTraceEnabled()) {
-		logger.debug("tag vocabulary: " + tagVocabulary);
-		logger.trace("upper guesser: " + upperCaseSuffixGuesser);
-		// logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
-		logger.trace("tagTransModel:\n"
-				+ ((ProbModel<Integer>) tagTransitionModel).getReprString());
-		// logger.trace("seenTokModel:\n"
-		// + ((ProbModel<String>) standardEmissionModel).getReprString());
-		// // logger.trace("specTokModel:\n"
-		// + ((ProbModel<String>) specTokensEmissionModel)
-		// .getReprString());
-		// }
+		if (logger.isTraceEnabled()) {
+			logger.debug("tag vocabulary: " + tagVocabulary);
+			// logger.trace("upper guesser: " + upperCaseSuffixGuesser);
+			logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
+			// logger.trace("tagTransModel:\n"
+			// + ((ProbModel<Integer>) tagTransitionModel).getReprString());
+			// logger.trace("seenTokModel:\n"
+			// + ((ProbModel<String>) standardEmissionModel).getReprString());
+			// // logger.trace("specTokModel:\n"
+			// + ((ProbModel<String>) specTokensEmissionModel)
+			// .getReprString());
+		}
 		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
 				maxSuffixLength, rareFrequency, tagTransitionModel,
 				standardEmissionModel, specTokensEmissionModel,

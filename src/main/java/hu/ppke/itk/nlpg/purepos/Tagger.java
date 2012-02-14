@@ -4,8 +4,8 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.decoder.FastDecoder;
-import hu.ppke.itk.nlpg.purepos.decoder.MessedViterbi;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
@@ -21,14 +21,16 @@ public class Tagger implements ITagger {
 	protected final Model<String, Integer> model;
 
 	public Tagger(final Model<String, Integer> model, double logTheta,
-			int maxGuessedTags) {
-		this(model, new NullAnalyzer(), logTheta, maxGuessedTags);
+			double sufTheta, int maxGuessedTags) {
+		this(model, new NullAnalyzer(), logTheta, sufTheta, maxGuessedTags);
 	}
 
 	public Tagger(final Model<String, Integer> model,
-			IMorphologicalAnalyzer analyzer, double logTheta, int maxGuessedTags) {
+			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
+			int maxGuessedTags) {
 		this.model = model;
-		this.viterbi = new MessedViterbi(model, analyzer, logTheta, maxGuessedTags);
+		this.viterbi = new BeamSearch(model, analyzer, logTheta, sufTheta,
+				maxGuessedTags);
 	}
 
 	@Override

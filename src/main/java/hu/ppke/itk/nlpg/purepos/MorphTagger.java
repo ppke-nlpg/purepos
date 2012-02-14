@@ -17,8 +17,8 @@ public class MorphTagger extends Tagger implements ITagger {
 	IMorphologicalAnalyzer analyzer;
 
 	public MorphTagger(Model<String, Integer> model, double logTheta,
-			int maxGuessedTags, IMorphologicalAnalyzer analyzer) {
-		super(model, analyzer, logTheta, maxGuessedTags);
+			double sufTheta, int maxGuessedTags, IMorphologicalAnalyzer analyzer) {
+		super(model, analyzer, logTheta, sufTheta, maxGuessedTags);
 		this.analyzer = analyzer;
 	}
 

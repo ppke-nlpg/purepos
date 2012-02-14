@@ -15,8 +15,9 @@ import java.util.ListIterator;
  * @param <T>
  */
 public class NGram<T extends Comparable<T>> implements INGram<T> {
+	protected final int HASH_NUM = 31;
 
-	protected List<T> tokenList;
+	protected final List<T> tokenList;
 	protected final int compareLength;
 
 	/**
@@ -39,13 +40,32 @@ public class NGram<T extends Comparable<T>> implements INGram<T> {
 	}
 
 	@Override
+	public NGram<T> add(T e) {
+		ArrayList<T> tokens = new ArrayList<T>(tokenList);
+		tokens.add(e);
+		return new NGram<T>(tokens, compareLength);
+	}
+
+	@Override
 	public String toString() {
 		return tokenList.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return 0;
+		int sum = 0;
+		ListIterator<T> thisIterator = tokenList.listIterator(tokenList.size());
+		int size;
+		if (compareLength != -1) {
+			size = compareLength;
+		} else {
+			size = Integer.MAX_VALUE;
+		}
+		for (int c = 0; thisIterator.hasPrevious() && c < size; ++c) {
+			T act = thisIterator.previous();
+			sum += act.hashCode() * HASH_NUM;
+		}
+		return sum;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,6 +112,12 @@ public class NGram<T extends Comparable<T>> implements INGram<T> {
 
 	@Override
 	public List<T> toList() {
-		return new ArrayList<T>(tokenList);
+		return tokenList;
 	}
+
+	@Override
+	public T getLast() {
+		return tokenList.get(tokenList.size() - 1);
+	}
+
 }

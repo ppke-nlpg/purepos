@@ -1,5 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
+
 import java.util.HashMap;
 
 import junit.framework.Assert;
@@ -15,16 +17,16 @@ public class HashSuffixtreeTest {
 
 	@Test
 	public void testCalculateTheta() {
-		HashSuffixTree<Integer> t = new HashSuffixTree<Integer>(0);
+		// HashSuffixTree<Integer> t = new HashSuffixTree<Integer>(0);
 		HashMap<Integer, Double> hm = new HashMap<Integer, Double>();
 		Double theta;
-		theta = t.calculateTheta(hm);
+		theta = SuffixTree.calculateTheta(hm);
 		Assert.assertEquals(0.0, theta);
 
 		hm.put(1, 0.5);
 		hm.put(2, 0.25);
 		hm.put(3, 0.25);
-		theta = t.calculateTheta(hm);
+		theta = SuffixTree.calculateTheta(hm);
 		Assert.assertEquals(0.125, theta);
 	}
 

@@ -73,7 +73,7 @@ public class Viterbi extends Decoder<String, Integer> {
 									second.getWeight());
 						}
 					});
-			List<Integer> ret = maximalState.getPath();
+			List<Integer> ret = maximalState.getPath().toList();
 			// System.out.println(ret);
 			return ret.subList(model.getTaggingOrder(), ret.size() - 1);
 		} catch (java.util.NoSuchElementException e) {
@@ -155,8 +155,8 @@ public class Viterbi extends Decoder<String, Integer> {
 		for (Integer fromTag : tags) {
 			State s = trellis.get(fromTag);
 			if (s != null) {
-				Map<Integer, Double> nextProb = getNextProb(s.getPath(), obs,
-						isFirst);
+				Map<Integer, Double> nextProb = getNextProb(s.getPath()
+						.toList(), obs, isFirst);
 				nextWeights.put(fromTag, nextProb);
 			}
 		}

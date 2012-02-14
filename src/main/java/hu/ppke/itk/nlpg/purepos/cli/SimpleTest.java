@@ -37,7 +37,7 @@ public class SimpleTest implements Runnable {
 
 			trainer = new HunPosTrainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
-			tagger = new Tagger(model, Math.log(10), 20);
+			tagger = new Tagger(model, Math.log(1000), Math.log(10), 10);
 
 			// fully compatible with hunpos
 			BufferedReader is = new BufferedReader(new InputStreamReader(

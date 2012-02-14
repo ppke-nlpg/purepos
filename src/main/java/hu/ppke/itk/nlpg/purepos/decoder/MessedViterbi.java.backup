@@ -18,13 +18,13 @@ public class MessedViterbi extends FastDecoder {
 
 	public MessedViterbi(Model<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
-			int maxGuessedTags) {
-		super(model, morphologicalAnalyzer, logTheta, maxGuessedTags);
+			double sufTheta, int maxGuessedTags) {
+		super(model, morphologicalAnalyzer, logTheta, sufTheta, maxGuessedTags);
 
 	}
 
 	protected Logger logger = Logger.getLogger(getClass());
-	Map<Integer, State> trellis = new HashMap<Integer, State>();
+	Map<Integer, Node> trellis = new HashMap<Integer, Node>();
 
 	@Override
 	public List<Integer> decode(final List<String> observations) {
@@ -40,7 +40,7 @@ public class MessedViterbi extends FastDecoder {
 			startTags.add(model.getBOSIndex());
 		}
 
-		State s = new State(startTags, 0.0); // TODO: hunpos worlflow is a bit
+		Node s = new Node(startTags, 0.0); // TODO: hunpos worlflow is a bit
 												// different here*
 
 		trellis.put(model.getBOSIndex(), s);
@@ -48,15 +48,15 @@ public class MessedViterbi extends FastDecoder {
 		forward(obs);
 
 		try { // find maximal element
-			State maximalState = Collections.max(trellis.values(),
-					new Comparator<State>() {
+			Node maximalState = Collections.max(trellis.values(),
+					new Comparator<Node>() {
 						@Override
-						public int compare(State first, State second) {
+						public int compare(Node first, Node second) {
 							return Double.compare(first.getWeight(),
 									second.getWeight());
 						}
 					});
-			List<Integer> ret = maximalState.getPath();
+			List<Integer> ret = maximalState.getState().toList();
 			return ret.subList(model.getTaggingOrder(), ret.size() - 1);
 		} catch (java.util.NoSuchElementException e) {
 			// TODO: is it really needed?
@@ -78,8 +78,8 @@ public class MessedViterbi extends FastDecoder {
 			nextWeights = computeNextWeights(isFirst, obs);
 			// logger.trace(tab + "nextweights: " + nextWeights);
 			logger.trace("\tcurrent states:");
-			for (State s : trellis.values())
-				logger.trace("\t\t" + s.getPath() + " - " + s.getWeight());
+			for (Node s : trellis.values())
+				logger.trace("\t\t" + s.getState() + " - " + s.getWeight());
 
 			trellis = updateTrellis(nextWeights);
 
@@ -96,18 +96,18 @@ public class MessedViterbi extends FastDecoder {
 		Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights = new HashMap<Integer, Map<Integer, Pair<Double, Double>>>();
 
 		for (Integer fromTag : trellis.keySet()) {
-			State s = trellis.get(fromTag);
-			Map<Integer, Pair<Double, Double>> nextProb = getNextProb(
-					s.getPath(), obs, isFirst);
+			Node s = trellis.get(fromTag);
+			Map<Integer, Pair<Double, Double>> nextProb = getNextProb(s
+					.getState().toList(), obs, isFirst);
 			nextWeights.put(fromTag, nextProb);
 
 		}
 		return nextWeights;
 	}
 
-	public Map<Integer, State> updateTrellis(
+	public Map<Integer, Node> updateTrellis(
 			Map<Integer, Map<Integer, Pair<Double, Double>>> nextWeights) {
-		Map<Integer, State> trellisTmp = new HashMap<Integer, State>();
+		Map<Integer, Node> trellisTmp = new HashMap<Integer, Node>();
 		// Set<Integer> tags = nextWeights
 		for (Integer nextTag : tags) {
 			Integer fromTag = findMaxFor(nextTag, nextWeights);
@@ -147,15 +147,15 @@ public class MessedViterbi extends FastDecoder {
 		return num;
 	}
 
-	protected Map<Integer, State> doBeamPruning(Map<Integer, State> trellis) {
-		Map<Integer, State> ret = new HashMap<Integer, State>();
-		Map.Entry<Integer, State> maxElement = Collections.max(
+	protected Map<Integer, Node> doBeamPruning(Map<Integer, Node> trellis) {
+		Map<Integer, Node> ret = new HashMap<Integer, Node>();
+		Map.Entry<Integer, Node> maxElement = Collections.max(
 				trellis.entrySet(),
-				new Comparator<Map.Entry<Integer, State>>() {
+				new Comparator<Map.Entry<Integer, Node>>() {
 
 					@Override
-					public int compare(Entry<Integer, State> o1,
-							Entry<Integer, State> o2) {
+					public int compare(Entry<Integer, Node> o1,
+							Entry<Integer, Node> o2) {
 						return Double.compare(o1.getValue().getWeight(), o2
 								.getValue().getWeight());
 					}

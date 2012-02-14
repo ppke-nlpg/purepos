@@ -31,7 +31,7 @@ public class MSZNY2011Demo implements Runnable {
 
 			trainer = new Trainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
-			tagger = new MorphTagger(model, Math.log(10), 20,
+			tagger = new MorphTagger(model, Math.log(10), Math.log(1000), 20,
 					HumorAnalyzer.getInstance());
 
 			BufferedReader is = new BufferedReader(new InputStreamReader(
