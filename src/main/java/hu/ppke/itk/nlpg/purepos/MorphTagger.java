@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 public class MorphTagger extends Tagger implements ITagger {
 	IMorphologicalAnalyzer analyzer;
@@ -34,7 +33,7 @@ public class MorphTagger extends Tagger implements ITagger {
 	}
 
 	private IToken findBest(IToken t) {
-		Set<IToken> stemmedTokens = analyzer.analyze(t);
+		List<IToken> stemmedTokens = analyzer.analyze(t);
 		if (stemmedTokens == null || stemmedTokens.size() == 0)
 			return new Token(t.getToken(), t.getToken(), t.getTag());
 

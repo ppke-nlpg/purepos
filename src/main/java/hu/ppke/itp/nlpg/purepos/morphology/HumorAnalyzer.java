@@ -3,8 +3,8 @@ package hu.ppke.itp.nlpg.purepos.morphology;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.morphologic.lib.Humor;
 
@@ -14,13 +14,13 @@ import com.morphologic.lib.Humor;
  * @author oroszgy
  * 
  */
-public class HumorAnalyzer implements IMorphologicalAnalyzer {
+public class HumorAnalyzer extends AbstractMorphologicalAnalyzer {
 	public static String LEX_PATH = "/usr/local/share/humor/lex";
 
 	public final int opt = Humor._CASE_SENSITIVE
 	/* | Humor._FILTER_STEM_AND_POS */| Humor._SHOW_STEM_FULL;
 
-	private static HumorAnalyzer instance = null;
+	private static AbstractMorphologicalAnalyzer instance = null;
 
 	protected HumorAnalyzer(String lexPath) {
 		init(lexPath);
@@ -31,7 +31,7 @@ public class HumorAnalyzer implements IMorphologicalAnalyzer {
 	 * 
 	 * @return
 	 */
-	public static HumorAnalyzer getInstance() {
+	public static AbstractMorphologicalAnalyzer getInstance() {
 		return getInstance(LEX_PATH);
 	}
 
@@ -42,7 +42,7 @@ public class HumorAnalyzer implements IMorphologicalAnalyzer {
 	 * @param lexPath
 	 * @return
 	 */
-	public static HumorAnalyzer getInstance(String lexPath) {
+	public static AbstractMorphologicalAnalyzer getInstance(String lexPath) {
 		if (instance == null)
 			instance = new HumorAnalyzer(lexPath);
 		return instance;
@@ -88,9 +88,9 @@ public class HumorAnalyzer implements IMorphologicalAnalyzer {
 	}
 
 	@Override
-	public Set<String> getTags(String word) {
+	public List<String> getTags(String word) {
 		String[] anals = getHumorAnalysises(word);
-		HashSet<String> ret = new HashSet<String>();
+		List<String> ret = new ArrayList<String>();
 		if (anals == null)
 			return null;
 		for (String a : anals) {
@@ -100,19 +100,9 @@ public class HumorAnalyzer implements IMorphologicalAnalyzer {
 	}
 
 	@Override
-	public Set<String> getTags(IToken word) {
-		return getTags(word.getToken());
-	}
-
-	@Override
-	public Set<IToken> analyze(IToken word) {
-		return analyze(word.getToken());
-	}
-
-	@Override
-	public Set<IToken> analyze(String word) {
+	public List<IToken> analyze(String word) {
 		String[] anals = getHumorAnalysises(word);
-		HashSet<IToken> ret = new HashSet<IToken>();
+		List<IToken> ret = new ArrayList<IToken>();
 		if (anals == null)
 			return null;
 		for (String a : anals) {

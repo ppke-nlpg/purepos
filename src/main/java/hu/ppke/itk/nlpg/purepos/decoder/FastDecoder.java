@@ -80,7 +80,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		String specName;
 
 		/* tags to integers */
-		Set<String> strAnals = morphologicalAnalyzer.getTags(word);
+		List<String> strAnals = morphologicalAnalyzer.getTags(word);
 		if (Util.isNotEmpty(strAnals)) {
 			isOOV = false;
 			anals = new ArrayList<Integer>();

@@ -2,15 +2,15 @@ package hu.ppke.itp.nlpg.purepos.morphology;
 
 import hu.ppke.itk.nlpg.docmodel.IToken;
 
-import java.util.Set;
+import java.util.List;
 
 public interface IMorphologicalAnalyzer {
-	public Set<String> getTags(String word);
+	public List<String> getTags(String word);
 
-	public Set<String> getTags(IToken word);
+	public List<String> getTags(IToken word);
 
-	public Set<IToken> analyze(IToken word);
+	public List<IToken> analyze(IToken word);
 
-	public Set<IToken> analyze(String word);
+	public List<IToken> analyze(String word);
 
 }
