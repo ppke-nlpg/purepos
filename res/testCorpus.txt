@@ -1,2 +1,0 @@
-Ejszakai#ejszakai#[MN][NOM] szorakozohelyek#szorakozohely#[FN][PL][NOM] (#(#[PUNCT] belepodijjal#belepodij#[FN][INS] es/vagy#??es/vagy#[KOT] kotelezo#kotelez#[IGE][_OKEP][NOM] fogyasztassal#fogyasztas#[FN][INS] )#)#[PUNCT] .#.#[PUNCT] 1#1#1 
-Sok#sok#[SZN][NOM] tanar#tanar#[FN][NOM] nem#nem#[HA] kepes#kepes#[MN][NOM] felfogni#felfog#[IGE][INF] a#a#[DET] tavaszi#tavaszi#[MN][NOM] vagy#vagy#[KOT] mas#mas#[FN|NM][NOM] szunet#szunet#[FN][NOM] fontossagat#fontossag#[FN][PSe3][ACC] ,#,#[PUNCT] 
