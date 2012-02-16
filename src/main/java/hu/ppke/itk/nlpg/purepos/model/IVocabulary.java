@@ -48,4 +48,8 @@ public interface IVocabulary<W, I extends Comparable<I>> {
 	public Set<I> getTagIndeces();
 
 	// public I getExtremalElement();
+
+	public void storeMaximalElement();
+
+	public I getMaximalIndex();
 }

@@ -112,6 +112,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 					specEmissionNGramModel, standardTokensLexicon,
 					specTokensLexicon, tagVocabulary);
 		}
+		tagVocabulary.storeMaximalElement();
 		logger.debug("tagTransitionLamda:");
 		IProbabilityModel<Integer, Integer> tagTransitionModel = tagNGramModel
 				.createProbabilityModel();

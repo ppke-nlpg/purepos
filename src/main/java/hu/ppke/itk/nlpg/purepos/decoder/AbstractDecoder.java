@@ -22,7 +22,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 
-public abstract class FastDecoder extends Decoder<String, Integer> {
+public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 	protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
@@ -33,7 +33,7 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 	protected Set<Integer> tags;
 	String tab = "\t";
 
-	public FastDecoder(Model<String, Integer> model,
+	public AbstractDecoder(Model<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
 			double sufTheta, int maxGuessedTags) {
 		super(model);
@@ -86,20 +86,13 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 			anals = new ArrayList<Integer>();
 			// seen = SeenType.Seen;
 			for (String tag : strAnals) {
-				// TODO: what should we do with those tags, that are not seen
-				// previously, but returned by the MA? - Hunpos adds it with -99
-				// weight
+
 				if (model.getTagVocabulary().getIndex(tag) != null) {
 					anals.add(model.getTagVocabulary().getIndex(tag));
+				} else {
+					anals.add(model.getTagVocabulary().addElement(tag));
 				}
-				// else {
-				// anals.add(model.getTagVocabulary().addElement(tag));
-				// }
 			}
-			// TODO: quick hack for surviving (match the MA output with the tag
-			// vocabulary!)
-			if (anals.size() == 0)
-				isOOV = true;
 
 		}
 		/* check whether we have lexicon info */
@@ -153,23 +146,16 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 	private Map<Integer, Pair<Double, Double>> getNextForGuessedToken(
 			final List<Integer> prevTags, String lWord, boolean isUpper,
 			List<Integer> anals, boolean isOOV) {
-		// Map<Integer, Double> tagProbs = new HashMap<Integer, Double>();
-		// List<Integer> possibleTags;
-		// logger.trace("guessing for:" + lWord);
 		ISuffixGuesser<String, Integer> guesser = null;
 		if (isUpper) {
-			// logger.trace("using upper guesser");
 			guesser = model.getUpperCaseSuffixGuesser();
 		} else {
-			// logger.trace("using lower guesser");
 			guesser = model.getLowerCaseSuffixGuesser();
 		}
 		Map<Integer, Pair<Double, Double>> ret;
 		if (!isOOV) {
-			// logger.trace("obs is in voc");
 			ret = getNextForGuessedVocToken(prevTags, lWord, anals, guesser);
 		} else {
-			// logger.trace("obs is oov");
 			ret = getNextForGuessedOOVToken(prevTags, lWord, guesser);
 		}
 
@@ -182,25 +168,17 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		Map<Integer, Pair<Double, Double>> tagProbs;
 		Map<Integer, Double> guessedTags = guesser
 				.getTagLogProbabilities(lWord);
-		// for (Integer key : guessedTags.keySet()) {
-		//
-		// logger.trace("\ttag " + key + " " + guessedTags.get(key));
-		// }
 
 		Set<Entry<Integer, Double>> prunedGuessedTags = pruneGuessedTags(guessedTags);
 
 		tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		for (Entry<Integer, Double> guess : prunedGuessedTags) {
 			Double emissionProb = guess.getValue();
-			// logger.debug("trans "
-			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
-			// + guessedVal);
+
 			Integer tag = guess.getKey();
 			Double tagTransProb = model.getTagTransitionModel().getLogProb(
 					prevTags, tag);
-			// logger.debug("emission "
-			// + model.getTagVocabulary().getWord(guess.getKey()) + " "
-			// + guessedVal);
+
 			tagProbs.put(
 					tag,
 					new ImmutablePair<Double, Double>(tagTransProb,
@@ -220,19 +198,23 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 		tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		for (Integer tag : possibleTags) {
 			Double emissionProb = 0.0;
-			if (model.getTagVocabulary().getWord(tag) == null) {
+
+			Double transitionProb;
+			if (tag > model.getTagVocabulary().getMaximalIndex()) {
 				emissionProb = UNKNOWN_TAG_WEIGHT;
+				// TODO: new tags should handled better
+				transitionProb = Double.NEGATIVE_INFINITY;
 			} else {
+				double logAprioriPorb = Math.log(model.getAprioriTagProbs()
+						.get(tag));
 				emissionProb = guesser.getTagLogProbability(lWord, tag)
-						- Math.log(model.getAprioriTagProbs().get(tag));
+						- logAprioriPorb;
+				transitionProb = model.getTagTransitionModel().getLogProb(
+						prevTags, tag);
 			}
-			tagProbs.put(
-					tag,
-					new ImmutablePair<Double, Double>(model
-							.getTagTransitionModel().getLogProb(prevTags, tag),
-							emissionProb
-									- Math.log(model.getAprioriTagProbs().get(
-											tag))));
+
+			tagProbs.put(tag, new ImmutablePair<Double, Double>(transitionProb,
+					emissionProb));
 		}
 		return tagProbs;
 	}
@@ -241,8 +223,9 @@ public abstract class FastDecoder extends Decoder<String, Integer> {
 			final List<Integer> prevTags, List<Integer> anals) {
 		Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 		Integer tag = anals.get(0);
-		tagProbs.put(tag, new ImmutablePair<Double, Double>(model
-				.getTagTransitionModel().getLogProb(prevTags, tag), 0.0));
+		Double tagProb = model.getTagTransitionModel()
+				.getLogProb(prevTags, tag);
+		tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb, 0.0));
 		return tagProbs;
 	}
 

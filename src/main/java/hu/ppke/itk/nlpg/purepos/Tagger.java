@@ -4,8 +4,8 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
-import hu.ppke.itk.nlpg.purepos.decoder.FastDecoder;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Tagger implements ITagger {
-	protected final FastDecoder viterbi;
+	protected final AbstractDecoder decoder;
 	protected final Model<String, Integer> model;
 
 	public Tagger(final Model<String, Integer> model, double logTheta,
@@ -29,16 +29,14 @@ public class Tagger implements ITagger {
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
 			int maxGuessedTags) {
 		this.model = model;
-		this.viterbi = new BeamSearch(model, analyzer, logTheta, sufTheta,
+		this.decoder = new BeamSearch(model, analyzer, logTheta, sufTheta,
 				maxGuessedTags);
 	}
 
 	@Override
 	public ISentence tagSentence(List<String> sentence) {
-		// System.out.println(sentence);
+		List<Integer> tags = decoder.decode(sentence);
 
-		List<Integer> tags = viterbi.decode(sentence);
-		// System.out.println(tags);
 		Iterator<Integer> tagsIt = tags.iterator();
 		Iterator<String> tokensIt = sentence.iterator();
 		List<IToken> tokens = new ArrayList<IToken>();

@@ -6,6 +6,8 @@ import hu.ppke.itk.nlpg.purepos.HunPosTrainer;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itp.nlpg.purepos.morphology.MorphologicalTable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,9 +27,11 @@ public class SimpleTest implements Runnable {
 	protected Tagger tagger;
 	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
+	protected final File morphTable;
 
-	public SimpleTest(String trainingCorpusPath) {
+	public SimpleTest(String trainingCorpusPath, String morphFilePath) {
 		this.trainingCorpusPath = trainingCorpusPath;
+		this.morphTable = new File(morphFilePath);
 	}
 
 	@Override
@@ -37,7 +41,9 @@ public class SimpleTest implements Runnable {
 
 			trainer = new HunPosTrainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
-			tagger = new Tagger(model, Math.log(1000), Math.log(10), 10);
+			IMorphologicalAnalyzer analyzer = new MorphologicalTable(morphTable);
+			tagger = new Tagger(model, analyzer, Math.log(1000), Math.log(10),
+					10);
 
 			// fully compatible with hunpos
 			BufferedReader is = new BufferedReader(new InputStreamReader(
@@ -72,7 +78,7 @@ public class SimpleTest implements Runnable {
 
 	public static void main(String[] args) {
 		// MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
-		SimpleTest demo = new SimpleTest(args[0]);
+		SimpleTest demo = new SimpleTest(args[0], args[1]);
 		demo.run();
 	}
 

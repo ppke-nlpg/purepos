@@ -31,7 +31,7 @@ public class ProbModelTest {
 		val = model.getProb(new ArrayList<Integer>(), 5);
 		Assert.assertEquals(0.25, val);
 		val = model.getProb(new ArrayList<Integer>(), -1);
-		Assert.assertEquals(null, val);
+		Assert.assertEquals(0.0, val);
 
 		// bigrams
 		val = model.getProb(Arrays.asList(2), 3);
@@ -43,7 +43,7 @@ public class ProbModelTest {
 		val = model.getProb(Arrays.asList(3), 6);
 		Assert.assertEquals(1.25, val);
 		val = model.getProb(Arrays.asList(3), -1);
-		Assert.assertEquals(null, val);
+		Assert.assertEquals(0.0, val);
 		// it is going to be an unigram
 		val = model.getProb(Arrays.asList(-1), 3);
 		Assert.assertEquals(0.25, val);
@@ -58,7 +58,7 @@ public class ProbModelTest {
 		val = model.getProb(Arrays.asList(2, 3), 4);
 		Assert.assertEquals(5.25, val);
 		val = model.getProb(Arrays.asList(2, 3), -1);
-		Assert.assertEquals(null, val);
+		Assert.assertEquals(0.0, val);
 
 	}
 
@@ -67,7 +67,7 @@ public class ProbModelTest {
 		DoubleTrieNode<Integer> root = new DoubleTrieNode<Integer>(0);
 		ProbModel<Integer> model = new ProbModel<Integer>(root);
 		Double val = model.getProb(new ArrayList<Integer>(), 1);
-		Assert.assertEquals(val, null);
+		Assert.assertEquals(val, 0.0);
 		Double val2 = model.getWordProbs(new ArrayList<Integer>()).get(1);
 		Assert.assertEquals(val2, null);
 

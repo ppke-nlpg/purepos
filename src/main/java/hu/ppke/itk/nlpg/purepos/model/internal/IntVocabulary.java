@@ -12,4 +12,9 @@ public class IntVocabulary<W> extends Vocabulary<W, Integer> {
 		return -1;
 	}
 
+	@Override
+	public void storeMaximalElement() {
+		maxKnownIndex = vocabulary.size() - 1;
+	}
+
 }

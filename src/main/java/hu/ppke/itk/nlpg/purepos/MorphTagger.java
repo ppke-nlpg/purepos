@@ -26,13 +26,13 @@ public class MorphTagger extends Tagger implements ITagger {
 		ISentence taggedSentence = super.tagSentence(sentence);
 		List<IToken> tmp = new ArrayList<IToken>();
 		for (IToken t : taggedSentence) {
-			IToken bestStemmedToken = findBest(t);
+			IToken bestStemmedToken = findBestLemma(t);
 			tmp.add(bestStemmedToken);
 		}
 		return new Sentence(tmp);
 	}
 
-	private IToken findBest(IToken t) {
+	private IToken findBestLemma(IToken t) {
 		List<IToken> stemmedTokens = analyzer.analyze(t);
 		if (stemmedTokens == null || stemmedTokens.size() == 0)
 			return new Token(t.getToken(), t.getToken(), t.getTag());

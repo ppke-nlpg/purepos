@@ -28,6 +28,7 @@ public abstract class Vocabulary<W, T extends Comparable<T>> implements
 	}
 
 	protected BiMap<W, T> vocabulary = HashBiMap.create();
+	protected T maxKnownIndex;
 
 	@Override
 	public int size() {
@@ -70,6 +71,11 @@ public abstract class Vocabulary<W, T extends Comparable<T>> implements
 	@Override
 	public String toString() {
 		return vocabulary.toString();
+	}
+
+	@Override
+	public T getMaximalIndex() {
+		return maxKnownIndex;
 	}
 
 	protected abstract T addVocabularyElement(W element);

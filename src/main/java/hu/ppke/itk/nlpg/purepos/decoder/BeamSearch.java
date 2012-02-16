@@ -19,7 +19,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
-public class BeamSearch extends FastDecoder {
+public class BeamSearch extends AbstractDecoder {
 	public BeamSearch(Model<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
 			double sufTheta, int maxGuessedTags) {

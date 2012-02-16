@@ -57,12 +57,13 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 		if (node.hasWord(word))
 			return node.getWord(word);
 		else
-			return null;
+			return 0.0;
 	}
 
 	@Override
 	public Double getLogProb(List<Integer> context, W word) {
-		double lp = Math.log(getProb(context, word));
+		Double prob = getProb(context, word);
+		double lp = Math.log(prob);
 		// logger.trace("\tlogprob for " + word + " and context " + context +
 		// ":"
 		// + lp);
