@@ -17,7 +17,7 @@ import java.io.PrintStream;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-public class SimpleTest implements Runnable {
+public class DevelopingTest implements Runnable {
 	{
 		PropertyConfigurator.configure("log4j.properties");
 	}
@@ -29,7 +29,7 @@ public class SimpleTest implements Runnable {
 	protected final String trainingCorpusPath;
 	protected final File morphTable;
 
-	public SimpleTest(String trainingCorpusPath, String morphFilePath) {
+	public DevelopingTest(String trainingCorpusPath, String morphFilePath) {
 		this.trainingCorpusPath = trainingCorpusPath;
 		this.morphTable = new File(morphFilePath);
 	}
@@ -78,7 +78,7 @@ public class SimpleTest implements Runnable {
 
 	public static void main(String[] args) {
 		// MSZNY2011Demo demo = new MSZNY2011Demo("./res/testCorpus.txt");
-		SimpleTest demo = new SimpleTest(args[0], args[1]);
+		DevelopingTest demo = new DevelopingTest(args[0], args[1]);
 		demo.run();
 	}
 

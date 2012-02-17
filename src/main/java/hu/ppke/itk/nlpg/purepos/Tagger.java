@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Tagger implements ITagger {
+	IMorphologicalAnalyzer analyzer;
 	protected final AbstractDecoder decoder;
 	protected final Model<String, Integer> model;
 
@@ -29,6 +30,7 @@ public class Tagger implements ITagger {
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
 			int maxGuessedTags) {
 		this.model = model;
+		this.analyzer = analyzer;
 		this.decoder = new BeamSearch(model, analyzer, logTheta, sufTheta,
 				maxGuessedTags);
 	}

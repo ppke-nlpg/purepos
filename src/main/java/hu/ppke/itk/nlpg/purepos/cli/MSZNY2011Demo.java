@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.cli;
 
+import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
@@ -29,10 +30,11 @@ public class MSZNY2011Demo implements Runnable {
 
 		try {
 
-			trainer = new Trainer(new File(trainingCorpusPath));
+			trainer = new Trainer(new File(trainingCorpusPath),
+					new CorpusReader());
 			model = trainer.trainModel(2, 2, 10, 10);
-			tagger = new MorphTagger(model, Math.log(10), Math.log(1000), 20,
-					HumorAnalyzer.getInstance());
+			tagger = new MorphTagger(model, HumorAnalyzer.getInstance(),
+					Math.log(10), Math.log(1000), 20);
 
 			BufferedReader is = new BufferedReader(new InputStreamReader(
 					System.in));

@@ -13,12 +13,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public class MorphTagger extends Tagger implements ITagger {
-	IMorphologicalAnalyzer analyzer;
 
-	public MorphTagger(Model<String, Integer> model, double logTheta,
-			double sufTheta, int maxGuessedTags, IMorphologicalAnalyzer analyzer) {
+	public MorphTagger(Model<String, Integer> model,
+			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
+			int maxGuessedTags) {
 		super(model, analyzer, logTheta, sufTheta, maxGuessedTags);
-		this.analyzer = analyzer;
+
 	}
 
 	@Override
@@ -33,31 +33,35 @@ public class MorphTagger extends Tagger implements ITagger {
 	}
 
 	private IToken findBestLemma(IToken t) {
-		List<IToken> stemmedTokens = analyzer.analyze(t);
-		if (stemmedTokens == null || stemmedTokens.size() == 0)
+		List<IToken> stems = analyzer.analyze(t);
+		if (stems == null || stems.size() == 0) {
+			// TODO: we need a guesser here
 			return new Token(t.getToken(), t.getToken(), t.getTag());
+		}
 
-		List<IToken> filteredStemmed = new ArrayList<IToken>();
-		for (IToken ct : stemmedTokens) {
+		List<IToken> possibleStems = new ArrayList<IToken>();
+		for (IToken ct : stems) {
 			if (t.getTag().equals(ct.getTag())) {
-				filteredStemmed.add(ct);
+				possibleStems.add(ct);
 			}
 		}
-		if (filteredStemmed == null || filteredStemmed.size() == 0)
-			return t;
+		if (possibleStems == null || possibleStems.size() == 0) {
+			// error handling
+			return new Token(t.getToken(), t.getToken(), t.getTag());
+		}
 
-		IToken best = Collections.max(filteredStemmed,
-				new Comparator<IToken>() {
+		// most frequrent stem
+		IToken best = Collections.max(possibleStems, new Comparator<IToken>() {
 
-					@Override
-					public int compare(IToken o1, IToken o2) {
-						return model.getStandardTokensLexicon().getWordCount(
-								o1.getStem())
-								- model.getStandardTokensLexicon()
-										.getWordCount(o2.getStem());
+			@Override
+			public int compare(IToken o1, IToken o2) {
+				return model.getStandardTokensLexicon().getWordCount(
+						o1.getStem())
+						- model.getStandardTokensLexicon().getWordCount(
+								o2.getStem());
 
-					}
-				});
+			}
+		});
 
 		return best;
 	}

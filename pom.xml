@@ -28,6 +28,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
+					<!-- 				
 					<execution>
 						<id>demo</id>
 						<phase>package</phase>
@@ -47,14 +48,15 @@
 							</archive>
 						</configuration>
 					</execution>
+					-->
 					<execution>
-						<id>simpletest</id>
+						<id>test</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>purepos-simpletest</finalName>
+							<finalName>purepos-test</finalName>
 
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -62,7 +64,7 @@
 							<archive>
 								<manifest>
 									<addClasspath>true</addClasspath>
-									<mainClass>hu.ppke.itk.nlpg.purepos.cli.SimpleTest</mainClass>
+									<mainClass>hu.ppke.itk.nlpg.purepos.cli.EfficiencyTest</mainClass>
 								</manifest>
 							</archive>
 						</configuration>

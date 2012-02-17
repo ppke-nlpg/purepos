@@ -20,7 +20,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
  */
 public class Token extends AbstractDocElement implements IToken {
 
-	private static String SEP = "/";// + '\u001E';
+	private static String SEP = "#";// + '\u001E';
 
 	Token(IToken token) {
 		this(token.getToken(), token.getStem(), token.getTag());

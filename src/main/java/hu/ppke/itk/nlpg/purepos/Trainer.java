@@ -1,6 +1,6 @@
 package hu.ppke.itk.nlpg.purepos;
 
-import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
+import hu.ppke.itk.nlpg.corpusreader.ICorpusReader;
 import hu.ppke.itk.nlpg.corpusreader.ParsingException;
 import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
@@ -13,14 +13,16 @@ import java.io.FileNotFoundException;
 public class Trainer implements ITrainer {
 	protected Statistics stat;
 	protected IDocument document;
+	protected ICorpusReader<IDocument> reader;
 
-	public Trainer(File f) throws FileNotFoundException, ParsingException {
+	public Trainer(File f, ICorpusReader<IDocument> reader)
+			throws FileNotFoundException, ParsingException {
+		this.reader = reader;
 		document = readCorpus(f);
 	}
 
 	protected IDocument readCorpus(File file) throws FileNotFoundException,
 			ParsingException {
-		CorpusReader reader = new CorpusReader();
 		return reader.readFromFile(file);
 
 	}

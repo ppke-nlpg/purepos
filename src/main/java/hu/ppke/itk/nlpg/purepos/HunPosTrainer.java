@@ -10,6 +10,7 @@ import hu.ppke.itk.nlpg.purepos.model.internal.POSTaggerModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+@Deprecated
 public class HunPosTrainer implements ITrainer {
 	protected Statistics stat;
 	protected IDocument document;
