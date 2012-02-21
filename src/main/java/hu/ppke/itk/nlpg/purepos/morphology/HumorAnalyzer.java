@@ -36,6 +36,8 @@ public class HumorAnalyzer extends AbstractMorphologicalAnalyzer {
 	public List<IToken> analyze(String word) {
 		List<IToken> tokens = new ArrayList<IToken>();
 		List<MorphAnalysis> anals = humor.getAnalysises(word);
+		if (anals == null)
+			return null;
 		for (MorphAnalysis a : anals) {
 			tokens.add(new Token(word, a.getStem(), a.getTag()));
 		}
