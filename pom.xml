@@ -101,6 +101,13 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
+		<dependency>
+			<groupId>com.morphologic</groupId>
+			<artifactId>humor</artifactId>
+			<version>0.4</version>
+			<scope>system</scope>
+			<systemPath>/home/oroszgy/workspace/ppke/humor/target/humor-0.4.jar</systemPath>
+		</dependency>
 	</dependencies>
 	<organization>
 		<name>Natural Language Processing Group, Pázmány Péter Catholic Univeristy, Budapest</name>

@@ -1,7 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.morphology;
 
-import hu.ppke.itp.nlpg.purepos.morphology.AbstractMorphologicalAnalyzer;
 import hu.ppke.itp.nlpg.purepos.morphology.HumorAnalyzer;
+import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class HumorAnalyzerTest {
 
-	AbstractMorphologicalAnalyzer humor;
+	IMorphologicalAnalyzer humor;
 
 	@Before
 	public void init() {
