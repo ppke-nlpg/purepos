@@ -2,7 +2,7 @@ package hu.ppke.itk.nlpg.purepos.decoder;
 
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
-import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -5,7 +5,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.model.Model;
-import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Collections;

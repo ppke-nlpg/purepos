@@ -6,8 +6,8 @@ import hu.ppke.itk.nlpg.purepos.HunPosTrainer;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.model.Model;
-import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
-import hu.ppke.itp.nlpg.purepos.morphology.MorphologicalTable;
+import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
 
 import java.io.BufferedReader;
 import java.io.File;

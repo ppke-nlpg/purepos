@@ -1,4 +1,4 @@
-package hu.ppke.itp.nlpg.purepos.morphology;
+package hu.ppke.itk.nlpg.purepos.morphology;
 
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;

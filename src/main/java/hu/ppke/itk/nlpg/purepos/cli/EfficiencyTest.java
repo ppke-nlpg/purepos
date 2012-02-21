@@ -7,10 +7,10 @@ import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
-import hu.ppke.itp.nlpg.purepos.morphology.HumorAnalyzer;
-import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
-import hu.ppke.itp.nlpg.purepos.morphology.MorphologicalTable;
-import hu.ppke.itp.nlpg.purepos.morphology.NullAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
+import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.File;

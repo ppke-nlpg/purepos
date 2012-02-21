@@ -1,7 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.morphology;
 
-import hu.ppke.itp.nlpg.purepos.morphology.HumorAnalyzer;
-import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import org.junit.Assert;
 import org.junit.Before;

@@ -8,8 +8,8 @@ import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.Model;
-import hu.ppke.itp.nlpg.purepos.morphology.IMorphologicalAnalyzer;
-import hu.ppke.itp.nlpg.purepos.morphology.NullAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
+import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
