@@ -25,52 +25,46 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<!-- 				
-					<execution>
-						<id>demo</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>purepos-demo</finalName>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<addClasspath>true</addClasspath>
-									<mainClass>hu.ppke.itk.nlpg.purepos.cli.MSZNY2011Demo</mainClass>
-								</manifest>
-							</archive>
-						</configuration>
-					</execution>
-					-->
-					<execution>
-						<id>test</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>purepos-test</finalName>
-
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<addClasspath>true</addClasspath>
-									<mainClass>hu.ppke.itk.nlpg.purepos.cli.EfficiencyTest</mainClass>
-								</manifest>
-							</archive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>hu.ppke.itk.nlpg.purepos.cli.EfficiencyTest</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.dstovall</groupId>
+                <artifactId>onejar-maven-plugin</artifactId>
+                <version>1.4.4</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <!-- 
+                            <onejarVersion>0.97</onejarVersion>
+                             
+                            <binlibs>
+                                <fileSet>
+                                    <directory>${project.build.directory}/dllextract</directory>
+                                    <includes>
+                                        <include>test.dll</include>
+                                    </includes>
+                                </fileSet>
+                            </binlibs>
+                            
+                            <attachToBuild>true</attachToBuild>-->
+                            
+                            <classifier>onejar</classifier>
+                        </configuration>
+                        <goals>
+                            <goal>one-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -115,5 +109,12 @@
 	</organization>
 	<scm>
 		<url>ssh://zacs.itk.ppke.hu/home/oroszgy/repos/purepos/purepos.git</url>
+		<developerConnection>György orosz</developerConnection>
 	</scm>
+	<pluginRepositories>
+        <pluginRepository>
+            <id>onejar-maven-plugin.googlecode.com</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
