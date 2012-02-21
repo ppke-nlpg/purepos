@@ -50,12 +50,14 @@ public class EfficiencyTest implements Runnable {
 					new CorpusReader());
 			model = trainer.trainModel(2, 2, 10, 10);
 			IMorphologicalAnalyzer analyzer;
-			if (morphTable.exists())
-				analyzer = new MorphologicalTable(morphTable);
-			else if (morphTable.getName().equals("humor"))
+			if (morphTable.getName().equals("humor"))
 				analyzer = HumorAnalyzer.getInstance();
+			else if (morphTable.exists())
+				analyzer = new MorphologicalTable(morphTable);
+
 			else
 				analyzer = new NullAnalyzer();
+			System.err.println("MA: " + analyzer.getClass().getName());
 			tagger = new MorphTagger(model, analyzer, Math.log(1000),
 					Math.log(10), 10);
 

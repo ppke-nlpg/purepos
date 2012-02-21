@@ -79,12 +79,13 @@ public class HumorAnalyzer extends AbstractMorphologicalAnalyzer {
 				anals[i] = anal.substring(0, anal.length()
 						- (suffix.length() - 1));
 			}
+			anal.replaceAll(" ", "_");
 		}
 		return anals;
 	}
 
 	protected String preprocessWord(String word) {
-		return word.replaceAll("(.+)-$", "$1");
+		return word.replaceAll("^(.+?)-+$", "$1");
 	}
 
 	@Override

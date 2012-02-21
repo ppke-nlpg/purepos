@@ -42,7 +42,8 @@ public class MorphTagger extends Tagger implements ITagger {
 		List<IToken> possibleStems = new ArrayList<IToken>();
 		for (IToken ct : stems) {
 			if (t.getTag().equals(ct.getTag())) {
-				possibleStems.add(ct);
+				possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
+						.getTag()));
 			}
 		}
 		if (possibleStems == null || possibleStems.size() == 0) {

@@ -52,11 +52,35 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		// (Brants does this, but how about Halácsy?)
 		// return getTagProbTnT(word, word.length(), tag);
 		return getTagProbHunPOS(word, tag);
+		// return getTagProbRevHunPOS(word, tag);
 	}
 
 	protected double getTagProbHunPOS(String word, T tag) {
 		Double ret = 0.0;
 		for (int i = word.length(); i >= 0; --i) {
+			String suff = word.substring(i);
+			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
+					.get(suff);
+			if (suffixValue != null) {
+				Integer tagSufFreq = suffixValue.getLeft().get(tag);
+				Double relFreq = 0.0;
+				if (tagSufFreq != null) {
+					Double tagSufFreqD = tagSufFreq.doubleValue();
+					relFreq = tagSufFreqD / suffixValue.getRight();
+
+					ret = (ret + (relFreq * theta)) / thetaPlusOne;
+					// logger.debug("accu(" + tag + ") = (prev(" + retP
+					// + ") + relfreq(" + relFreq + ") * theta(" + theta
+					// + "))/thetaPO(" + thetaPlusOne + ") =" + ret);
+				}
+			}
+		}
+		return ret;
+	}
+
+	protected double getTagProbRevHunPOS(String word, T tag) {
+		Double ret = 0.0;
+		for (int i = 0; i <= word.length(); ++i) {
 			String suff = word.substring(i);
 			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
 					.get(suff);

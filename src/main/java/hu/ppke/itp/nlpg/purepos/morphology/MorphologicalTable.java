@@ -59,7 +59,7 @@ public class MorphologicalTable extends AbstractMorphologicalAnalyzer {
 			return null;
 		List<IToken> ret = new ArrayList<IToken>();
 		for (String tag : tags) {
-			ret.add(new Token(word, tag));
+			ret.add(new Token(word, word, tag));
 		}
 		return ret;
 	}
