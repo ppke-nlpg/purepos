@@ -40,7 +40,7 @@ public class BeamSearch extends AbstractDecoder {
 		for (int j = 0; j <= n; ++j) {
 			startTags.add(model.getBOSIndex());
 		}
-		// TODO: is it 2?
+
 		NGram<Integer> startNGram = new NGram<Integer>(startTags,
 				model.getTaggingOrder());
 

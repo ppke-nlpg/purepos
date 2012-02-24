@@ -174,7 +174,6 @@ public class POSTaggerModel extends Model<String, Integer> {
 			ILexicon<String, Integer> standardTokensLexicon, int rareFreq,
 			HashSuffixTree<Integer> lowerSuffixTree,
 			HashSuffixTree<Integer> upperSuffixTree) {
-		// TODO is integers are uppercase? - HunPOS: yes
 		for (Entry<String, HashMap<Integer, Integer>> entry : standardTokensLexicon) {
 
 			String word = entry.getKey();

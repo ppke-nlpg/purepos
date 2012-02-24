@@ -136,6 +136,10 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 				// logger.trace("obs is in voc and has only one possible tag");
 				return getNextForSingleTaggedToken(prevTags, anals);
 			} else {
+				// TEST: correct implementation
+				// return getNextForGuessedToken(prevTags, wordForm, isUpper,
+				// anals, isOOV);
+				// Hunpos implementation
 				return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
 						isOOV);
 
@@ -144,7 +148,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	}
 
 	private Map<Integer, Pair<Double, Double>> getNextForGuessedToken(
-			final List<Integer> prevTags, String lWord, boolean isUpper,
+			final List<Integer> prevTags, String wordForm, boolean isUpper,
 			List<Integer> anals, boolean isOOV) {
 		ISuffixGuesser<String, Integer> guesser = null;
 		if (isUpper) {
@@ -154,9 +158,9 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		}
 		Map<Integer, Pair<Double, Double>> ret;
 		if (!isOOV) {
-			ret = getNextForGuessedVocToken(prevTags, lWord, anals, guesser);
+			ret = getNextForGuessedVocToken(prevTags, wordForm, anals, guesser);
 		} else {
-			ret = getNextForGuessedOOVToken(prevTags, lWord, guesser);
+			ret = getNextForGuessedOOVToken(prevTags, wordForm, guesser);
 		}
 
 		return ret;
