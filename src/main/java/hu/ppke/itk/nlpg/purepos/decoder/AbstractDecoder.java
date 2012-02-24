@@ -136,10 +136,6 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 				// logger.trace("obs is in voc and has only one possible tag");
 				return getNextForSingleTaggedToken(prevTags, anals);
 			} else {
-				// TEST: correct implementation
-				// return getNextForGuessedToken(prevTags, wordForm, isUpper,
-				// anals, isOOV);
-				// Hunpos implementation
 				return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
 						isOOV);
 

@@ -1,5 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
+import hu.ppke.itk.nlpg.purepos.model.internal.HashLemmaTree;
+
 import java.util.Map;
 
 /**
@@ -54,6 +56,12 @@ public abstract class Model<W, T extends Comparable<T>> {
 	// protected double theta;
 
 	protected Map<Integer, Double> aprioriTagProbs;
+
+	protected HashLemmaTree lemmaTree;
+
+	public HashLemmaTree getLemmaTree() {
+		return lemmaTree;
+	}
 
 	/**
 	 * @return the eosTag

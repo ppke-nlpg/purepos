@@ -15,4 +15,8 @@ public class Util {
 	public static <E> boolean isNotEmpty(Collection<E> c) {
 		return c != null && c.size() > 0;
 	}
+
+	public static <E> boolean isEmpty(Collection<E> c) {
+		return !isNotEmpty(c);
+	}
 }

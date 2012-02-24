@@ -6,6 +6,7 @@ import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
+import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.ILexicon;
 import hu.ppke.itk.nlpg.purepos.model.INGramModel;
@@ -49,6 +50,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			IProbabilityModel<Integer, String> specTokensEmissionModel,
 			ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser,
 			ISuffixGuesser<String, Integer> upperCaseSuffixGuesser,
+			HashLemmaTree lemmaTree,
 			ILexicon<String, Integer> standardTokensLexicon,
 			ILexicon<String, Integer> specTokensLexicon,
 			IVocabulary<String, Integer> tagVocabulary,
@@ -62,6 +64,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 		this.specTokensEmissionModel = specTokensEmissionModel;
 		this.lowerCaseSuffixGuesser = lowerCaseSuffixGuesser;
 		this.upperCaseSuffixGuesser = upperCaseSuffixGuesser;
+		this.lemmaTree = lemmaTree;
 
 		this.standardTokensLexicon = standardTokensLexicon;
 		this.specTokensLexicon = specTokensLexicon;
@@ -90,8 +93,9 @@ public class POSTaggerModel extends Model<String, Integer> {
 	 *            this amount
 	 * @return
 	 */
-	public static POSTaggerModel train(IDocument document, int tagOrder,
-			int emissionOrder, int maxSuffixLength, int rareFrequency) {
+	public static Model<String, Integer> train(IDocument document,
+			int tagOrder, int emissionOrder, int maxSuffixLength,
+			int rareFrequency) {
 		stat = new Statistics();
 		// build n-gram models
 		INGramModel<Integer, Integer> tagNGramModel = new NGramModel<Integer>(
@@ -104,13 +108,15 @@ public class POSTaggerModel extends Model<String, Integer> {
 		ILexicon<String, Integer> standardTokensLexicon = new Lexicon<String, Integer>();
 		ILexicon<String, Integer> specTokensLexicon = new Lexicon<String, Integer>();
 		IVocabulary<String, Integer> tagVocabulary = new IntVocabulary<String>();
+
+		HashLemmaTree lemmaTree = new HashLemmaTree(100);
 		for (ISentence sentence : document.getSentences()) {
 			ISentence mySentence = new Sentence(sentence);
 			addSentenceMarkers(mySentence, tagOrder);
 			// adding a sentence to the model
 			addSentence(mySentence, tagNGramModel, stdEmissionNGramModel,
 					specEmissionNGramModel, standardTokensLexicon,
-					specTokensLexicon, tagVocabulary);
+					specTokensLexicon, tagVocabulary, lemmaTree);
 		}
 		tagVocabulary.storeMaximalElement();
 		// logger.debug("tagTransitionLamda:");
@@ -128,6 +134,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 				maxSuffixLength);
 		HashSuffixTree<Integer> upperSuffixTree = new HashSuffixTree<Integer>(
 				maxSuffixLength);
+
 		buildSuffixTrees(standardTokensLexicon, rareFrequency, lowerSuffixTree,
 				upperSuffixTree);
 		Map<Integer, Double> aprioriProbs = tagNGramModel.getWordAprioriProbs();
@@ -156,7 +163,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
 				maxSuffixLength, rareFrequency, tagTransitionModel,
 				standardEmissionModel, specTokensEmissionModel,
-				lowerCaseSuffixGuesser, upperCaseSuffixGuesser,
+				lowerCaseSuffixGuesser, upperCaseSuffixGuesser, lemmaTree,
 				standardTokensLexicon, specTokensLexicon, tagVocabulary,
 				aprioriProbs);
 		return model;
@@ -207,7 +214,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			INGramModel<Integer, String> specEmissionNGramModel,
 			ILexicon<String, Integer> standardTokensLexicon,
 			ILexicon<String, Integer> specTokensLexicon,
-			IVocabulary<String, Integer> tagVocabulary) {
+			IVocabulary<String, Integer> tagVocabulary, HashLemmaTree lemmaTree) {
 		stat.incrementSentenceCount();
 		// sentence is random accessible
 		ISpecTokenMatcher specMatcher = new SpecTokenMatcher();
@@ -232,10 +239,14 @@ public class POSTaggerModel extends Model<String, Integer> {
 
 			String word = sentence.get(i).getToken();
 			Integer tag = tags.get(i);
+			// TEST: creatin a trie from lemmas
+
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
+				SuffixCoder.addToken(word, sentence.get(i).getStem(), tag,
+						lemmaTree, 1);
 				tagNGramModel.addWord(prevTags, tag);
 				// logger.trace(tag);
 				stat.incrementTokenCount();
@@ -246,10 +257,10 @@ public class POSTaggerModel extends Model<String, Integer> {
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
 					specEmissionNGramModel.addWord(context, specName);
-					// TODO: this is how it should have been used:
-					// specTokensLexicon.addToken(specName, tag);
+					// TODO: FIXME: this is how it should have been used:
+					specTokensLexicon.addToken(specName, tag);
 					// this is how it is used in HunPOS
-					specTokensLexicon.addToken(word, tag);
+					// specTokensLexicon.addToken(word, tag);
 				}
 			}
 		}

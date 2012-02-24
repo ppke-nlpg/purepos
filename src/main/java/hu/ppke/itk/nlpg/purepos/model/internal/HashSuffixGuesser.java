@@ -31,9 +31,6 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	HashSuffixGuesser(
 			HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable,
 			Map<T, Double> aprioriProbs, double theta) {
-		// TODO: interesting why Brants and Halácsy assumes that the shortest
-		// suffix has the greatest power instead of the longest suffix. It would
-		// be good to investigate the other case.
 		this.aprioriProbs = aprioriProbs;
 		this.freqTable = freqTable;
 		this.theta = theta;
