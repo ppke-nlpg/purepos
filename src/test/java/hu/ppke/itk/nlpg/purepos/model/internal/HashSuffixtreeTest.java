@@ -11,11 +11,6 @@ import org.junit.Test;
 public class HashSuffixtreeTest {
 
 	@Test
-	public void testThetaAgainstHunPos() {
-		// TODO test theta against hunpos
-	}
-
-	@Test
 	public void testCalculateTheta() {
 		// HashSuffixTree<Integer> t = new HashSuffixTree<Integer>(0);
 		HashMap<Integer, Double> hm = new HashMap<Integer, Double>();

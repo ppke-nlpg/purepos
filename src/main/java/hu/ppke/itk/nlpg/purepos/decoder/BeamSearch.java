@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.log4j.Logger;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -27,7 +25,7 @@ public class BeamSearch extends AbstractDecoder {
 
 	}
 
-	protected Logger logger = Logger.getLogger(this.getClass());
+	// protected Logger logger = Logger.getLogger(this.getClass());
 
 	@Override
 	public List<Integer> decode(List<String> observations) {
@@ -63,11 +61,11 @@ public class BeamSearch extends AbstractDecoder {
 		boolean isFirst = true;
 		for (String obs : observations) {
 
-			logger.trace("Current observation " + obs);
-			logger.trace("\tCurrent states:");
-			for (Entry<NGram<Integer>, Node> entry : beam.entrySet()) {
-				logger.trace("\t\t" + entry.getKey() + " - " + entry.getValue());
-			}
+			// logger.trace("Current observation " + obs);
+			// logger.trace("\tCurrent states:");
+			// for (Entry<NGram<Integer>, Node> entry : beam.entrySet()) {
+			// logger.trace("\t\t" + entry.getKey() + " - " + entry.getValue());
+			// }
 
 			HashMap<NGram<Integer>, Node> newBeam = new HashMap<NGram<Integer>, Node>();
 
@@ -120,10 +118,10 @@ public class BeamSearch extends AbstractDecoder {
 
 			beam = prune(newBeam);
 			isFirst = false;
-			for (Entry<NGram<Integer>, Node> e : beam.entrySet()) {
-				logger.trace("\t\tNode state: " + e.getKey() + " "
-						+ e.getValue());
-			}
+			// for (Entry<NGram<Integer>, Node> e : beam.entrySet()) {
+			// logger.trace("\t\tNode state: " + e.getKey() + " "
+			// + e.getValue());
+			// }
 		}
 		return findMax(beam);
 	}

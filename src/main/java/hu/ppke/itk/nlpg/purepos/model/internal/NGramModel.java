@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.log4j.Logger;
 
 /**
  * N-gram model implementation which uses tries to store these elements.
@@ -29,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class NGramModel<W> extends INGramModel<Integer, W> {
 
-	Logger logger = Logger.getLogger(this.getClass());
+	// Logger logger = Logger.getLogger(this.getClass());
 	protected IntTrieNode<W> root;
 	/*
 	 * lambda1 is at position 1 and so on; lamda0 is seen to be used in Hunpos
@@ -46,7 +45,8 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 
 	@Override
 	public void addWord(List<Integer> context, W word) {
-		// TODO: is there any space for performance improvement? arraylist or
+		// TODO: PERF: is there any space for performance improvement? arraylist
+		// or
 		// linkedlist?
 		ListIterator<Integer> iterator = context.listIterator(context.size());
 		IntTrieNode<W> act = root;
@@ -101,7 +101,8 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 		if (contextFreq == 1 || wordFreq == 1)
 			return -1;
 		else
-			// TODO: what if we would substract 0.5 instead of 1?
+			// TODO: RESEARCH: what if we would substract any value instead of
+			// 1?
 			return (wordFreq - 1) / (contextFreq - 1);
 
 	}
@@ -154,7 +155,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 				lambdas.set(i, lambdas.get(i) / sum);
 			}
 		}
-		logger.debug(lambdas);
+		// logger.debug(lambdas);
 		// logger.debug(lambdas.toString());
 	}
 
@@ -200,7 +201,6 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 		return new ProbModel<W>(root, lambdas);
 	}
 
-	// TODO: test
 	@Override
 	public Map<W, Integer> getWords() {
 		return root.getWords();

@@ -11,7 +11,6 @@ public class SpecTokenMatcher implements ISpecTokenMatcher {
 
 	protected LinkedHashMap<String, Pattern> patterns = new LinkedHashMap<String, Pattern>();
 
-	// TODO: read patterns from file
 	/**
 	 * Initialize patterns from HunPos
 	 */

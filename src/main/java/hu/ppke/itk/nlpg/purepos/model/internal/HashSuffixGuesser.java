@@ -75,6 +75,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		return ret;
 	}
 
+	@Deprecated
 	protected double getTagProbRevHunPOS(String word, T tag) {
 		Double ret = 0.0;
 		for (int i = 0; i <= word.length(); ++i) {
@@ -109,13 +110,12 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	 *            POS tag
 	 * @return
 	 */
-	// TODO: Brants vs. Halácsy: Brants multiply nTagProb with theta
-	// instead of Brants - investigate which works better and why?!
+	@Deprecated
 	protected double getTagProbTnT(String word, int index, T tag) {
-		// TODO: calculate imperatively instead of recursively
+
 		if (index >= 0 && freqTable.containsKey(word.substring(index))) {
 			String suffix = word.substring(index);
-			// TODO: how does automatic conversation happen? (should be float!)
+
 			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
 					.get(suffix);
 			Integer tagSufFreq = suffixValue.getLeft().get(tag);

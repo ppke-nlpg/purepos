@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
-
 /**
  * Model represneting a cropus wiht pos tags.
  * 
@@ -35,7 +33,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class POSTaggerModel extends Model<String, Integer> {
-	protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
+	// protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
 
 	protected static Statistics stat;
 
@@ -102,7 +100,8 @@ public class POSTaggerModel extends Model<String, Integer> {
 				tagOrder + 1);
 		INGramModel<Integer, String> stdEmissionNGramModel = new NGramModel<String>(
 				emissionOrder + 1);
-		// TODO: in HunPOS the order of spec emission model is always 2
+		// TODO: RESEARCH: in HunPOS the order of spec emission model is always
+		// 2
 		INGramModel<Integer, String> specEmissionNGramModel = new NGramModel<String>(
 				2);
 		ILexicon<String, Integer> standardTokensLexicon = new Lexicon<String, Integer>();
@@ -170,11 +169,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 	}
 
 	protected static void addSentenceMarkers(ISentence mySentence, int tagOrder) {
-		// TODO: its interesting that despite of using n-gram models we only add
-		// one BOS
-
 		mySentence.add(0, new Token(BOS_TOKEN, BOS_TAG));
-
 	}
 
 	protected static void buildSuffixTrees(
@@ -186,7 +181,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			String word = entry.getKey();
 			int wordFreq = standardTokensLexicon.getWordCount(word);
 			if (wordFreq <= rareFreq) {
-				// TODO: it is not really efficient
+				// TODO: PERF: it is not really efficient
 				String lowerWord = Util.toLower(word);
 				boolean isLower = !Util.isUpper(word);
 				for (Integer tag : entry.getValue().keySet()) {
@@ -257,9 +252,9 @@ public class POSTaggerModel extends Model<String, Integer> {
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
 					specEmissionNGramModel.addWord(context, specName);
-					// TODO: FIXME: this is how it should have been used:
+					// this is how it should have been used:
 					specTokensLexicon.addToken(specName, tag);
-					// this is how it is used in HunPOS
+					// this is how it is used in HunPOS:
 					// specTokensLexicon.addToken(word, tag);
 				}
 			}

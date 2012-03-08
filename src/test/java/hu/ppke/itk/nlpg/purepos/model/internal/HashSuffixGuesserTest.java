@@ -22,7 +22,7 @@ public class HashSuffixGuesserTest {
 
 	@Test
 	@Ignore
-	// TODO: write new test cases
+	// TODO: TEST: write new test cases
 	public void testGetTagProb() {
 		// Double zProb = guesser.getTagProbTnT("z", 1, 3);
 		// Double zEst = (8.0 / 15.0 + theta * (1.0 / thetaPlusOne))

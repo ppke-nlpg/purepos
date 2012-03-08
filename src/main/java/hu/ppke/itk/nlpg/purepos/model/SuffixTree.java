@@ -2,8 +2,6 @@ package hu.ppke.itk.nlpg.purepos.model;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
  * Implementors should implement a representation of a tree with word suffixes
  * combined with suffox counts.
@@ -19,7 +17,7 @@ public abstract class SuffixTree<W, T> {
 	/*
 	 * maximum length of suffixes which are stored
 	 */
-	protected static Logger logger = Logger.getLogger(SuffixTree.class);
+	// protected static Logger logger = Logger.getLogger(SuffixTree.class);
 	protected final int maxSuffixLength;
 
 	public SuffixTree(int maxSuffixLength) {
@@ -57,9 +55,10 @@ public abstract class SuffixTree<W, T> {
 	 * @return the value of theta
 	 */
 	public static <T> double calculateTheta(Map<T, Double> aprioriProbs) {
-		// TODO: understand how it really works -> weighted average of stddev
+		// TODO: RESEARCH: understand how it really works -> weighted average of
+		// stddev
 		// TODO: it can be moved to some util class as a static method
-		logger.trace("AprioriProbs: " + aprioriProbs);
+		// logger.trace("AprioriProbs: " + aprioriProbs);
 		double pAv = 0;
 		for (Double val : aprioriProbs.values()) {
 			pAv += Math.pow(val, 2);

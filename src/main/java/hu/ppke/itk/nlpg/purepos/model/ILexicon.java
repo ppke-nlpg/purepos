@@ -62,6 +62,4 @@ public interface ILexicon<W, T> extends
 	 */
 	public int getWordCountForTag(W word, T tag);
 
-	// TODO: possible getTagCount for a word is needed
-
 }

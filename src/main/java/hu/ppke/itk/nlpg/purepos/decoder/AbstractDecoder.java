@@ -20,11 +20,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.log4j.Logger;
 
 public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
-	protected Logger logger = Logger.getLogger(getClass());
+	// protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
 	protected IMorphologicalAnalyzer morphologicalAnalyzer;
 	protected double logTheta;
@@ -202,7 +201,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			Double transitionProb;
 			if (tag > model.getTagVocabulary().getMaximalIndex()) {
 				emissionProb = UNKNOWN_TAG_WEIGHT;
-				// TODO: new tags should handled better
+				// TODO: RESEARCH: new tags should handled better
 				transitionProb = Double.NEGATIVE_INFINITY;
 			} else {
 				double logAprioriPorb = Math.log(model.getAprioriTagProbs()
@@ -251,7 +250,6 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		Double eosProb = model.getTagTransitionModel().getLogProb(prevTags,
 				model.getEOSIndex());
 		HashMap<Integer, Pair<Double, Double>> ret = new HashMap<Integer, Pair<Double, Double>>();
-		// TODO: this 1.0 can be anything, it is better to be zero
 		ret.put(model.getEOSIndex(), new ImmutablePair<Double, Double>(eosProb,
 				1.0));
 		return ret;

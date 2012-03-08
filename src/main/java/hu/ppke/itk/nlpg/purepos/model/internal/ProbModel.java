@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
  * Implements a probability model for n-grams. Tags are represented as Integers.
  * 
@@ -18,8 +16,8 @@ import org.apache.log4j.Logger;
  */
 public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 
-	protected Logger logger = Logger.getLogger(getClass());
-	// TODO: use a more memory efficient model for storing these data
+	// protected Logger logger = Logger.getLogger(getClass());
+	// TODO: MEM: use a more memory efficient model for storing these data
 	protected DoubleTrieNode<W> root;
 
 	protected ProbModel(DoubleTrieNode<W> root) {
@@ -71,7 +69,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 	}
 
 	@Override
-	// TODO: implement getProb() using this function
+	// TODO: PERF: implement getProb() using this function
 	public Map<W, Double> getWordProbs(List<Integer> context) {
 		ListIterator<Integer> iterator = context.listIterator(context.size());
 		TrieNode<Integer, Double, W> node = root;
@@ -112,7 +110,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W> {
 					.values()) {
 				DoubleTrieNode<W> ch = createChild((IntTrieNode<W>) child,
 						words, lambdas, 2);
-				// TODO: should I handle the null case?
+				// TODO: FIXED should I handle the null case?
 				newRoot.addChild(ch);
 
 			}

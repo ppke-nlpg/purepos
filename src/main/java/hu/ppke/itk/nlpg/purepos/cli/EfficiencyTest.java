@@ -3,7 +3,6 @@ package hu.ppke.itk.nlpg.purepos.cli;
 import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
-import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 public class EfficiencyTest implements Runnable {
@@ -29,7 +27,7 @@ public class EfficiencyTest implements Runnable {
 
 	}
 
-	protected Logger logger = Logger.getLogger(this.getClass());
+	// protected Logger logger = Logger.getLogger(this.getClass());
 	protected Model<String, Integer> model;
 	protected Tagger tagger;
 	protected ITrainer trainer;
@@ -46,14 +44,15 @@ public class EfficiencyTest implements Runnable {
 		long start = System.currentTimeMillis();
 		long end;
 		try {
-			logger.info("Starting training...");
+			System.err.println("Starting training...");
 
 			trainer = new Trainer(new File(trainingCorpusPath),
 					new CorpusReader());
 			model = trainer.trainModel(2, 2, 10, 10);
 			end = System.currentTimeMillis();
-			logger.info("Done training in " + ((start - end) / 1000.0) + " ms!");
-			logger.info("Starting tagging...");
+			System.err.println("Done training in " + ((start - end) / 1000.0)
+					+ " ms!");
+			System.err.println("Starting tagging...");
 			IMorphologicalAnalyzer analyzer;
 			start = System.currentTimeMillis();
 			if (morphTable.getName().equals("humor"))
@@ -64,8 +63,8 @@ public class EfficiencyTest implements Runnable {
 			else
 				analyzer = new NullAnalyzer();
 			System.err.println("MA: " + analyzer.getClass().getName());
-			tagger = new MorphTagger(model, analyzer, Math.log(1000),
-					Math.log(10), 10);
+			tagger = new Tagger(model, analyzer, Math.log(1000), Math.log(10),
+					10);
 
 			// fully compatible with hunpos
 			BufferedReader is = new BufferedReader(new InputStreamReader(
@@ -87,7 +86,8 @@ public class EfficiencyTest implements Runnable {
 			return;
 		}
 		end = System.currentTimeMillis();
-		logger.info("Done tagging in " + ((start - end) / 1000.0) + " ms!");
+		System.err.println("Done tagging in " + ((start - end) / 1000.0)
+				+ " ms!");
 	}
 
 	public static void main(String[] args) {

@@ -12,12 +12,12 @@ import java.io.File;
  */
 public class ModelHandler {
 	public static void write(Model<?, ?> model, File file) {
-		// TODO: implement
+		// TODO: implement model writing
 	}
 
 	public static Model<?, ?> read(File file) {
 		return null;
-		// TODO: implement
+		// TODO: implement model reading
 	}
 
 }

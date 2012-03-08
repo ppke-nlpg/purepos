@@ -39,7 +39,7 @@ public class MSZNY2011DemoTest {
 	// // ProbModel<String> m1 = (ProbModel<String>) model
 	// // .getStandardEmissionModel();
 	// // System.out.print(m1.getReprString());
-	// // TODO: write meaningful test cases
+	// // write meaningful test cases
 	// // ProbModel<String> m2 = (ProbModel<String>) model
 	// // .getSpecTokensEmissionModel();
 	// // System.out.print(m2.getReprString());

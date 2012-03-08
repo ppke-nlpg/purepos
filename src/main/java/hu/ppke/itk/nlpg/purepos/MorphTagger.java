@@ -58,7 +58,7 @@ public class MorphTagger extends Tagger implements ITagger {
 		// most frequrent stem
 		IToken best = Collections.max(possibleStems, new Comparator<IToken>() {
 			public int count(IToken t) {
-				// FIXME: cheat! - TODO investigate
+				// TODO: RESEARCH: cheat! - investigate
 				int plus = 0;
 				plus = t.getStem() == t.getToken() ? 1 : 0;
 				return model.getStandardTokensLexicon().getWordCount(
