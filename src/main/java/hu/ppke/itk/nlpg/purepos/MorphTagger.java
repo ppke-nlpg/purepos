@@ -35,14 +35,14 @@ public class MorphTagger extends Tagger implements ITagger {
 
 	private IToken findBestLemma(IToken t) {
 		List<IToken> stems = analyzer.analyze(t);
-		List<IToken> possibleStems = new ArrayList<IToken>();
+
 		if (Util.isEmpty(stems)) {
-			// TODO: we need a guesser here
+			// the guesser is used
 			stems = model.getLemmaTree().getLemmas(t.getToken(),
 					model.getTagVocabulary());
 		}
-
 		// matching tags
+		List<IToken> possibleStems = new ArrayList<IToken>();
 		for (IToken ct : stems) {
 			if (t.getTag().equals(ct.getTag())) {
 				possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
@@ -58,7 +58,7 @@ public class MorphTagger extends Tagger implements ITagger {
 		// most frequrent stem
 		IToken best = Collections.max(possibleStems, new Comparator<IToken>() {
 			public int count(IToken t) {
-				// FIXME: cheat!
+				// FIXME: cheat! - TODO investigate
 				int plus = 0;
 				plus = t.getStem() == t.getToken() ? 1 : 0;
 				return model.getStandardTokensLexicon().getWordCount(

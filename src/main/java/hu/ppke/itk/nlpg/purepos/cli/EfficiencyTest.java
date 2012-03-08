@@ -43,13 +43,19 @@ public class EfficiencyTest implements Runnable {
 
 	@Override
 	public void run() {
-
+		long start = System.currentTimeMillis();
+		long end;
 		try {
+			logger.info("Starting training...");
 
 			trainer = new Trainer(new File(trainingCorpusPath),
 					new CorpusReader());
 			model = trainer.trainModel(2, 2, 10, 10);
+			end = System.currentTimeMillis();
+			logger.info("Done training in " + ((start - end) / 1000.0) + " ms!");
+			logger.info("Starting tagging...");
 			IMorphologicalAnalyzer analyzer;
+			start = System.currentTimeMillis();
 			if (morphTable.getName().equals("humor"))
 				analyzer = HumorAnalyzer.getInstance();
 			else if (morphTable.exists())
@@ -80,7 +86,8 @@ public class EfficiencyTest implements Runnable {
 			e.printStackTrace();
 			return;
 		}
-
+		end = System.currentTimeMillis();
+		logger.info("Done tagging in " + ((start - end) / 1000.0) + " ms!");
 	}
 
 	public static void main(String[] args) {

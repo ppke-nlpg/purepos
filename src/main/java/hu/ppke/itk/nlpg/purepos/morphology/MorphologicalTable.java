@@ -1,7 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.morphology;
 
 import hu.ppke.itk.nlpg.docmodel.IToken;
-import hu.ppke.itk.nlpg.docmodel.internal.Token;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,14 +53,15 @@ public class MorphologicalTable extends AbstractMorphologicalAnalyzer {
 
 	@Override
 	public List<IToken> analyze(String word) {
-		List<String> tags = morphTable.get(word);
-		if (tags == null)
-			return null;
-		List<IToken> ret = new ArrayList<IToken>();
-		for (String tag : tags) {
-			ret.add(new Token(word, word, tag));
-		}
-		return ret;
+		// List<String> tags = morphTable.get(word);
+		// if (tags == null)
+		// return null;
+		// List<IToken> ret = new ArrayList<IToken>();
+		// for (String tag : tags) {
+		// ret.add(new Token(word, word, tag));
+		// }
+		// return ret;
+		return null;
 	}
 
 }
