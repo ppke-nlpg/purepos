@@ -2,7 +2,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.INGram;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -17,6 +17,7 @@ import java.util.ListIterator;
 public class NGram<T extends Comparable<T>> implements INGram<T> {
 	protected final int HASH_NUM = 31;
 
+	protected final int hashCode;
 	protected final List<T> tokenList;
 	protected final int compareLength;
 
@@ -30,20 +31,26 @@ public class NGram<T extends Comparable<T>> implements INGram<T> {
 	 *            starting from the end)
 	 */
 	public NGram(List<T> tokens, int compareLength) {
-		this.tokenList = new ArrayList<T>(tokens);
+		this.tokenList = new LinkedList<T>(tokens);
 		this.compareLength = compareLength;
+		this.hashCode = initHashCode();
+	}
+
+	public NGram(List<T> tokens, T newElement, int compareLength) {
+		this.compareLength = compareLength;
+		List<T> tmp = new LinkedList<T>();
+		tmp.add(newElement);
+		this.tokenList = tmp;
+		this.hashCode = initHashCode();
 	}
 
 	public NGram(List<T> tokens) {
-		this.tokenList = new ArrayList<T>(tokens);
-		this.compareLength = -1;
+		this(tokens, -1);
 	}
 
 	@Override
 	public NGram<T> add(T e) {
-		ArrayList<T> tokens = new ArrayList<T>(tokenList);
-		tokens.add(e);
-		return new NGram<T>(tokens, compareLength);
+		return new NGram<T>(tokenList, e, compareLength);
 	}
 
 	@Override
@@ -53,6 +60,10 @@ public class NGram<T extends Comparable<T>> implements INGram<T> {
 
 	@Override
 	public int hashCode() {
+		return hashCode;
+	}
+
+	public int initHashCode() {
 		int sum = 0;
 		ListIterator<T> thisIterator = tokenList.listIterator(tokenList.size());
 		int size;

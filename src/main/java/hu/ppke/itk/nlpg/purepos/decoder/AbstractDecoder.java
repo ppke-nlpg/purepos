@@ -6,6 +6,7 @@ import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
+import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
+	private static final double EOS_EMISSION_PROB = 1.0;
 	// protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
 	protected IMorphologicalAnalyzer morphologicalAnalyzer;
@@ -53,8 +55,8 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	 * @param isFirst
 	 * @return
 	 */
-	protected Map<Integer, Pair<Double, Double>> getNextProb(
-			final List<Integer> prevTags, final String word,
+	protected Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextProbs(
+			final Set<NGram<Integer>> prevTagsSet, final String word,
 			final boolean isFirst) {
 
 		/*
@@ -63,7 +65,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		 */
 		SpecTokenMatcher spectokenMatcher = new SpecTokenMatcher();
 		if (word.equals(Model.getEOSToken())) {
-			return getNextForEOSToken(prevTags);
+			return getNextForEOSToken(prevTagsSet);
 		}
 		String lWord = Util.toLower(word);
 		/* has any uppercased character */
@@ -130,42 +132,46 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		/* if the token is somehow known then use the models */
 		if (seen != SeenType.Unseen) {
 			// logger.trace("obs is seen");
-			return getNextForSeenToken(prevTags, wordProbModel, wordForm, tags);
+			return getNextForSeenToken(prevTagsSet, wordProbModel, wordForm,
+					tags);
 		} else {
 			// logger.trace("obs is unseen");
 			if (Util.isNotEmpty(anals) && anals.size() == 1) {
 				// logger.trace("obs is in voc and has only one possible tag");
-				return getNextForSingleTaggedToken(prevTags, anals);
+				return getNextForSingleTaggedToken(prevTagsSet, anals);
 			} else {
-				return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
-						isOOV);
+				return getNextForGuessedToken(prevTagsSet, lWord, isUpper,
+						anals, isOOV);
 
 			}
 		}
 	}
 
-	private Map<Integer, Pair<Double, Double>> getNextForGuessedToken(
-			final List<Integer> prevTags, String wordForm, boolean isUpper,
-			List<Integer> anals, boolean isOOV) {
+	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForGuessedToken(
+			final Set<NGram<Integer>> prevTagsSet, String wordForm,
+			boolean isUpper, List<Integer> anals, boolean isOOV) {
 		ISuffixGuesser<String, Integer> guesser = null;
 		if (isUpper) {
 			guesser = model.getUpperCaseSuffixGuesser();
 		} else {
 			guesser = model.getLowerCaseSuffixGuesser();
 		}
-		Map<Integer, Pair<Double, Double>> ret;
+		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret;
 		if (!isOOV) {
-			ret = getNextForGuessedVocToken(prevTags, wordForm, anals, guesser);
+			ret = getNextForGuessedVocToken(prevTagsSet, wordForm, anals,
+					guesser);
 		} else {
-			ret = getNextForGuessedOOVToken(prevTags, wordForm, guesser);
+			ret = getNextForGuessedOOVToken(prevTagsSet, wordForm, guesser);
 		}
 
 		return ret;
 	}
 
-	private Map<Integer, Pair<Double, Double>> getNextForGuessedOOVToken(
-			final List<Integer> prevTags, String lWord,
+	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForGuessedOOVToken(
+			final Set<NGram<Integer>> prevTagsSet, String lWord,
 			ISuffixGuesser<String, Integer> guesser) {
+
+		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
 		Map<Integer, Pair<Double, Double>> tagProbs;
 		Map<Integer, Double> guessedTags = guesser
 				.getTagLogProbabilities(lWord);
@@ -173,26 +179,31 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		Set<Entry<Integer, Double>> prunedGuessedTags = pruneGuessedTags(guessedTags);
 
 		tagProbs = new HashMap<Integer, Pair<Double, Double>>();
-		for (Entry<Integer, Double> guess : prunedGuessedTags) {
-			Double emissionProb = guess.getValue();
+		for (NGram<Integer> prevTags : prevTagsSet) {
+			for (Entry<Integer, Double> guess : prunedGuessedTags) {
+				Double emissionProb = guess.getValue();
+				Integer tag = guess.getKey();
 
-			Integer tag = guess.getKey();
-			Double tagTransProb = model.getTagTransitionModel().getLogProb(
-					prevTags, tag);
+				Double tagTransProb = model.getTagTransitionModel().getLogProb(
+						prevTags.toList(), tag);
+				tagProbs.put(
+						tag,
+						new ImmutablePair<Double, Double>(tagTransProb,
+								emissionProb
+										- Math.log(model.getAprioriTagProbs()
+												.get(tag))));
 
-			tagProbs.put(
-					tag,
-					new ImmutablePair<Double, Double>(tagTransProb,
-							emissionProb
-									- Math.log(model.getAprioriTagProbs().get(
-											tag))));
+			}
+			ret.put(prevTags, tagProbs);
 		}
-		return tagProbs;
+		return ret;
 	}
 
-	private Map<Integer, Pair<Double, Double>> getNextForGuessedVocToken(
-			final List<Integer> prevTags, String lWord, List<Integer> anals,
-			ISuffixGuesser<String, Integer> guesser) {
+	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForGuessedVocToken(
+			final Set<NGram<Integer>> prevTagsSet, String lWord,
+			List<Integer> anals, ISuffixGuesser<String, Integer> guesser) {
+
+		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
 		Map<Integer, Pair<Double, Double>> tagProbs;
 		List<Integer> possibleTags;
 		possibleTags = anals;
@@ -205,55 +216,73 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 				emissionProb = UNKNOWN_TAG_WEIGHT;
 				// TODO: RESEARCH: new tags should handled better
 				transitionProb = Double.NEGATIVE_INFINITY;
+				tagProbs.put(tag, new ImmutablePair<Double, Double>(
+						transitionProb, emissionProb));
 			} else {
 				double logAprioriPorb = Math.log(model.getAprioriTagProbs()
 						.get(tag));
 				emissionProb = guesser.getTagLogProbability(lWord, tag)
 						- logAprioriPorb;
-				transitionProb = model.getTagTransitionModel().getLogProb(
-						prevTags, tag);
+				for (NGram<Integer> prevTags : prevTagsSet) {
+					transitionProb = model.getTagTransitionModel().getLogProb(
+							prevTags.toList(), tag);
+					tagProbs.put(tag, new ImmutablePair<Double, Double>(
+							transitionProb, emissionProb));
+				}
 			}
 
-			tagProbs.put(tag, new ImmutablePair<Double, Double>(transitionProb,
-					emissionProb));
 		}
-		return tagProbs;
+		return ret;
 	}
 
-	private Map<Integer, Pair<Double, Double>> getNextForSingleTaggedToken(
-			final List<Integer> prevTags, List<Integer> anals) {
-		Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
-		Integer tag = anals.get(0);
-		Double tagProb = model.getTagTransitionModel()
-				.getLogProb(prevTags, tag);
-		tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb, 0.0));
-		return tagProbs;
+	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForSingleTaggedToken(
+			final Set<NGram<Integer>> prevTagsSet, List<Integer> anals) {
+		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
+		for (NGram<Integer> prevTags : prevTagsSet) {
+			Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
+			Integer tag = anals.get(0);
+			Double tagProb = model.getTagTransitionModel().getLogProb(
+					prevTags.toList(), tag);
+			tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb, 0.0));
+			ret.put(prevTags, tagProbs);
+		}
+		return ret;
 	}
 
-	private Map<Integer, Pair<Double, Double>> getNextForSeenToken(
-			final List<Integer> prevTags,
+	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForSeenToken(
+			final Set<NGram<Integer>> prevTagsSet,
 			IProbabilityModel<Integer, String> wordProbModel, String wordForm,
 			Set<Integer> tags) {
-		Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
-		for (Integer tag : tags) {
-			Double tagProb = model.getTagTransitionModel().getLogProb(prevTags,
-					tag);
-			List<Integer> actTags = new ArrayList<Integer>(prevTags);
-			actTags.add(tag);
-			Double emissionProb = wordProbModel.getLogProb(actTags, wordForm);
-			tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb,
-					emissionProb));
+		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
+		for (NGram<Integer> prevTags : prevTagsSet) {
+			Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
+			for (Integer tag : tags) {
+				Double tagProb = model.getTagTransitionModel().getLogProb(
+						prevTags.toList(), tag);
+				List<Integer> actTags = new ArrayList<Integer>(
+						prevTags.toList());
+				actTags.add(tag);
+				Double emissionProb = wordProbModel.getLogProb(actTags,
+						wordForm);
+				tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb,
+						emissionProb));
+			}
+			ret.put(prevTags, tagProbs);
 		}
-		return tagProbs;
+		return ret;
 	}
 
-	private HashMap<Integer, Pair<Double, Double>> getNextForEOSToken(
-			final List<Integer> prevTags) {
-		Double eosProb = model.getTagTransitionModel().getLogProb(prevTags,
-				model.getEOSIndex());
-		HashMap<Integer, Pair<Double, Double>> ret = new HashMap<Integer, Pair<Double, Double>>();
-		ret.put(model.getEOSIndex(), new ImmutablePair<Double, Double>(eosProb,
-				1.0));
+	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForEOSToken(
+			final Set<NGram<Integer>> prevTagsSet) {
+		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
+		for (NGram<Integer> prevTags : prevTagsSet) {
+			Double eosProb = model.getTagTransitionModel().getLogProb(
+					prevTags.toList(), model.getEOSIndex());
+			Map<Integer, Pair<Double, Double>> r = new HashMap<Integer, Pair<Double, Double>>();
+			r.put(model.getEOSIndex(), new ImmutablePair<Double, Double>(
+					eosProb, EOS_EMISSION_PROB));
+			ret.put(prevTags, r);
+		}
 		return ret;
 	}
 
@@ -293,5 +322,97 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 		return set;
 	}
+
+	// BACKUP
+	// protected Map<Integer, Pair<Double, Double>> getNextProb(
+	// final List<Integer> prevTags, final String word,
+	// final boolean isFirst) {
+	//
+	// /*
+	// * if EOS then the returning probability is the probability of that the
+	// * next tag is EOS_TAG
+	// */
+	// SpecTokenMatcher spectokenMatcher = new SpecTokenMatcher();
+	// if (word.equals(Model.getEOSToken())) {
+	// return getNextForEOSToken(prevTags);
+	// }
+	// String lWord = Util.toLower(word);
+	// /* has any uppercased character */
+	// boolean isUpper = Util.isUpper(lWord, word);
+	// /* possible analysis list from MA */
+	// List<Integer> anals = null;
+	//
+	// boolean isOOV = true;
+	//
+	// SeenType seen = null;
+	// IProbabilityModel<Integer, String> wordProbModel = null;
+	// String wordForm = word;
+	// Set<Integer> tags = null;
+	// boolean isSpec;
+	// String specName;
+	//
+	// /* tags to integers */
+	// List<String> strAnals = morphologicalAnalyzer.getTags(word);
+	// if (Util.isNotEmpty(strAnals)) {
+	// isOOV = false;
+	// anals = new ArrayList<Integer>();
+	// // seen = SeenType.Seen;
+	// for (String tag : strAnals) {
+	//
+	// if (model.getTagVocabulary().getIndex(tag) != null) {
+	// anals.add(model.getTagVocabulary().getIndex(tag));
+	// } else {
+	// anals.add(model.getTagVocabulary().addElement(tag));
+	// }
+	// }
+	//
+	// }
+	// /* check whether we have lexicon info */
+	// tags = model.getStandardTokensLexicon().getTags(word);
+	// if (Util.isNotEmpty(tags)) {
+	// wordProbModel = model.getStandardEmissionModel();
+	// wordForm = word;
+	// seen = SeenType.Seen;
+	// /* whether if it a sentence starting word */
+	// } else {
+	// tags = model.getStandardTokensLexicon().getTags(lWord);
+	// if (isFirst && isUpper && Util.isNotEmpty(tags)) {
+	// wordProbModel = model.getStandardEmissionModel();
+	// wordForm = lWord;
+	// seen = SeenType.LowerCasedSeen;
+	// } else {
+	// specName = spectokenMatcher.matchLexicalElement(word);
+	// isSpec = specName != null;
+	// /* whether if it is a spec token */
+	// if (isSpec) {
+	// wordProbModel = model.getSpecTokensEmissionModel();
+	// tags = model.getSpecTokensLexicon().getTags(specName);
+	// if (Util.isNotEmpty(tags)) {
+	// seen = SeenType.SpecialToken;
+	// } else {
+	// seen = SeenType.Unseen;
+	// }
+	// wordForm = specName;
+	// } else {
+	// seen = SeenType.Unseen;
+	// }
+	// }
+	// }
+	// /* if the token is somehow known then use the models */
+	// if (seen != SeenType.Unseen) {
+	// // logger.trace("obs is seen");
+	// return getNextForSeenToken(prevTags, wordProbModel, wordForm, tags);
+	// } else {
+	// // logger.trace("obs is unseen");
+	// if (Util.isNotEmpty(anals) && anals.size() == 1) {
+	// // logger.trace("obs is in voc and has only one possible tag");
+	// return getNextForSingleTaggedToken(prevTags, anals);
+	// } else {
+	// return getNextForGuessedToken(prevTags, lWord, isUpper, anals,
+	// isOOV);
+	//
+	// }
+	// }
+	// }
 
 }

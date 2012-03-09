@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -72,17 +73,23 @@ public class BeamSearch extends AbstractDecoder {
 			Table<NGram<Integer>, Integer, Double> nextProbs = HashBasedTable
 					.create();
 			Map<NGram<Integer>, Double> obsProbs = new HashMap<NGram<Integer>, Double>();
-			for (NGram<Integer> context : beam.keySet()) {
-				Map<Integer, Pair<Double, Double>> nexts = getNextProb(
-						context.toList(), obs, isFirst);
-				for (Map.Entry<Integer, Pair<Double, Double>> entry : nexts
+			Set<NGram<Integer>> contexts = beam.keySet();
+
+			Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> nexts = getNextProbs(
+					contexts, obs, isFirst);
+
+			for (Map.Entry<NGram<Integer>, Map<Integer, Pair<Double, Double>>> nextsEntry : nexts
+					.entrySet()) {
+				NGram<Integer> context = nextsEntry.getKey();
+				Map<Integer, Pair<Double, Double>> nextContextProbs = nextsEntry
+						.getValue();
+				for (Map.Entry<Integer, Pair<Double, Double>> entry : nextContextProbs
 						.entrySet()) {
 					Integer tag = entry.getKey();
 					nextProbs.put(context, tag, entry.getValue().getLeft());
 					obsProbs.put(context.add(tag), entry.getValue().getRight());
 				}
 			}
-
 			// for (Integer t : nextProbs.keySet()) {
 			// logger.trace("\t\tNext node:" + context + t);
 			// logger.trace("\t\tnode currentprob:"

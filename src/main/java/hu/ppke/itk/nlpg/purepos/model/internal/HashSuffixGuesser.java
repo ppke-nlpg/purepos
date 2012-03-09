@@ -42,8 +42,55 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	}
 
 	@Override
+	public Map<T, Double> getTagLogProbabilities(String word) {
+		HashMap<T, Double> ret = new HashMap<T, Double>();
+		// Set<T> tags = freqTable.get("").getLeft().keySet();
+		// for (T tag : tags) {
+		// ret.put(tag, getTagLogProbability(word, tag));
+		// }
+		// return ret;
+		Map<T, Double> probs = getTagProbabilities(word);
+		for (Map.Entry<T, Double> entry : probs.entrySet()) {
+			ret.put(entry.getKey(), Math.log(entry.getValue()));
+		}
+		return ret;
+	}
+
+	public Map<T, Double> getTagProbabilities(String word) {
+		Map<T, Double> mret = new HashMap<T, Double>();
+		Set<T> tags = freqTable.get("").getLeft().keySet();
+		for (T tag : tags) {
+			mret.put(tag, 0.0);
+		}
+		for (int i = word.length(); i >= 0; --i) {
+			String suff = word.substring(i);
+			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
+					.get(suff);
+			if (suffixValue != null) {
+				Map<T, Integer> tagSufFreqs = suffixValue.getLeft();
+				for (Map.Entry<T, Integer> entry : tagSufFreqs.entrySet()) {
+					T tag = entry.getKey();
+					Double tagSufFreqD = entry.getValue().doubleValue();
+					Double relFreq = 0.0;
+					Double ret = mret.get(tag);
+
+					relFreq = tagSufFreqD / suffixValue.getRight();
+
+					mret.put(tag, (ret + (relFreq * theta)) / thetaPlusOne);
+					// logger.debug("accu(" + tag + ") = (prev(" + retP
+					// + ") + relfreq(" + relFreq + ") * theta(" + theta
+					// + "))/thetaPO(" + thetaPlusOne + ") =" + ret);
+
+				}
+			}
+		}
+		return mret;
+
+	}
+
+	@Override
 	public double getTagLogProbability(String word, T tag) {
-		System.out.println(tag + "\t" + word);
+		// System.out.println(tag + "\t" + word);
 		// if (word == lastWord && tag == lastTag) {
 		// return lastLogProb;
 		// } else {
@@ -81,6 +128,8 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 					// logger.debug("accu(" + tag + ") = (prev(" + retP
 					// + ") + relfreq(" + relFreq + ") * theta(" + theta
 					// + "))/thetaPO(" + thetaPlusOne + ") =" + ret);
+				} else {
+					break;
 				}
 			}
 		}
@@ -147,16 +196,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 			return 0;
 	}
 
-	@Override
-	public Map<T, Double> getTagLogProbabilities(String word) {
-		HashMap<T, Double> ret = new HashMap<T, Double>();
-		Set<T> tags = freqTable.get("").getLeft().keySet();
-		for (T tag : tags) {
-			ret.put(tag, getTagLogProbability(word, tag));
-		}
-		return ret;
-	}
-
+	@Deprecated
 	@Override
 	public T getMaxProbabilityTag(String word) {
 		return getMaxProbabilityTag(getTagLogProbabilities(word));
