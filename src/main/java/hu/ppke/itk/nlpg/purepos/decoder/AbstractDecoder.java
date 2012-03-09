@@ -29,6 +29,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	protected double logTheta;
 	protected double sufTheta;
 	protected int maxGuessedTags;
+
 	protected Set<Integer> tags;
 	String tab = "\t";
 
@@ -55,6 +56,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	protected Map<Integer, Pair<Double, Double>> getNextProb(
 			final List<Integer> prevTags, final String word,
 			final boolean isFirst) {
+
 		/*
 		 * if EOS then the returning probability is the probability of that the
 		 * next tag is EOS_TAG
@@ -65,7 +67,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		}
 		String lWord = Util.toLower(word);
 		/* has any uppercased character */
-		boolean isUpper = Util.isUpper(word);
+		boolean isUpper = Util.isUpper(lWord, word);
 		/* possible analysis list from MA */
 		List<Integer> anals = null;
 

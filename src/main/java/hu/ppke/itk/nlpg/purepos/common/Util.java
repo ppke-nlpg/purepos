@@ -4,6 +4,11 @@ import java.util.Collection;
 
 public class Util {
 
+	public static boolean isUpper(String lword, String word) {
+		return !lword.equals(word);
+	}
+
+	@Deprecated
 	public static boolean isUpper(String word) {
 		return !toLower(word).equals(word);
 	}

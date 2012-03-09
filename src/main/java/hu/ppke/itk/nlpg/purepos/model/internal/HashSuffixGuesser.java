@@ -26,6 +26,10 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	@SuppressWarnings("unused")
 	private final Map<T, Double> aprioriProbs;
 
+	// protected String lastWord = "";
+	// protected T lastTag;
+	// protected double lastLogProb;
+
 	// protected Logger logger = Logger.getLogger(this.getClass());
 
 	HashSuffixGuesser(
@@ -39,8 +43,16 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 	@Override
 	public double getTagLogProbability(String word, T tag) {
+		System.out.println(tag + "\t" + word);
+		// if (word == lastWord && tag == lastTag) {
+		// return lastLogProb;
+		// } else {
 		double logProb = Math.log(getTagProbability(word, tag));
+		// lastWord = word;
+		// lastTag = tag;
+		// lastLogProb = logProb;
 		return logProb;// - Math.log(aprioriProbs.get(tag));
+		// }
 	}
 
 	@Override

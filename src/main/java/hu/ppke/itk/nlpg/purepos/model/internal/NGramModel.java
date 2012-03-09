@@ -45,9 +45,6 @@ public class NGramModel<W> extends INGramModel<Integer, W> {
 
 	@Override
 	public void addWord(List<Integer> context, W word) {
-		// TODO: PERF: is there any space for performance improvement? arraylist
-		// or
-		// linkedlist?
 		ListIterator<Integer> iterator = context.listIterator(context.size());
 		IntTrieNode<W> act = root;
 		int i = 0;

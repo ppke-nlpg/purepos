@@ -181,9 +181,8 @@ public class POSTaggerModel extends Model<String, Integer> {
 			String word = entry.getKey();
 			int wordFreq = standardTokensLexicon.getWordCount(word);
 			if (wordFreq <= rareFreq) {
-				// TODO: PERF: it is not really efficient
 				String lowerWord = Util.toLower(word);
-				boolean isLower = !Util.isUpper(word);
+				boolean isLower = !Util.isUpper(lowerWord, word);
 				for (Integer tag : entry.getValue().keySet()) {
 					int wordTagFreq = standardTokensLexicon.getWordCountForTag(
 							word, tag);
