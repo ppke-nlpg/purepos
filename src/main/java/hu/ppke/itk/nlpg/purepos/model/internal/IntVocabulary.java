@@ -1,6 +1,14 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-public class IntVocabulary<W> extends Vocabulary<W, Integer> {
+import java.io.Serializable;
+
+public class IntVocabulary<W> extends Vocabulary<W, Integer> implements
+		Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2619042965046412670L;
 
 	@Override
 	protected Integer addVocabularyElement(W element) {

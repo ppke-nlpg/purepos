@@ -2,6 +2,7 @@ package hu.ppke.itk.nlpg.purepos.model;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.HashLemmaTree;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -16,7 +17,10 @@ import java.util.Map;
  *            type parameter for representing words
  * 
  */
-public abstract class Model<W, T extends Comparable<T>> {
+public abstract class Model<W, T extends Comparable<T>> implements Serializable {
+
+	private static final long serialVersionUID = -8584335542969140286L;
+
 	protected static final String EOS_TAG = "</S>";
 
 	protected static final String BOS_TAG = "<S>";

@@ -19,6 +19,10 @@ import org.apache.commons.lang3.tuple.MutablePair;
  */
 public class HashSuffixTree<T> extends SuffixTree<String, T> {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3763884096384725634L;
+	/**
 	 * A node is: (suffix, ((tag, tag count), suffix count))
 	 */
 	protected HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> representation = new HashMap<String, MutablePair<HashMap<T, Integer>, Integer>>();

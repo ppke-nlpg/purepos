@@ -2,6 +2,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.INGram;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -14,7 +15,12 @@ import java.util.ListIterator;
  * 
  * @param <T>
  */
-public class NGram<T extends Comparable<T>> implements INGram<T> {
+public class NGram<T extends Comparable<T>> implements INGram<T>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	protected final int HASH_NUM = 31;
 
 	protected final int hashCode;

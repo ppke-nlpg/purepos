@@ -35,6 +35,8 @@ import java.util.Vector;
 public class POSTaggerModel extends Model<String, Integer> {
 	// protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
 
+	private static final long serialVersionUID = 1876248264951522416L;
+
 	protected static Statistics stat;
 
 	public static Statistics getLastStat() {
@@ -233,7 +235,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 
 			String word = sentence.get(i).getToken();
 			Integer tag = tags.get(i);
-			// TEST: creatin a trie from lemmas
+			// TEST: creating a trie from lemmas
 
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);

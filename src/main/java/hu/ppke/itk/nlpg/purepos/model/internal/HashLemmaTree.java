@@ -12,6 +12,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class HashLemmaTree extends HashSuffixTree<Pair<String, Integer>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4680124440505966799L;
+
 	public HashLemmaTree(int maxSuffixLength) {
 		super(maxSuffixLength);
 	}

@@ -1,5 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import java.io.Serializable;
+
 /**
  * TrieNode class which holds Integer values.
  * 
@@ -8,7 +10,13 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
  * @param <W>
  *            word type
  */
-public class IntTrieNode<W> extends TrieNode<Integer, Integer, W> {
+public class IntTrieNode<W> extends TrieNode<Integer, Integer, W> implements
+		Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	IntTrieNode(Integer id) {
 		super(id);
 	}

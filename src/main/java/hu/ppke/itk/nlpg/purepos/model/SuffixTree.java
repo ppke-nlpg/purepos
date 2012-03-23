@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -13,7 +14,11 @@ import java.util.Map;
  * @param <T>
  *            Tag type
  */
-public abstract class SuffixTree<W, T> {
+public abstract class SuffixTree<W, T> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -684858638817631397L;
 	/*
 	 * maximum length of suffixes which are stored
 	 */

@@ -2,6 +2,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -14,7 +15,10 @@ import java.util.Map;
  * 
  * @param <W>
  */
-public class ProbModel<W> implements IProbabilityModel<Integer, W> {
+public class ProbModel<W> implements IProbabilityModel<Integer, W>,
+		Serializable {
+
+	private static final long serialVersionUID = -8143201121322353289L;
 
 	// protected Logger logger = Logger.getLogger(getClass());
 	// TODO: MEM: use a more memory efficient model for storing these data

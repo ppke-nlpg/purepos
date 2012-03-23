@@ -3,6 +3,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 import hu.ppke.itk.nlpg.purepos.model.INGramModel;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +27,13 @@ import org.apache.commons.lang3.tuple.Pair;
  * @param <W>
  *            word type
  */
-public class NGramModel<W> extends INGramModel<Integer, W> {
+public class NGramModel<W> extends INGramModel<Integer, W> implements
+		Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Logger logger = Logger.getLogger(this.getClass());
 	protected IntTrieNode<W> root;
 	/*

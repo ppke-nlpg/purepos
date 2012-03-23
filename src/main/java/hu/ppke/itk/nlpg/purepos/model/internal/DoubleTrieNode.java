@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -10,7 +11,8 @@ import java.util.HashMap;
  * @param <W>
  *            word type
  */
-public class DoubleTrieNode<W> extends TrieNode<Integer, Double, W> {
+public class DoubleTrieNode<W> extends TrieNode<Integer, Double, W> implements
+		Serializable {
 
 	protected DoubleTrieNode(Integer id) {
 		super(id);

@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,11 @@ import java.util.Map;
  * @param <W>
  *            type for words
  */
-public abstract class TrieNode<I, N extends Number, W> {
+public abstract class TrieNode<I, N extends Number, W> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5867650276492059939L;
 	// TODO: PERF: is it worth using berkeleylm, instead of my implementation:
 	// it is
 	// known to be fast and small

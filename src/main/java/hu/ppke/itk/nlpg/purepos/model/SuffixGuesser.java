@@ -1,11 +1,18 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public abstract class SuffixGuesser<W, T> implements ISuffixGuesser<W, T> {
+public abstract class SuffixGuesser<W, T> implements ISuffixGuesser<W, T>,
+		Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -39955036105607248L;
+
 	public static <T> T getMaxProbabilityTag(Map<T, Double> probabilities) {
 		// if (probabilities == null || probabilities.size() == 0)
 		// return null;

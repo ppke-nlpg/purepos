@@ -2,6 +2,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.ILexicon;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -18,7 +19,12 @@ import java.util.Set;
  * @param <T>
  *            Tag type
  */
-public class Lexicon<W, T> implements ILexicon<W, T> {
+public class Lexicon<W, T> implements ILexicon<W, T>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	protected HashMap<W, HashMap<T, Integer>> representation;
 
 	protected int size;
