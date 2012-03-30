@@ -69,6 +69,8 @@ public class EfficiencyTest implements Runnable {
 			// fully compatible with hunpos
 			BufferedReader is = new BufferedReader(new InputStreamReader(
 					System.in));
+			// BufferedReader is = new BufferedReader(new InputStreamReader(
+			// new FileInputStream(new File("../test/eff/test.sent"))));
 			String inputLine;
 			PrintStream ps = new PrintStream(System.out, true);
 			System.err.println(trainer.getStat().getStat(model));

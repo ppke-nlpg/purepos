@@ -102,6 +102,11 @@
 			<scope>system</scope>
 			<systemPath>/home/oroszgy/workspace/ppke/humor/target/humor-0.4.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>args4j</groupId>
+			<artifactId>args4j</artifactId>
+			<version>2.0.16</version>
+		</dependency>
 	</dependencies>
 	<organization>
 		<name>Natural Language Processing Group, Pázmány Péter Catholic Univeristy, Budapest</name>
