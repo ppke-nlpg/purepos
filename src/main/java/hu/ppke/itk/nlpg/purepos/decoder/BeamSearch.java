@@ -61,6 +61,7 @@ public class BeamSearch extends AbstractDecoder {
 		beam.put(start, new Node(start, 0.0, null));
 		boolean isFirst = true;
 		for (String obs : observations) {
+			// System.err.println(obs);
 
 			// logger.trace("Current observation " + obs);
 			// logger.trace("\tCurrent states:");
@@ -152,8 +153,10 @@ public class BeamSearch extends AbstractDecoder {
 
 	private HashMap<NGram<Integer>, Node> prune(
 			final HashMap<NGram<Integer>, Node> beam) {
-		HashMap<NGram<Integer>, Node> ret = new HashMap<NGram<Integer>, Node>();
 
+		HashMap<NGram<Integer>, Node> ret = new HashMap<NGram<Integer>, Node>();
+		// System.err.println(beam);
+		// try {
 		Node maxNode = Collections.max(beam.values());
 		Double max = maxNode.getWeight();
 		for (NGram<Integer> key : beam.keySet()) {
@@ -163,7 +166,12 @@ public class BeamSearch extends AbstractDecoder {
 				ret.put(key, actNode);
 			}
 		}
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// System.err.println(beam);
+		// }
 		return ret;
+
 	}
 
 	private void update(HashMap<NGram<Integer>, Node> beam,

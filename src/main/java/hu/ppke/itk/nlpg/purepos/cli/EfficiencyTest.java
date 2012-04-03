@@ -3,6 +3,7 @@ package hu.ppke.itk.nlpg.purepos.cli;
 import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
+import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.Tagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
@@ -63,8 +64,8 @@ public class EfficiencyTest implements Runnable {
 			else
 				analyzer = new NullAnalyzer();
 			System.err.println("MA: " + analyzer.getClass().getName());
-			tagger = new Tagger(model, analyzer, Math.log(1000), Math.log(10),
-					10);
+			tagger = new MorphTagger(model, analyzer, Math.log(1000),
+					Math.log(10), 10);
 
 			// fully compatible with hunpos
 			BufferedReader is = new BufferedReader(new InputStreamReader(
@@ -74,6 +75,7 @@ public class EfficiencyTest implements Runnable {
 			String inputLine;
 			PrintStream ps = new PrintStream(System.out, true);
 			System.err.println(trainer.getStat().getStat(model));
+
 			while ((inputLine = is.readLine()) != null) {
 				inputLine = inputLine.trim();
 				ISentence s = tagger.tagSentence(inputLine);

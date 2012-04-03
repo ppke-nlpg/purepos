@@ -199,6 +199,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		return ret;
 	}
 
+	// TODO: biztos, hogy jó, ez?
 	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForGuessedVocToken(
 			final Set<NGram<Integer>> prevTagsSet, String lWord,
 			List<Integer> anals, ISuffixGuesser<String, Integer> guesser) {
@@ -218,6 +219,9 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 				transitionProb = Double.NEGATIVE_INFINITY;
 				tagProbs.put(tag, new ImmutablePair<Double, Double>(
 						transitionProb, emissionProb));
+				for (NGram<Integer> prevTags : prevTagsSet) {
+					ret.put(prevTags, tagProbs);
+				}
 			} else {
 				double logAprioriPorb = Math.log(model.getAprioriTagProbs()
 						.get(tag));
@@ -228,6 +232,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 							prevTags.toList(), tag);
 					tagProbs.put(tag, new ImmutablePair<Double, Double>(
 							transitionProb, emissionProb));
+					ret.put(prevTags, tagProbs);
 				}
 			}
 
