@@ -9,6 +9,8 @@ import hu.ppke.itk.nlpg.purepos.model.internal.POSTaggerModel;
 import java.io.File;
 import java.io.IOException;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 public class SerialzatorTest {
@@ -23,6 +25,12 @@ public class SerialzatorTest {
 		Serializator.writeModel(model, new File(pathname));
 		Model<String, Integer> readModel = Serializator.readModel(new File(
 				pathname));
+
 		// TODO: write equality test case, now it is enough that it doesn't fail
+		String modelTagVocab = model.getTagVocabulary().toString();
+		String readTagVocab = readModel.getTagVocabulary().toString();
+		System.out.println(modelTagVocab);
+		System.out.println(readTagVocab);
+		Assert.assertEquals(modelTagVocab.length(), readTagVocab.length());
 	}
 }

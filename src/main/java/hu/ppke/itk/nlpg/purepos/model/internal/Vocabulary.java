@@ -22,12 +22,21 @@ import com.google.common.collect.HashBiMap;
 public abstract class Vocabulary<W, T extends Comparable<T>> implements
 		IVocabulary<W, T> {
 
+	public Vocabulary() {
+		vocabulary = HashBiMap.create();
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5641962775445714546L;
+
 	@Override
 	public Set<T> getTagIndeces() {
 		return vocabulary.values();
 	}
 
-	protected BiMap<W, T> vocabulary = HashBiMap.create();
+	protected BiMap<W, T> vocabulary;
 	protected T maxKnownIndex;
 
 	@Override

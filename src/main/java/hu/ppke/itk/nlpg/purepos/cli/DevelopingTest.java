@@ -4,7 +4,7 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.purepos.HunPosTrainer;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
-import hu.ppke.itk.nlpg.purepos.Tagger;
+import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
@@ -24,7 +24,7 @@ public class DevelopingTest implements Runnable {
 
 	protected Logger logger = Logger.getLogger(this.getClass());
 	protected Model<String, Integer> model;
-	protected Tagger tagger;
+	protected POSTagger tagger;
 	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
 	protected final File morphTable;
@@ -42,7 +42,7 @@ public class DevelopingTest implements Runnable {
 			trainer = new HunPosTrainer(new File(trainingCorpusPath));
 			model = trainer.trainModel(2, 2, 10, 10);
 			IMorphologicalAnalyzer analyzer = new MorphologicalTable(morphTable);
-			tagger = new Tagger(model, analyzer, Math.log(1000), Math.log(10),
+			tagger = new POSTagger(model, analyzer, Math.log(1000), Math.log(10),
 					10);
 
 			// fully compatible with hunpos

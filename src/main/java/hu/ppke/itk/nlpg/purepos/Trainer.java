@@ -9,6 +9,7 @@ import hu.ppke.itk.nlpg.purepos.model.internal.POSTaggerModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Trainer implements ITrainer {
 	protected Statistics stat;
@@ -21,9 +22,20 @@ public class Trainer implements ITrainer {
 		document = readCorpus(f);
 	}
 
+	public Trainer(Scanner sc, ICorpusReader<IDocument> reader)
+			throws ParsingException {
+		this.reader = reader;
+		this.document = readCorpus(sc);
+	}
+
 	protected IDocument readCorpus(File file) throws FileNotFoundException,
 			ParsingException {
 		return reader.readFromFile(file);
+
+	}
+
+	protected IDocument readCorpus(Scanner sc) throws ParsingException {
+		return this.reader.readFromScanner(sc);
 
 	}
 

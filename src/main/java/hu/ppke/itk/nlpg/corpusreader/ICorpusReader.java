@@ -13,6 +13,7 @@ package hu.ppke.itk.nlpg.corpusreader;
 import hu.ppke.itk.nlpg.docmodel.IDocElement;
 
 import java.io.File;
+import java.util.Scanner;
 
 /**
  * Implementors class should be able to build a docmodel from a corpus (part).
@@ -42,5 +43,15 @@ public interface ICorpusReader<C extends IDocElement> {
 	 * @throws ParsingException
 	 */
 	public C readFromFile(File file) throws ParsingException;
+
+	/**
+	 * Reads into the container object
+	 * 
+	 * @param scanner
+	 *            scanner object which is read
+	 * @return
+	 * @throws ParsingException
+	 */
+	public C readFromScanner(Scanner scanner) throws ParsingException;
 
 }
