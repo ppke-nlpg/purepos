@@ -2,6 +2,7 @@ package hu.ppke.itk.nlpg.purepos.model;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
  * @param <W>
  *            Mapped type
  */
-public interface IVocabulary<W, I extends Comparable<I>> {
+public interface IVocabulary<W, I extends Comparable<I>> extends Serializable {
 
 	/**
 	 * Returns the size of the dictionary

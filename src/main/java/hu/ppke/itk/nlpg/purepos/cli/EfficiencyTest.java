@@ -4,7 +4,9 @@ import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
-import hu.ppke.itk.nlpg.purepos.Tagger;
+
+import hu.ppke.itk.nlpg.purepos.POSTagger;
+
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
@@ -30,7 +32,7 @@ public class EfficiencyTest implements Runnable {
 
 	// protected Logger logger = Logger.getLogger(this.getClass());
 	protected Model<String, Integer> model;
-	protected Tagger tagger;
+	protected POSTagger tagger;
 	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
 	protected final File morphTable;
@@ -75,6 +77,7 @@ public class EfficiencyTest implements Runnable {
 			String inputLine;
 			PrintStream ps = new PrintStream(System.out, true);
 			System.err.println(trainer.getStat().getStat(model));
+
 			while ((inputLine = is.readLine()) != null) {
 				inputLine = inputLine.trim();
 				ISentence s = tagger.tagSentence(inputLine);

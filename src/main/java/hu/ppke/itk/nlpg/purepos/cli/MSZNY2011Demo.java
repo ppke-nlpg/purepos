@@ -5,7 +5,7 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
-import hu.ppke.itk.nlpg.purepos.Tagger;
+import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
 public class MSZNY2011Demo implements Runnable {
 
 	protected Model<String, Integer> model;
-	protected Tagger tagger;
+	protected POSTagger tagger;
 	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
 

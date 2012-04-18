@@ -43,6 +43,15 @@ public abstract class AbstractDocElementReader<C extends IDocElement>
 
 	}
 
+	@Override
+	public C readFromScanner(Scanner sc) throws ParsingException {
+		String text;
+
+		text = readScanner(sc);
+		return read(text);
+
+	}
+
 	/**
 	 * Sets the encoding for reading a text file. The default is UTF-8.
 	 * 
@@ -73,12 +82,16 @@ public abstract class AbstractDocElementReader<C extends IDocElement>
 	 */
 	protected String readFile(File file) throws FileNotFoundException {
 		Scanner scanner = new Scanner(file, fileEncoding);
+		return readScanner(scanner);
+
+	}
+
+	protected String readScanner(Scanner scanner) {
 		StringBuffer ret = new StringBuffer();
 		while (scanner.hasNext()) {
 			ret.append(scanner.nextLine() + lineSeparator);
 		}
 		return ret.toString();
-
 	}
 
 }

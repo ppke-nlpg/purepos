@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class MorphTagger extends Tagger implements ITagger {
+public class MorphTagger extends POSTagger implements ITagger {
 
 	public MorphTagger(Model<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
