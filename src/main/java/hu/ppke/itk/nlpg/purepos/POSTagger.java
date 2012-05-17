@@ -70,8 +70,12 @@ public class POSTagger implements ITagger {
 		String line;
 		while (scanner.hasNext()) {
 			line = scanner.nextLine();
-			ISentence s = tagSentence(line);
-			ps.println(sentence2string(s));
+			if (!line.trim().equals("")) {
+				ISentence s = tagSentence(line);
+				ps.println(sentence2string(s));
+			} else {
+				ps.println();
+			}
 		}
 	}
 
