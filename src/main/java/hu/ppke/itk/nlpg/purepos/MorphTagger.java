@@ -28,6 +28,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 		List<IToken> tmp = new ArrayList<IToken>();
 		for (IToken t : taggedSentence) {
 			IToken bestStemmedToken = findBestLemma(t);
+			bestStemmedToken = new Token(bestStemmedToken.getToken(),
+					bestStemmedToken.getStem().replace(" ", "_"),
+					bestStemmedToken.getTag());
 			tmp.add(bestStemmedToken);
 		}
 		return new Sentence(tmp);
