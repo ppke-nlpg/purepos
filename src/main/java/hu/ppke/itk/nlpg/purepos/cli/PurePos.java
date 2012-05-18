@@ -7,7 +7,8 @@ import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.common.Serializator;
-import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
+import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
 import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
@@ -34,8 +35,8 @@ public class PurePos implements Runnable {
 			int rareFreq) throws ParsingException, IOException {
 		Scanner sc = createScanner(encoding, inputPath);
 		Trainer trainer = new Trainer(sc, new CorpusReader());
-		Model<String, Integer> m = trainer.trainModel(tagOrder, emissionOrder,
-				suffLength, rareFreq);
+		RawModel m = trainer.trainModel(tagOrder, emissionOrder, suffLength,
+				rareFreq);
 		System.err.println(trainer.getStat().getStat(m));
 		// TODO: implement incremental training
 		Serializator.writeModel(m, new File(modelPath));
@@ -55,8 +56,8 @@ public class PurePos implements Runnable {
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, String outPath)
 			throws IOException, ClassNotFoundException {
-		Model<String, Integer> model = Serializator.readModel(new File(
-				modelPath));
+		RawModel rawmodel = Serializator.readModel(new File(modelPath));
+		CompiledModel<String, Integer> model = rawmodel.compile();
 		ITagger t;
 		IMorphologicalAnalyzer ma;
 		if (analyzer.equals("none")) {

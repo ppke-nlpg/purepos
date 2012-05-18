@@ -30,10 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class NGramModel<W> extends INGramModel<Integer, W> implements
 		Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5159356902216485765L;
 	// Logger logger = Logger.getLogger(this.getClass());
 	protected IntTrieNode<W> root;
 	/*
@@ -47,6 +44,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> implements
 	public NGramModel(int n) {
 		super(n);
 		root = new IntTrieNode<W>(IntVocabulary.getExtremalElement());
+		lambdas = new ArrayList<Double>();
 	}
 
 	@Override

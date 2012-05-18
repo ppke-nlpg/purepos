@@ -4,11 +4,9 @@ import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.purepos.ITrainer;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
-
 import hu.ppke.itk.nlpg.purepos.POSTagger;
-
 import hu.ppke.itk.nlpg.purepos.Trainer;
-import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
 import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
@@ -31,7 +29,7 @@ public class EfficiencyTest implements Runnable {
 	}
 
 	// protected Logger logger = Logger.getLogger(this.getClass());
-	protected Model<String, Integer> model;
+	protected RawModel model;
 	protected POSTagger tagger;
 	protected ITrainer trainer;
 	protected final String trainingCorpusPath;
@@ -66,7 +64,7 @@ public class EfficiencyTest implements Runnable {
 			else
 				analyzer = new NullAnalyzer();
 			System.err.println("MA: " + analyzer.getClass().getName());
-			tagger = new MorphTagger(model, analyzer, Math.log(1000),
+			tagger = new MorphTagger(model.compile(), analyzer, Math.log(1000),
 					Math.log(10), 10);
 
 			// fully compatible with hunpos

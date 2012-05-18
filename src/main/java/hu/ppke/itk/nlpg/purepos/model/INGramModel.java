@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,11 @@ import java.util.Map;
  * @param <W>
  *            word type
  */
-public abstract class INGramModel<C, W> {
+public abstract class INGramModel<C, W> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7673887850100038882L;
 	protected final int n;
 
 	public INGramModel(int n) {

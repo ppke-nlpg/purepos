@@ -1,6 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.decoder;
 
 import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
@@ -19,7 +20,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
 public class BeamSearch extends AbstractDecoder {
-	public BeamSearch(Model<String, Integer> model,
+	public BeamSearch(CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
 			double sufTheta, int maxGuessedTags) {
 		super(model, morphologicalAnalyzer, logTheta, sufTheta, maxGuessedTags);

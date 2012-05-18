@@ -1,6 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.decoder;
 
-import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 
 /**
  * Viterbi algorithm for decoding.
@@ -15,9 +15,9 @@ public abstract class Decoder<W, T extends Comparable<T>> implements
 	/**
 	 * Model which is learnt by the trainer.
 	 */
-	Model<W, T> model;
+	CompiledModel<W, T> model;
 
-	public Decoder(Model<W, T> model) {
+	public Decoder(CompiledModel<W, T> model) {
 		this.model = model;
 	}
 

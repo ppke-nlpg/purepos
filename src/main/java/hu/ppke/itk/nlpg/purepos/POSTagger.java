@@ -7,7 +7,7 @@ import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
-import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
@@ -23,14 +23,14 @@ import com.google.common.base.Joiner;
 public class POSTagger implements ITagger {
 	IMorphologicalAnalyzer analyzer;
 	protected final AbstractDecoder decoder;
-	protected final Model<String, Integer> model;
+	protected final CompiledModel<String, Integer> model;
 
-	public POSTagger(final Model<String, Integer> model, double logTheta,
-			double sufTheta, int maxGuessedTags) {
+	public POSTagger(final CompiledModel<String, Integer> model,
+			double logTheta, double sufTheta, int maxGuessedTags) {
 		this(model, new NullAnalyzer(), logTheta, sufTheta, maxGuessedTags);
 	}
 
-	public POSTagger(final Model<String, Integer> model,
+	public POSTagger(final CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
 			int maxGuessedTags) {
 		this.model = model;

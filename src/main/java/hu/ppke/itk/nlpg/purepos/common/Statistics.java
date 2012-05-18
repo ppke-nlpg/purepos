@@ -2,7 +2,11 @@ package hu.ppke.itk.nlpg.purepos.common;
 
 import hu.ppke.itk.nlpg.purepos.model.Model;
 
-public class Statistics {
+import java.io.Serializable;
+
+public class Statistics implements Serializable {
+
+	private static final long serialVersionUID = -6981789925628984349L;
 
 	int sentences;
 	int tokens;
@@ -49,5 +53,17 @@ public class Statistics {
 		ret += "theta = " + theta;
 
 		return ret;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Statistics) {
+			Statistics other = (Statistics) o;
+			return other.lGuesserItems == this.lGuesserItems
+					&& other.sentences == this.sentences
+					&& other.theta == this.theta && other.tokens == this.tokens
+					&& other.uGuesserItems == this.uGuesserItems;
+		}
+		return false;
 	}
 }

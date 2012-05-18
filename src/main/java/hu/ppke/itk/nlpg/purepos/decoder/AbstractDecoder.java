@@ -6,6 +6,7 @@ import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
@@ -35,7 +36,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	protected Set<Integer> tags;
 	String tab = "\t";
 
-	public AbstractDecoder(Model<String, Integer> model,
+	public AbstractDecoder(CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer morphologicalAnalyzer, double logTheta,
 			double sufTheta, int maxGuessedTags) {
 		super(model);

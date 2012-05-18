@@ -5,7 +5,6 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
-import hu.ppke.itk.nlpg.purepos.common.Statistics;
 import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.ILexicon;
@@ -25,23 +24,15 @@ import java.util.Map.Entry;
 import java.util.Vector;
 
 /**
- * Model represneting a cropus wiht pos tags.
+ * Model representing a corpus with pos tags.
  * 
  * Containing n-gram based language models, and suffixguessers as well.
  * 
  * @author György Orosz
  * 
  */
-public class POSTaggerModel extends Model<String, Integer> {
+public class POSTaggerModel extends CompiledModel<String, Integer> {
 	// protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
-
-	private static final long serialVersionUID = 1876248264951522416L;
-
-	protected static Statistics stat;
-
-	public static Statistics getLastStat() {
-		return stat;
-	}
 
 	protected POSTaggerModel(int taggingOrder, int emissionOrder,
 			int suffixLength, int rareFrequency,
@@ -55,27 +46,14 @@ public class POSTaggerModel extends Model<String, Integer> {
 			ILexicon<String, Integer> specTokensLexicon,
 			IVocabulary<String, Integer> tagVocabulary,
 			Map<Integer, Double> aprioriTagProbs) {
-		this.taggingOrder = taggingOrder;
-		this.emissionOrder = emissionOrder;
-		this.suffixLength = suffixLength;
-		this.rareFreqency = rareFrequency;
-		this.tagTransitionModel = tagTransitionModel;
-		this.standardEmissionModel = standardEmissionModel;
-		this.specTokensEmissionModel = specTokensEmissionModel;
-		this.lowerCaseSuffixGuesser = lowerCaseSuffixGuesser;
-		this.upperCaseSuffixGuesser = upperCaseSuffixGuesser;
-		this.lemmaTree = lemmaTree;
-
-		this.standardTokensLexicon = standardTokensLexicon;
-		this.specTokensLexicon = specTokensLexicon;
-		this.tagVocabulary = tagVocabulary;
-		this.aprioriTagProbs = aprioriTagProbs;
-
-		// tagVocabulary.addElement(EOS_TAG);
-		// tagVocabulary.addElement(BOS_TAG);
-		eosIndex = tagVocabulary.addElement(EOS_TAG);
-		bosIndex = tagVocabulary.addElement(BOS_TAG);
+		super(taggingOrder, emissionOrder, suffixLength, rareFrequency,
+				tagTransitionModel, standardEmissionModel,
+				specTokensEmissionModel, lowerCaseSuffixGuesser,
+				upperCaseSuffixGuesser, lemmaTree, standardTokensLexicon,
+				specTokensLexicon, tagVocabulary, aprioriTagProbs);
 	}
+
+	private static final long serialVersionUID = 1876248264951522416L;
 
 	/**
 	 * Trains a POS tagger on the givel corpus with the parameters
@@ -96,7 +74,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 	public static Model<String, Integer> train(IDocument document,
 			int tagOrder, int emissionOrder, int maxSuffixLength,
 			int rareFrequency) {
-		stat = new Statistics();
+		// stat = new Statistics();
 		// build n-gram models
 		INGramModel<Integer, Integer> tagNGramModel = new NGramModel<Integer>(
 				tagOrder + 1);
@@ -140,33 +118,18 @@ public class POSTaggerModel extends Model<String, Integer> {
 				upperSuffixTree);
 		Map<Integer, Double> aprioriProbs = tagNGramModel.getWordAprioriProbs();
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
-		stat.setTheta(theta);
+		// stat.setTheta(theta);
 		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser = lowerSuffixTree
 				.createGuesser(theta, aprioriProbs);
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
 				.createGuesser(theta, aprioriProbs);
 
-		// System.out.println(((NGramModel<String>) stdEmissionNGramModel)
-		// .getReprString());
-		// create the model
-		// if (logger.isTraceEnabled()) {
-		// logger.debug("tag vocabulary: " + tagVocabulary);
-		// logger.trace("upper guesser: " + upperCaseSuffixGuesser);
-		// logger.debug("lower guesser: " + lowerCaseSuffixGuesser);
-		// logger.trace("tagTransModel:\n"
-		// + ((ProbModel<Integer>) tagTransitionModel).getReprString());
-		// logger.trace("seenTokModel:\n"
-		// + ((ProbModel<String>) standardEmissionModel).getReprString());
-		// // logger.trace("specTokModel:\n"
-		// + ((ProbModel<String>) specTokensEmissionModel)
-		// .getReprString());
-		// }
-		POSTaggerModel model = new POSTaggerModel(tagOrder, emissionOrder,
-				maxSuffixLength, rareFrequency, tagTransitionModel,
-				standardEmissionModel, specTokensEmissionModel,
-				lowerCaseSuffixGuesser, upperCaseSuffixGuesser, lemmaTree,
-				standardTokensLexicon, specTokensLexicon, tagVocabulary,
-				aprioriProbs);
+		Model<String, Integer> model = new POSTaggerModel(tagOrder,
+				emissionOrder, maxSuffixLength, rareFrequency,
+				tagTransitionModel, standardEmissionModel,
+				specTokensEmissionModel, lowerCaseSuffixGuesser,
+				upperCaseSuffixGuesser, lemmaTree, standardTokensLexicon,
+				specTokensLexicon, tagVocabulary, aprioriProbs);
 		return model;
 	}
 
@@ -191,11 +154,11 @@ public class POSTaggerModel extends Model<String, Integer> {
 					if (isLower) {
 						// logger.trace("Lower: " + word + " " + wordTagFreq);
 						lowerSuffixTree.addWord(lowerWord, tag, wordTagFreq);
-						stat.incrementLowerGuesserItems(wordTagFreq);
+						// stat.incrementLowerGuesserItems(wordTagFreq);
 					} else {
 						// logger.trace("Upper: " + word + " " + wordTagFreq);
 						upperSuffixTree.addWord(lowerWord, tag, wordTagFreq);
-						stat.incrementUpperGuesserItems(wordTagFreq);
+						// stat.incrementUpperGuesserItems(wordTagFreq);
 					}
 
 				}
@@ -211,7 +174,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 			ILexicon<String, Integer> standardTokensLexicon,
 			ILexicon<String, Integer> specTokensLexicon,
 			IVocabulary<String, Integer> tagVocabulary, HashLemmaTree lemmaTree) {
-		stat.incrementSentenceCount();
+		// stat.incrementSentenceCount();
 		// sentence is random accessible
 		ISpecTokenMatcher specMatcher = new SpecTokenMatcher();
 		Vector<Integer> tags = new Vector<Integer>();
@@ -245,7 +208,7 @@ public class POSTaggerModel extends Model<String, Integer> {
 						lemmaTree, 1);
 				tagNGramModel.addWord(prevTags, tag);
 				// logger.trace(tag);
-				stat.incrementTokenCount();
+				// stat.incrementTokenCount();
 				// logger.trace("token is added:" + word);
 				standardTokensLexicon.addToken(word, tag);
 				stdEmissionNGramModel.addWord(context, word);

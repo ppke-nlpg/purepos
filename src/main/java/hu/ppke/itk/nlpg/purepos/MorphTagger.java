@@ -5,7 +5,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.Util;
-import hu.ppke.itk.nlpg.purepos.model.Model;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MorphTagger extends POSTagger implements ITagger {
 
-	public MorphTagger(Model<String, Integer> model,
+	public MorphTagger(CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
 			int maxGuessedTags) {
 		super(model, analyzer, logTheta, sufTheta, maxGuessedTags);
