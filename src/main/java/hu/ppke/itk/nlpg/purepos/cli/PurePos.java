@@ -32,14 +32,24 @@ public class PurePos implements Runnable {
 
 	public static void train(String encoding, String modelPath,
 			String inputPath, int tagOrder, int emissionOrder, int suffLength,
-			int rareFreq) throws ParsingException, IOException {
+			int rareFreq) throws ParsingException, IOException,
+			ClassNotFoundException {
+
 		Scanner sc = createScanner(encoding, inputPath);
 		Trainer trainer = new Trainer(sc, new CorpusReader());
-		RawModel m = trainer.trainModel(tagOrder, emissionOrder, suffLength,
-				rareFreq);
-		System.err.println(trainer.getStat().getStat(m));
-		// TODO: implement incremental training
-		Serializator.writeModel(m, new File(modelPath));
+
+		File modelFile = new File(modelPath);
+		RawModel retModel;
+		if (modelFile.exists()) {
+			retModel = Serializator.readModel(modelFile);
+			retModel = trainer.trainModel(retModel);
+		} else {
+			retModel = trainer.trainModel(tagOrder, emissionOrder, suffLength,
+					rareFreq);
+		}
+		System.err.println(trainer.getStat().getStat(retModel));
+
+		Serializator.writeModel(retModel, new File(modelPath));
 	}
 
 	protected static Scanner createScanner(String encoding, String inputPath)

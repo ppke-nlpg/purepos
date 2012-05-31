@@ -8,6 +8,8 @@ public interface ITrainer {
 	public RawModel trainModel(int tagOrder, int emissionOrder,
 			int maxSuffixLength, int rareFrequency);
 
+	public RawModel trainModel(RawModel model);
+
 	public Statistics getStat();
 
 }

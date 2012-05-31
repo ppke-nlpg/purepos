@@ -55,4 +55,27 @@ public class SerializatorTest {
 
 		Serializator.deleteModel(f);
 	}
+
+	@Test
+	public void incrementalTest() throws ParsingException, IOException,
+			ClassNotFoundException {
+		CorpusReader r = new CorpusReader();
+		IDocument d1 = r
+				.read("Michael#Michael#[FN][NOM] Karaman#??Karaman#[FN][NOM]"
+						+ " ,#,#[PUNCT] az#az#[DET] Ann#Ann#[FN][NOM] 1#1#[SZN][NOM]");
+		IDocument d2 = r
+				.read("Ez#ez#[FN|NM][NOM] volt#van#[IGE][Me3] a#a#[DET]"
+						+ " legszebb#szép#[FF][MN][_FOK][NOM]"
+						+ " estém#este#[FN][PSe1][NOM] .#.#[PUNCT] ");
+		RawModel model = new RawModel(3, 3, 10, 10);
+		model.train(d1);
+		Assert.assertEquals(6, model.getStandardTokensLexicon().size());
+		String pathname = "./_test.model";
+		File f = new File(pathname);
+		Serializator.writeModel(model, f);
+		RawModel readModel = Serializator.readModel(f);
+		model.train(d2);
+		Assert.assertEquals(12, model.getStandardTokensLexicon().size());
+		Serializator.deleteModel(f);
+	}
 }

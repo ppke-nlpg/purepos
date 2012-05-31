@@ -36,7 +36,7 @@ public class CLIOptions {
 	@Option(name = "-h", aliases = "--help", usage = "Print this message.")
 	boolean printHelp = false;
 
-	@Option(name = "-m", aliases = "--model", usage = "Specifies a path to a model file.", metaVar = "<modelfile>", required = true)
+	@Option(name = "-m", aliases = "--model", usage = "Specifies a path to a model file. If an exisiting model is given for training, the tool performs incremental training.", metaVar = "<modelfile>", required = true)
 	String modelName;
 
 	@Option(name = "-i", aliases = "--input-file", usage = "File containg the training set (for tagging) or the text to be tagged (for tagging). The default is the standard input.", metaVar = "<file>")

@@ -52,6 +52,11 @@ public class Trainer implements ITrainer {
 			int maxSuffixLength, int rareFrequency) {
 		RawModel m = new RawModel(tagOrder, emissionOrder, maxSuffixLength,
 				rareFrequency);
+		return trainModel(m);
+	}
+
+	@Override
+	public RawModel trainModel(RawModel m) {
 		m.train(document);
 		stat = m.getLastStat();
 		return m;
