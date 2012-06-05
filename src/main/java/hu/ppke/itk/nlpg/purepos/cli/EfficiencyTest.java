@@ -17,16 +17,14 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import org.apache.log4j.PropertyConfigurator;
-
 public class EfficiencyTest implements Runnable {
-	{
-		String logFile = "log4j.properties";
-		File t = new File(logFile);
-		if (t.exists())
-			PropertyConfigurator.configure(logFile);
-
-	}
+	// {
+	// String logFile = "log4j.properties";
+	// File t = new File(logFile);
+	// if (t.exists())
+	// PropertyConfigurator.configure(logFile);
+	//
+	// }
 
 	// protected Logger logger = Logger.getLogger(this.getClass());
 	protected RawModel model;

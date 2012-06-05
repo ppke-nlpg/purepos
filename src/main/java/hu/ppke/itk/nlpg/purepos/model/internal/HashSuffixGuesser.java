@@ -20,6 +20,10 @@ import org.apache.commons.lang3.tuple.MutablePair;
 // TODO: is it worth to create an implementation which recalculates the
 // probabilities for all the suffixes?
 public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8813089059654810794L;
 	private final HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable;
 	private final double theta;
 	private final double thetaPlusOne;

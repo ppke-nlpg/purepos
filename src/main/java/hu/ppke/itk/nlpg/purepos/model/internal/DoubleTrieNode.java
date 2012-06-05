@@ -14,6 +14,11 @@ import java.util.HashMap;
 public class DoubleTrieNode<W> extends TrieNode<Integer, Double, W> implements
 		Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6085522644927269375L;
+
 	protected DoubleTrieNode(Integer id) {
 		super(id);
 	}

@@ -183,6 +183,7 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 		// creating tag list
 
 		Integer eosTag = tagVocabulary.addElement(getEOSTag());
+		@SuppressWarnings(value = { "unused" })
 		Integer bosTag = tagVocabulary.addElement(getBOSTag());
 		for (int j = sentence.size() - 1; j >= 0; --j) {
 			Integer tagID = tagVocabulary.addElement(sentence.get(j).getTag());

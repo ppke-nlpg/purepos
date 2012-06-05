@@ -17,6 +17,10 @@ public class HashLemmaTree extends HashSuffixTree<Pair<String, Integer>> {
 	 */
 	private static final long serialVersionUID = -4680124440505966799L;
 
+	private HashLemmaTree() {
+		this(10);
+	}
+
 	public HashLemmaTree(int maxSuffixLength) {
 		super(maxSuffixLength);
 	}

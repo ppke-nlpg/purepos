@@ -7,17 +7,16 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
 public class NGramModelTest {
 	NGramModel<Integer> model;
-	Logger logger = Logger.getLogger(this.getClass());
-	{
-		BasicConfigurator.configure();
-	}
+
+	// Logger logger = Logger.getLogger(this.getClass());
+	// {
+	// BasicConfigurator.configure();
+	// }
 
 	@Before
 	public void initialize() {

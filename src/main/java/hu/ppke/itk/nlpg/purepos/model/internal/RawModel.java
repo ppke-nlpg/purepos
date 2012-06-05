@@ -24,6 +24,10 @@ import java.util.Map.Entry;
 import java.util.Vector;
 
 public class RawModel extends Model<String, Integer> {
+	private RawModel() {
+		this(2, 2, 10, 10, new Lexicon<String, Integer>(),
+				new Lexicon<String, Integer>(), new IntVocabulary<String>());
+	}
 
 	private static final long serialVersionUID = 8860320542881381547L;
 

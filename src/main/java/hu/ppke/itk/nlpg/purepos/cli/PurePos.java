@@ -6,7 +6,7 @@ import hu.ppke.itk.nlpg.purepos.ITagger;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
-import hu.ppke.itk.nlpg.purepos.common.Serializator;
+import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
 import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
@@ -16,7 +16,6 @@ import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -32,24 +31,27 @@ public class PurePos implements Runnable {
 
 	public static void train(String encoding, String modelPath,
 			String inputPath, int tagOrder, int emissionOrder, int suffLength,
-			int rareFreq) throws ParsingException, IOException,
-			ClassNotFoundException {
-
+			int rareFreq) throws ParsingException, Exception {
 		Scanner sc = createScanner(encoding, inputPath);
 		Trainer trainer = new Trainer(sc, new CorpusReader());
 
 		File modelFile = new File(modelPath);
 		RawModel retModel;
 		if (modelFile.exists()) {
-			retModel = Serializator.readModel(modelFile);
+			System.err.println("Reading model... ");
+			retModel = SSerializer.readModel(modelFile);
+			System.err.println("Training model... ");
 			retModel = trainer.trainModel(retModel);
 		} else {
+			System.err.println("Training model... ");
 			retModel = trainer.trainModel(tagOrder, emissionOrder, suffLength,
 					rareFreq);
 		}
 		System.err.println(trainer.getStat().getStat(retModel));
 
-		Serializator.writeModel(retModel, new File(modelPath));
+		System.err.println("Writing model... ");
+		SSerializer.writeModel(retModel, new File(modelPath));
+		System.err.println("Done!");
 	}
 
 	protected static Scanner createScanner(String encoding, String inputPath)
@@ -65,8 +67,10 @@ public class PurePos implements Runnable {
 
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, String outPath)
-			throws IOException, ClassNotFoundException {
-		RawModel rawmodel = Serializator.readModel(new File(modelPath));
+			throws Exception {
+		System.err.println("Reading model... ");
+		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
+		System.err.println("Compiling model... ");
 		CompiledModel<String, Integer> model = rawmodel.compile();
 		ITagger t;
 		IMorphologicalAnalyzer ma;
