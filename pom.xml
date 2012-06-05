@@ -4,7 +4,7 @@
 
 	<groupId>hu.ppke.itk.nlpg</groupId>
 	<artifactId>purepos</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>purepos</name>
@@ -25,7 +25,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			            <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -36,6 +36,19 @@
                     </archive>
                 </configuration>
             </plugin>
+	       <plugin>
+	            <artifactId>maven-assembly-plugin</artifactId>
+	            <configuration>
+	                <archive>
+	                    <manifest>
+	                        <mainClass>hu.ppke.itk.nlpg.purepos.cli.PurePos</mainClass>
+	                    </manifest>
+	                </archive>
+	                <descriptorRefs>
+	                    <descriptorRef>jar-with-dependencies</descriptorRef>
+	                </descriptorRefs>
+	            </configuration>
+	        </plugin>
             <plugin>
                 <groupId>org.dstovall</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>
@@ -43,20 +56,6 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <!-- 
-                            <onejarVersion>0.97</onejarVersion>
-                             
-                            <binlibs>
-                                <fileSet>
-                                    <directory>${project.build.directory}/dllextract</directory>
-                                    <includes>
-                                        <include>test.dll</include>
-                                    </includes>
-                                </fileSet>
-                            </binlibs>
-                            
-                            <attachToBuild>true</attachToBuild>-->
-                            
                             <classifier>onejar</classifier>
                         </configuration>
                         <goals>

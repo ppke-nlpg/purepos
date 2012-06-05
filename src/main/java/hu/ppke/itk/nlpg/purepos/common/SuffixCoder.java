@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2012 György Orosz, Attila Novák.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v3
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/
+ * 
+ * This file is part of PurePos.
+ * 
+ * PurePos is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * PurePos is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * Contributors:
+ *     György Orosz - initial API and implementation
+ ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.common;
 
 import hu.ppke.itk.nlpg.docmodel.IToken;
@@ -9,6 +31,12 @@ import hu.ppke.itk.nlpg.purepos.model.internal.Vocabulary;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+/**
+ * Makes a compact representation for POS-tag transformation pairs.
+ * 
+ * @author György Orosz
+ * 
+ */
 public class SuffixCoder {
 
 	private static final int SHIFT = 100;
