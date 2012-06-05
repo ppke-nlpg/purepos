@@ -118,8 +118,7 @@
 		<url>http://nlpg.itk.ppke.hu</url>
 	</organization>
 	<scm>
-		<url>ssh://zacs.itk.ppke.hu/home/oroszgy/repos/purepos/purepos.git</url>
-		<developerConnection>György orosz</developerConnection>
+		<developerConnection>György Orosz</developerConnection>
 	</scm>
 	<pluginRepositories>
         <pluginRepository>
