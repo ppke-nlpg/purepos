@@ -96,6 +96,20 @@ public class PurePos implements Runnable {
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, String outPath)
 			throws Exception {
+		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed);
+		Scanner input = createScanner(encoding, inputPath);
+		PrintStream output;
+		if (outPath == null) {
+			output = new PrintStream(System.out, true, encoding);
+		} else {
+			output = new PrintStream(new File(outPath), encoding);
+		}
+
+		t.tag(input, output);
+	}
+
+	public static ITagger createTagger(String modelPath, String analyzer,
+			boolean noStemming, int maxGuessed) throws Exception {
 		System.err.println("Reading model... ");
 		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
 		System.err.println("Compiling model... ");
@@ -117,15 +131,7 @@ public class PurePos implements Runnable {
 			t = new MorphTagger(model, ma, Math.log(10000), Math.log(10),
 					maxGuessed);
 		}
-		Scanner input = createScanner(encoding, inputPath);
-		PrintStream output;
-		if (outPath == null) {
-			output = new PrintStream(System.out, true, encoding);
-		} else {
-			output = new PrintStream(new File(outPath), encoding);
-		}
-
-		t.tag(input, output);
+		return t;
 	}
 
 	@Override
