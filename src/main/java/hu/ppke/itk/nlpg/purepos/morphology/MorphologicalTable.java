@@ -27,6 +27,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -38,16 +39,16 @@ public class MorphologicalTable extends AbstractMorphologicalAnalyzer {
 	protected File morphFile;
 	protected Map<String, List<String>> morphTable;
 
-	public MorphologicalTable(File file) {
+	public MorphologicalTable(File file) throws FileNotFoundException,
+			IOException {
 		this.morphFile = file;
-		try {
-			morphTable = readFile(morphFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		morphTable = readFile(morphFile);
+
 	}
 
-	protected Map<String, List<String>> readFile(File file) throws IOException {
+	protected Map<String, List<String>> readFile(File file) throws IOException,
+			FileNotFoundException {
 		HashMap<String, List<String>> mTable = new HashMap<String, List<String>>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				new FileInputStream(file)));

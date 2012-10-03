@@ -110,20 +110,37 @@ public class PurePos implements Runnable {
 
 	public static ITagger createTagger(String modelPath, String analyzer,
 			boolean noStemming, int maxGuessed) throws Exception {
+		IMorphologicalAnalyzer ma;
+		if (analyzer.equals("integrated")) {
+			// TODO: set lex files through environment vars
+			try {
+				System.err
+						.println("Trying to use Humor morphological analyzer.");
+				ma = HumorAnalyzer.getInstance();
+			} catch (NoClassDefFoundError e) {
+				System.err
+						.println("Humor java files are not found. Not using any morphological analyzer.");
+				ma = new NullAnalyzer();
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+				System.err.println("Not using any morphological analyzer.");
+				ma = new NullAnalyzer();
+			}
+		} else if (analyzer.equals("none")) {
+			ma = new NullAnalyzer();
+
+		} else {
+			System.err.println("Using morphological table at: " + analyzer
+					+ ".");
+			ma = new MorphologicalTable(new File(analyzer));
+		}
+
 		System.err.println("Reading model... ");
 		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
 		System.err.println("Compiling model... ");
 		CompiledModel<String, Integer> model = rawmodel.compile();
 		ITagger t;
-		IMorphologicalAnalyzer ma;
-		if (analyzer.equals("none")) {
-			ma = new NullAnalyzer();
-		} else if (analyzer.equals("integrated")) {
-			// TODO: set lex files through environment vars
-			ma = HumorAnalyzer.getInstance();
-		} else {
-			ma = new MorphologicalTable(new File(analyzer));
-		}
+
 		if (noStemming) {
 			t = new POSTagger(model, ma, Math.log(10000), Math.log(10),
 					maxGuessed);
@@ -131,7 +148,15 @@ public class PurePos implements Runnable {
 			t = new MorphTagger(model, ma, Math.log(10000), Math.log(10),
 					maxGuessed);
 		}
-		return t;
+		Scanner input = createScanner(encoding, inputPath);
+		PrintStream output;
+		if (outPath == null) {
+			output = new PrintStream(System.out, true, encoding);
+		} else {
+			output = new PrintStream(new File(outPath), encoding);
+		}
+		System.err.println("Processing input... ");
+		t.tag(input, output);
 	}
 
 	@Override
@@ -147,7 +172,8 @@ public class PurePos implements Runnable {
 						options.maxGuessed, options.toFile);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
+			System.exit(-1);
 			// TODO: error handling
 		}
 	}
@@ -166,6 +192,8 @@ public class PurePos implements Runnable {
 					.println("\nUsage: java -jar <purepos.jar> [options...] arguments...");
 			parser.printUsage(System.err);
 			return;
+		} catch (Throwable e) {
+			System.err.println(e);
 		}
 	}
 }

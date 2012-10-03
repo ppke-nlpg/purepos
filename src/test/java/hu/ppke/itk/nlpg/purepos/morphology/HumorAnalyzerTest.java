@@ -26,12 +26,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.morphologic.lib.InitException;
+
 public class HumorAnalyzerTest {
 
 	IMorphologicalAnalyzer humor;
 
 	@Before
-	public void init() {
+	public void init() throws InitException {
 		humor = HumorAnalyzer.getInstance();
 	}
 

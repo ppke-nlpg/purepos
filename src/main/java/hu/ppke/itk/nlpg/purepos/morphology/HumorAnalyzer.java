@@ -28,8 +28,9 @@ import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.morphologic.humor.JHumor;
+import com.morphologic.humor.JAnalHumor;
 import com.morphologic.humor.MorphAnalysis;
+import com.morphologic.lib.InitException;
 
 /***
  * Wrapper class around Humor for only getting POS tags
@@ -39,15 +40,15 @@ import com.morphologic.humor.MorphAnalysis;
  */
 public class HumorAnalyzer extends AbstractMorphologicalAnalyzer {
 	private static IMorphologicalAnalyzer hInstance = null;
-	private final JHumor humor;
+	private final JAnalHumor humor;
 
-	private HumorAnalyzer() {
-		humor = new JHumor();
+	private HumorAnalyzer() throws InitException {
+		humor = new JAnalHumor();
 	}
 
-	private HumorAnalyzer(String lexPath) {
-		humor = new JHumor(lexPath);
-	}
+	// private HumorAnalyzer(String lexPath) {
+	// humor = new JAnalHumor(lexPath);
+	// }
 
 	@Override
 	public List<String> getTags(String word) {
@@ -66,13 +67,9 @@ public class HumorAnalyzer extends AbstractMorphologicalAnalyzer {
 		return tokens;
 	}
 
-	public static IMorphologicalAnalyzer getInstance() {
-		return HumorAnalyzer.getInstance(JHumor.LEX_PATH);
-	}
-
-	public static IMorphologicalAnalyzer getInstance(String lexPath) {
+	public static IMorphologicalAnalyzer getInstance() throws InitException {
 		if (hInstance == null)
-			hInstance = new HumorAnalyzer(lexPath);
+			hInstance = new HumorAnalyzer();
 		return hInstance;
 	}
 
