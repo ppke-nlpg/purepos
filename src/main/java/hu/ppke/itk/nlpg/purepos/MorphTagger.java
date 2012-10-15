@@ -27,6 +27,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
@@ -42,12 +43,13 @@ import java.util.List;
  * 
  */
 public class MorphTagger extends POSTagger implements ITagger {
+	StemFilter stemFilter;
 
 	public MorphTagger(CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
 			int maxGuessedTags) {
 		super(model, analyzer, logTheta, sufTheta, maxGuessedTags);
-
+		stemFilter = Util.crateStemFilter();
 	}
 
 	@Override
@@ -87,23 +89,30 @@ public class MorphTagger extends POSTagger implements ITagger {
 		}
 
 		// most frequrent stem
-		IToken best = Collections.max(possibleStems, new Comparator<IToken>() {
-			public int count(IToken t) {
-				// TODO: RESEARCH: cheat! - investigate
-				int plus = 0;
-				plus = t.getStem() == t.getToken() ? 1 : 0;
-				return model.getStandardTokensLexicon().getWordCount(
-						t.getStem())
-						+ plus;
+		IToken best;
+		if (possibleStems.size() == 1) {
+			best = possibleStems.get(0);
+		} else {
+			if (stemFilter != null) {
+				possibleStems = stemFilter.filterStem(possibleStems);
 			}
+			best = Collections.max(possibleStems, new Comparator<IToken>() {
+				public int count(IToken t) {
+					// TODO: RESEARCH: cheat! - investigate
+					int plus = 0;
+					plus = t.getStem() == t.getToken() ? 1 : 0;
+					return model.getStandardTokensLexicon().getWordCount(
+							t.getStem())
+							+ plus;
+				}
 
-			@Override
-			public int compare(IToken o1, IToken o2) {
-				return count(o1) - count(o2);
+				@Override
+				public int compare(IToken o1, IToken o2) {
+					return count(o1) - count(o2);
 
-			}
-		});
-
+				}
+			});
+		}
 		return best;
 	}
 }

@@ -22,9 +22,16 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.common;
 
+import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collection;
 
 public class Util {
+	protected static final String STEM_FILTER_FILE = "purepos_stems.txt";
+	protected static final String STEM_FILTER_PROPERTY = System
+			.getProperty("stems.path");
 
 	public static boolean isUpper(String lword, String word) {
 		return !lword.equals(word);
@@ -45,5 +52,28 @@ public class Util {
 
 	public static <E> boolean isEmpty(Collection<E> c) {
 		return !isNotEmpty(c);
+	}
+
+	public static StemFilter crateStemFilter() {
+		File localFile = new File(STEM_FILTER_FILE);
+		String path = null;
+		if (STEM_FILTER_PROPERTY != null) {
+			File propFile = new File(STEM_FILTER_PROPERTY);
+			if (propFile.exists()) {
+				path = propFile.getAbsolutePath();
+			}
+		}
+
+		if (localFile.exists()) {
+			path = localFile.getAbsolutePath();
+		}
+
+		if (path == null)
+			return null;
+		try {
+			return new StemFilter(new File(path));
+		} catch (FileNotFoundException e) {
+			return null;
+		}
 	}
 }
