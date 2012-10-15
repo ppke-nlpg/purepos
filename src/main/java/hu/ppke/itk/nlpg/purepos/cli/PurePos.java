@@ -148,15 +148,7 @@ public class PurePos implements Runnable {
 			t = new MorphTagger(model, ma, Math.log(10000), Math.log(10),
 					maxGuessed);
 		}
-		Scanner input = createScanner(encoding, inputPath);
-		PrintStream output;
-		if (outPath == null) {
-			output = new PrintStream(System.out, true, encoding);
-		} else {
-			output = new PrintStream(new File(outPath), encoding);
-		}
-		System.err.println("Processing input... ");
-		t.tag(input, output);
+		return t;
 	}
 
 	@Override

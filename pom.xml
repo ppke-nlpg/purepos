@@ -25,45 +25,45 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>hu.ppke.itk.nlpg.purepos.cli.PurePos</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-	       <plugin>
-	            <artifactId>maven-assembly-plugin</artifactId>
-	            <configuration>
-	                <archive>
-	                    <manifest>
-	                        <mainClass>hu.ppke.itk.nlpg.purepos.cli.PurePos</mainClass>
-	                    </manifest>
-	                </archive>
-	                <descriptorRefs>
-	                    <descriptorRef>jar-with-dependencies</descriptorRef>
-	                </descriptorRefs>
-	            </configuration>
-	        </plugin>
-            <plugin>
-                <groupId>org.dstovall</groupId>
-                <artifactId>onejar-maven-plugin</artifactId>
-                <version>1.4.4</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <classifier>onejar</classifier>
-                        </configuration>
-                        <goals>
-                            <goal>one-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>hu.ppke.itk.nlpg.purepos.cli.PurePos</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>hu.ppke.itk.nlpg.purepos.cli.PurePos</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.dstovall</groupId>
+				<artifactId>onejar-maven-plugin</artifactId>
+				<version>1.4.4</version>
+				<executions>
+					<execution>
+						<configuration>
+							<classifier>onejar</classifier>
+						</configuration>
+						<goals>
+							<goal>one-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -75,43 +75,31 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>1.2</version>
-		</dependency> -->
-		<dependency>
 			<groupId>com.morphologic</groupId>
 			<artifactId>humor</artifactId>
 			<version>0.6.2</version>
 			<scope>system</scope>
 			<systemPath>/home/oroszgy/workspace/act/humor/humor/target/humor-0.6.2.jar</systemPath>
 		</dependency>
- 	 	<dependency>
+		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>r09</version> 
-		</dependency> 
+			<version>r09</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.0.1</version>
-		</dependency> 
-<!-- 	<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
 		</dependency>
-		-->
-	 	<dependency>
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>1.2.16</version> </dependency> -->
+		<dependency>
 			<groupId>args4j</groupId>
 			<artifactId>args4j</artifactId>
 			<version>2.0.16</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>com.esotericsoftware.kryo</groupId>
-			<artifactId>kryo</artifactId>
-			<version>2.10</version>
-		</dependency>-->
+		<!-- <dependency> <groupId>com.esotericsoftware.kryo</groupId> <artifactId>kryo</artifactId> 
+			<version>2.10</version> </dependency> -->
 	</dependencies>
 	<organization>
 		<name>Natural Language Processing Group, Pázmány Péter Catholic Univeristy, Budapest</name>
@@ -121,9 +109,9 @@
 		<developerConnection>György Orosz</developerConnection>
 	</scm>
 	<pluginRepositories>
-        <pluginRepository>
-            <id>onejar-maven-plugin.googlecode.com</id>
-            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-        </pluginRepository>
-    </pluginRepositories>
+		<pluginRepository>
+			<id>onejar-maven-plugin.googlecode.com</id>
+			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
