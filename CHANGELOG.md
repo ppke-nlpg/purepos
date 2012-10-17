@@ -3,7 +3,8 @@ Changelog
 
 1.1
 ~~~
-* Ability to filter stem candidates with a stem list
+* Filters stem candidates with a given stem list
+* Any MA integration is possible, since accpets pretagged input witn -a 'pre'
 
 1.0.2
 ~~~~~

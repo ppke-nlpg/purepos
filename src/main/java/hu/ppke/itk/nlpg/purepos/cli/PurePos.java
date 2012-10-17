@@ -28,6 +28,7 @@ import hu.ppke.itk.nlpg.purepos.ITagger;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
+import hu.ppke.itk.nlpg.purepos.common.TaggedSequenceReader;
 import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
@@ -37,7 +38,6 @@ import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
@@ -51,7 +51,13 @@ import org.kohsuke.args4j.CmdLineParser;
  * 
  */
 public class PurePos implements Runnable {
+	private static final String TAG_OPT = "tag";
+	private static final String TRAIN_OPT = "train";
+	private static final String PRE_MA = "pre";
+	private static final String NONE_MA = "none";
+	private static final String INTEGRATED_MA = "integrated";
 	protected CLIOptions options;
+	protected static TaggedSequenceReader taggedSeqReader;
 
 	public PurePos(CLIOptions options) {
 		this.options = options;
@@ -60,7 +66,7 @@ public class PurePos implements Runnable {
 	public static void train(String encoding, String modelPath,
 			String inputPath, int tagOrder, int emissionOrder, int suffLength,
 			int rareFreq) throws ParsingException, Exception {
-		Scanner sc = createScanner(encoding, inputPath);
+		Scanner sc = createScanner(encoding, inputPath, false, null);
 		Trainer trainer = new Trainer(sc, new CorpusReader());
 
 		File modelFile = new File(modelPath);
@@ -82,36 +88,46 @@ public class PurePos implements Runnable {
 		System.err.println("Done!");
 	}
 
-	protected static Scanner createScanner(String encoding, String inputPath)
-			throws FileNotFoundException {
+	protected static Scanner createScanner(String encoding, String inputPath,
+			boolean taggedSeq, String seps) throws Exception {
 		Scanner sc;
 		if (inputPath != null) {
 			sc = new Scanner(new File(inputPath), encoding);
 		} else {
 			sc = new Scanner(System.in, encoding);
 		}
-		return sc;
+		if (taggedSeq) {
+			String[] parts = seps.split(" ");
+			if (parts.length < 4)
+				throw new Exception("Badly formatted separator parameter!");
+			taggedSeqReader = new TaggedSequenceReader(sc, parts[0], parts[1],
+					parts[2], parts[3]);
+			return taggedSeqReader.getScanner();
+		} else
+			return sc;
 	}
 
 	public static void tag(String encoding, String modelPath, String inputPath,
-			String analyzer, boolean noStemming, int maxGuessed, String outPath)
-			throws Exception {
+			String analyzer, boolean noStemming, int maxGuessed,
+			String outPath, String separators) throws Exception {
+		Scanner input = createScanner(encoding, inputPath,
+				analyzer.equals(PRE_MA), separators);
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed);
-		Scanner input = createScanner(encoding, inputPath);
+
 		PrintStream output;
 		if (outPath == null) {
 			output = new PrintStream(System.out, true, encoding);
 		} else {
 			output = new PrintStream(new File(outPath), encoding);
 		}
-
+		System.err.println("Tagging:");
 		t.tag(input, output);
 	}
 
 	public static ITagger createTagger(String modelPath, String analyzer,
 			boolean noStemming, int maxGuessed) throws Exception {
 		IMorphologicalAnalyzer ma;
-		if (analyzer.equals("integrated")) {
+		if (analyzer.equals(INTEGRATED_MA)) {
 			// TODO: set lex files through environment vars
 			try {
 				System.err
@@ -126,9 +142,11 @@ public class PurePos implements Runnable {
 				System.err.println("Not using any morphological analyzer.");
 				ma = new NullAnalyzer();
 			}
-		} else if (analyzer.equals("none")) {
+		} else if (analyzer.equals(NONE_MA)) {
 			ma = new NullAnalyzer();
 
+		} else if (analyzer.equals(PRE_MA)) {
+			ma = taggedSeqReader.getMorphologicalAnalyzer();
 		} else {
 			System.err.println("Using morphological table at: " + analyzer
 					+ ".");
@@ -154,14 +172,14 @@ public class PurePos implements Runnable {
 	@Override
 	public void run() {
 		try {
-			if (options.command.equals("train")) {
+			if (options.command.equals(TRAIN_OPT)) {
 				train(options.encoding, options.modelName, options.fromFile,
 						options.tagOrder, options.emissionOrder,
 						options.suffixLength, options.rareFreq);
-			} else if (options.command.equals("tag")) {
+			} else if (options.command.equals(TAG_OPT)) {
 				tag(options.encoding, options.modelName, options.fromFile,
 						options.morphology, options.noStemming,
-						options.maxGuessed, options.toFile);
+						options.maxGuessed, options.toFile, options.separator);
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
