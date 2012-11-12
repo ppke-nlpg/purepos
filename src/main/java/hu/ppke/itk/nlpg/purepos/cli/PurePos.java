@@ -98,7 +98,7 @@ public class PurePos implements Runnable {
 		}
 		if (taggedSeq) {
 			String[] parts = seps.split(" ");
-			if (parts.length < 4)
+			if (parts == null || parts.length < 4)
 				throw new Exception("Badly formatted separator parameter!");
 			taggedSeqReader = new TaggedSequenceReader(sc, parts[0], parts[1],
 					parts[2], parts[3]);
@@ -183,6 +183,7 @@ public class PurePos implements Runnable {
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+
 			System.exit(-1);
 			// TODO: error handling
 		}
@@ -204,6 +205,7 @@ public class PurePos implements Runnable {
 			return;
 		} catch (Throwable e) {
 			System.err.println(e);
+			parser.printUsage(System.err);
 		}
 	}
 }

@@ -1,6 +1,8 @@
 Changelog
 ---------
 
+* Default options for pretagged analyzer are added. 
+
 1.1
 ~~~
 * Filters stem candidates with a given stem list

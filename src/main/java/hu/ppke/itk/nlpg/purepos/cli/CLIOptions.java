@@ -48,7 +48,7 @@ public class CLIOptions {
 	@Option(name = "-a", aliases = "--analyzer", usage = "Set the morphological analyzer. <analyzer> can be 'none', 'integrated', 'pre' or a file : <morphologicalTableFile>. Using the 'pre' analyzer assumes a preannotated input. The default is to use the integrated one. Tagging only option. ", metaVar = "<analyzer>")
 	String morphology = "integrated"; // integrated, none, morphtable
 	@Option(name = "-d", aliases = "--separator", usage = "Separator characters and tag starting character for annotated input (divided by spaces). Eg.: \"{{ || }} [\"", metaVar = "<characters>")
-	String separator;
+	String separator = "{{ || }} [";
 	@Option(name = "-p", aliases = "--only-pos-tags", usage = "Do not perform stemming, output only POS tags. Tagging only option.")
 	boolean noStemming = false;
 	@Option(name = "-g", aliases = "--max-guessed", usage = "Limit the max guessed tags for each token. The default is 10. Tagging only option.", metaVar = "<number>")
