@@ -271,6 +271,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			Integer tag = anals.get(0);
 			Double tagProb = model.getTagTransitionModel().getLogProb(
 					prevTags.toList(), tag);
+			tagProb = tagProb == Float.NEGATIVE_INFINITY ? 0 : tagProb;
 			tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb, 0.0));
 			ret.put(prevTags, tagProbs);
 		}
