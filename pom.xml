@@ -82,9 +82,9 @@
 		<dependency>
 			<groupId>com.morphologic</groupId>
 			<artifactId>humor</artifactId>
-			<version>0.6.2</version>
+			<version>0.6.4</version>
 			<scope>system</scope>
-			<systemPath>/home/oroszgy/workspace/act/humor/humor/target/humor-0.6.2.jar</systemPath>
+			<systemPath>/home/oroszgy/workspace/act/humor/humor/target/humor-0.6.4.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>

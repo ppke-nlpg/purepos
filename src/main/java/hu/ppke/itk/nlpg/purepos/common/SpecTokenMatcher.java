@@ -48,13 +48,14 @@ public class SpecTokenMatcher implements ISpecTokenMatcher {
 		addPattern("@CARDSEPS", "^[0-9\\.,:-]+[0-9]+$");
 		addPattern("@CARDSUFFIX", "^[0-9]+[a-zA-Z][a-zA-Z]?[a-zA-Z]?$");
 		addPattern("@HTMLENTITY", "^&[^;]+;?$");
+		addPattern("@PUNCT", "^\\pP+$");
 	}
 
 	@Override
 	public String matchLexicalElement(String token) {
 		for (Entry<String, Pattern> pattern : patterns.entrySet()) {
 			Matcher m = pattern.getValue().matcher(token);
-			if (m.find())
+			if (m.matches())
 				return pattern.getKey();
 		}
 		return null;

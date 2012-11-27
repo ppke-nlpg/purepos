@@ -46,6 +46,8 @@ public class SpecTokenMatcherTest {
 		Assert.assertEquals("@HTMLENTITY",
 				matcher.matchLexicalElement("&sfdf;"));
 		Assert.assertEquals("@HTMLENTITY", matcher.matchLexicalElement("&sfdf"));
-		Assert.assertEquals(null, matcher.matchLexicalElement("&;"));
+		Assert.assertEquals("@PUNCT", matcher.matchLexicalElement("-"));
+		Assert.assertEquals("@PUNCT", matcher.matchLexicalElement("—"));
+		Assert.assertEquals("@PUNCT", matcher.matchLexicalElement("&;"));
 	}
 }
