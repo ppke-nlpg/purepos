@@ -22,6 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.model.IMapper;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.io.Serializable;
@@ -41,6 +42,16 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		Serializable {
 
 	private static final long serialVersionUID = -8143201121322353289L;
+	protected IMapper<W> elementMapper = null;
+	protected IMapper<Integer> contextMapper = null;
+
+	public void setElementMapper(IMapper<W> mapper) {
+		this.elementMapper = mapper;
+	}
+
+	public void setContextMapper(IMapper<Integer> mapper) {
+		this.contextMapper = mapper;
+	}
 
 	// protected Logger logger = Logger.getLogger(getClass());
 	// TODO: MEM: use a more memory efficient model for storing these data
@@ -59,6 +70,12 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		// for a context which is greater then the size of the model, the
 		// context is cut and the greatest context probability is calculated
 		// String d = context.toString() + " " + word.toString();
+		if (elementMapper != null) {
+			word = elementMapper.map(word);
+		}
+		if (contextMapper != null) {
+			context = contextMapper.map(context);
+		}
 		ListIterator<Integer> iterator = context.listIterator(context.size());
 		TrieNode<Integer, Double, W> node = root;
 		Boolean findMore = true;

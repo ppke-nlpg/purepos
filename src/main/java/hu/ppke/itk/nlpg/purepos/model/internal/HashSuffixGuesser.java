@@ -22,6 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.model.IMapper;
 import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
 
 import java.util.HashMap;
@@ -51,6 +52,12 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	private final double thetaPlusOne;
 	@SuppressWarnings("unused")
 	private final Map<T, Double> aprioriProbs;
+
+	protected IMapper<T> mapper = null;
+
+	public void setMapper(IMapper<T> mapper) {
+		this.mapper = mapper;
+	}
 
 	// protected String lastWord = "";
 	// protected T lastTag;
@@ -130,6 +137,9 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 	@Override
 	public double getTagProbability(String word, T tag) {
+		if (mapper != null) {
+			tag = mapper.map(tag);
+		}
 		// TODO: are you sure to calculate with the empty suffix as well?
 		// (Brants does this, but how about Halácsy?)
 		// return getTagProbTnT(word, word.length(), tag);
