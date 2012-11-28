@@ -4,7 +4,7 @@
 
 	<groupId>hu.ppke.itk.nlpg</groupId>
 	<artifactId>purepos</artifactId>
-	<version>1.1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>purepos</name>
@@ -82,9 +82,9 @@
 		<dependency>
 			<groupId>com.morphologic</groupId>
 			<artifactId>humor</artifactId>
-			<version>0.6.4</version>
+			<version>0.7</version>
 			<scope>system</scope>
-			<systemPath>/home/oroszgy/workspace/act/humor/humor/target/humor-0.6.4.jar</systemPath>
+			<systemPath>/home/oroszgy/workspace/act/humor/humor/target/humor-0.7.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
