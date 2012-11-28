@@ -102,7 +102,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		IProbabilityModel<Integer, String> wordProbModel = null;
 		String wordForm = word;
 		Set<Integer> tags = null;
-		boolean isSpec;
+		boolean isSpec = false;
 		String specName;
 
 		/* tags to integers */
@@ -156,7 +156,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		if (seen != SeenType.Unseen) {
 			// logger.trace("obs is seen");
 			return getNextForSeenToken(prevTagsSet, wordProbModel, wordForm,
-					tags);
+					isSpec, tags, anals);
 		} else {
 			// logger.trace("obs is unseen");
 			if (Util.isNotEmpty(anals) && anals.size() == 1) {
@@ -281,11 +281,12 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForSeenToken(
 			final Set<NGram<Integer>> prevTagsSet,
 			IProbabilityModel<Integer, String> wordProbModel, String wordForm,
-			Set<Integer> tags) {
+			boolean isSpec, Set<Integer> tags, List<Integer> anals) {
 		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
 		for (NGram<Integer> prevTags : prevTagsSet) {
 			Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
 			for (Integer tag : tags) {
+
 				Double tagProb = model.getTagTransitionModel().getLogProb(
 						prevTags.toList(), tag);
 				List<Integer> actTags = new ArrayList<Integer>(
