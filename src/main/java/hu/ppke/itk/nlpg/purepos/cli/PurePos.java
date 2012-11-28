@@ -182,7 +182,8 @@ public class PurePos implements Runnable {
 						options.maxGuessed, options.toFile, options.separator);
 			}
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			// System.err.println(e.getMessage());
+			e.printStackTrace();
 
 			System.exit(-1);
 			// TODO: error handling
