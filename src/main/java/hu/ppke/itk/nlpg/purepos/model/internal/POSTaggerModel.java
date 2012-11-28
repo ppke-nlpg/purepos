@@ -146,6 +146,10 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
 				.createGuesser(theta, aprioriProbs);
 
+		// addMappings(standardEmissionModel, specTokensEmissionModel,
+		// tagTransitionModel, lowerCaseSuffixGuesser,
+		// upperCaseSuffixGuesser, tagVocabulary);
+
 		Model<String, Integer> model = new POSTaggerModel(tagOrder,
 				emissionOrder, maxSuffixLength, rareFrequency,
 				tagTransitionModel, standardEmissionModel,

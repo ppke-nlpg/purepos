@@ -185,6 +185,10 @@ public class RawModel extends Model<String, Integer> {
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
 				.createGuesser(theta, aprioriProbs);
 
+		addMappings(standardEmissionModel, specTokensEmissionModel,
+				tagTransitionModel, lowerCaseSuffixGuesser,
+				upperCaseSuffixGuesser, tagVocabulary);
+
 		CompiledModel<String, Integer> model = new CompiledModel<String, Integer>(
 				taggingOrder, emissionOrder, suffixLength, rareFreqency,
 				tagTransitionModel, standardEmissionModel,

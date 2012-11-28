@@ -74,4 +74,6 @@ public interface ISuffixGuesser<W, T> {
 	 */
 	public T getMaxProbabilityTag(W word);
 
+	public void setMapper(IMapper<T> mapper);
+
 }

@@ -45,10 +45,12 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 	protected IMapper<W> elementMapper = null;
 	protected IMapper<Integer> contextMapper = null;
 
+	@Override
 	public void setElementMapper(IMapper<W> mapper) {
 		this.elementMapper = mapper;
 	}
 
+	@Override
 	public void setContextMapper(IMapper<Integer> mapper) {
 		this.contextMapper = mapper;
 	}

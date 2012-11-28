@@ -23,6 +23,7 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,10 +33,10 @@ import java.util.regex.Pattern;
 
 public class TagMapper implements IMapper<Integer> {
 	LinkedHashMap<Pattern, String> mapping;
-	private Vocabulary<String, Integer> vocabulary;
+	private IVocabulary<String, Integer> vocabulary;
 
-	public TagMapper(Vocabulary<String, Integer> vocabulary) {
-		this.vocabulary = vocabulary;
+	public TagMapper(IVocabulary<String, Integer> tagVocabulary) {
+		this.vocabulary = tagVocabulary;
 		mapping = new LinkedHashMap<Pattern, String>();
 		init();
 	}

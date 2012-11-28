@@ -55,6 +55,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 	protected IMapper<T> mapper = null;
 
+	@Override
 	public void setMapper(IMapper<T> mapper) {
 		this.mapper = mapper;
 	}
