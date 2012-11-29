@@ -237,8 +237,6 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 				// logger.trace(tag);
 				// stat.incrementTokenCount();
 				// logger.trace("token is added:" + word);
-				standardTokensLexicon.addToken(word, tag);
-				stdEmissionNGramModel.addWord(context, word);
 
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
@@ -247,6 +245,9 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 					specTokensLexicon.addToken(specName, tag);
 					// this is how it is used in HunPOS:
 					// specTokensLexicon.addToken(word, tag);
+				} else {
+					standardTokensLexicon.addToken(word, tag);
+					stdEmissionNGramModel.addWord(context, word);
 				}
 			}
 		}
