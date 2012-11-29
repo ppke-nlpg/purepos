@@ -144,8 +144,40 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		// TODO: are you sure to calculate with the empty suffix as well?
 		// (Brants does this, but how about Halácsy?)
 		// return getTagProbTnT(word, word.length(), tag);
-		return getTagProbHunPOS(word, tag);
+		// return getTagProbHunPOS(word, tag);
+		Double ret = 0.0;
+		ret = getTagProbBoosted(word, tag, 2);
+		if (ret == 0)
+			ret = getTagProbBoosted(word, tag, 1);
+		if (ret == 0)
+			ret = getTagProbBoosted(word, tag, 0);
+		return ret;
 		// return getTagProbRevHunPOS(word, tag);
+	}
+
+	protected double getTagProbBoosted(String word, T tag, Integer offset) {
+		Double ret = 0.0;
+		for (int i = word.length() - offset; i >= 0; --i) {
+			String suff = word.substring(i);
+			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
+					.get(suff);
+			if (suffixValue != null) {
+				Integer tagSufFreq = suffixValue.getLeft().get(tag);
+				Double relFreq = 0.0;
+				if (tagSufFreq != null) {
+					Double tagSufFreqD = tagSufFreq.doubleValue();
+					relFreq = tagSufFreqD / suffixValue.getRight();
+
+					ret = (ret + (relFreq * theta)) / thetaPlusOne;
+					// logger.debug("accu(" + tag + ") = (prev(" + retP
+					// + ") + relfreq(" + relFreq + ") * theta(" + theta
+					// + "))/thetaPO(" + thetaPlusOne + ") =" + ret);
+				} else {
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 
 	protected double getTagProbHunPOS(String word, T tag) {

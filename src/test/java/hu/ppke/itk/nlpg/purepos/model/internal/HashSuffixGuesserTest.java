@@ -85,7 +85,7 @@ public class HashSuffixGuesserTest {
 	}
 
 	@Test
-	// @Ignore
+	@Ignore
 	public void testProbs() {
 		HashSuffixTree<Integer> suffixTree = new HashSuffixTree<Integer>(3);
 		Map<Integer, Double> m = new HashMap<Integer, Double>();
@@ -111,5 +111,29 @@ public class HashSuffixGuesserTest {
 						(Double) guesser.getTagLogProbability(word,
 								tagEntry.getKey()));
 			}
+	}
+
+	@Test
+	public void testBoostedProb() {
+		HashSuffixTree<Integer> suffixTree = new HashSuffixTree<Integer>(3);
+		Map<Integer, Double> m = new HashMap<Integer, Double>();
+		suffixTree.addWord("bementem", 1, 1);
+		suffixTree.addWord("bartomhoz", 4, 1);
+
+		m.put(1, 0.2);
+		m.put(2, 0.4);
+		m.put(3, 0.2);
+		m.put(4, 0.2);
+
+		guesser = (HashSuffixGuesser<Integer>) suffixTree.createGuesser(
+				suffixTree.calculateTheta(m), null);
+
+		Assert.assertEquals(0.0, guesser.getTagProbBoosted("alma", 1, 1), 0.0);
+		Assert.assertEquals(0.0446,
+				guesser.getTagProbBoosted("asztaloz", 1, 0), 0.01);
+		Assert.assertEquals(0.1705,
+				guesser.getTagProbBoosted("asztaloz", 4, 1), 0.01);
+		Assert.assertEquals(0.0, guesser.getTagProbBoosted("z", 4, 2), 0.01);
+
 	}
 }
