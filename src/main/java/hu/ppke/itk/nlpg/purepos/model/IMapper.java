@@ -22,10 +22,14 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface IMapper<T> {
 	public T map(T element);
 
 	public List<T> map(List<T> elements);
+
+	public Collection<T> filter(Collection<T> morphAnals,
+			Collection<T> possibleTags);
 }

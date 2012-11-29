@@ -206,4 +206,9 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		return root.getReprString();
 	}
 
+	@Override
+	public IMapper<Integer> getContextMapper() {
+		return this.contextMapper;
+	}
+
 }

@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.decoder;
 
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.model.IMapper;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
@@ -284,10 +285,8 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			final Set<NGram<Integer>> prevTagsSet,
 			IProbabilityModel<Integer, String> wordProbModel, String wordForm,
 			boolean isSpec, Set<Integer> tags, List<Integer> anals) {
-		Set<Integer> common = new HashSet<Integer>(tags);
-		if (anals != null)
-			common.retainAll(anals);
-		Collection<Integer> tagset = common.size() == 0 ? tags : common;
+		Collection<Integer> tagset = filterTagsWithMorphology(tags, anals,
+				wordProbModel.getContextMapper());
 
 		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
 		for (NGram<Integer> prevTags : prevTagsSet) {
@@ -307,6 +306,23 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			ret.put(prevTags, tagProbs);
 		}
 		return ret;
+	}
+
+	protected Collection<Integer> filterTagsWithMorphology(Set<Integer> tags,
+			List<Integer> anals, IMapper<Integer> mapper) {
+
+		Collection<Integer> common;
+		if (anals != null) {
+			if (mapper != null) {
+				common = mapper.filter(anals, tags);
+			} else {
+				common = new HashSet<Integer>(anals);
+				common.retainAll(tags);
+			}
+			if (common.size() > 0)
+				return common;
+		}
+		return tags;
 	}
 
 	private Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> getNextForEOSToken(

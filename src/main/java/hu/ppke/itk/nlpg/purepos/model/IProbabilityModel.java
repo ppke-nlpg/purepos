@@ -82,4 +82,6 @@ public interface IProbabilityModel<T, W> {
 
 	public abstract void setElementMapper(IMapper<W> mapper);
 
+	public abstract IMapper<Integer> getContextMapper();
+
 }
