@@ -43,7 +43,7 @@ public class SpecTokenMatcher implements ISpecTokenMatcher {
 	 * Initialize patterns from HunPos
 	 */
 	public SpecTokenMatcher() {
-		addPattern("@CARD", "^[0-9]*$");
+		addPattern("@CARD", "^[0-9]+$");
 		addPattern("@CARDPUNCT", "^[0-9]+\\.$");
 		addPattern("@CARDSEPS", "^[0-9\\.,:-]+[0-9]+$");
 		addPattern("@CARDSUFFIX", "^[0-9]+[a-zA-Z][a-zA-Z]?[a-zA-Z]?$");
