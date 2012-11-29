@@ -33,8 +33,10 @@ import hu.ppke.itk.nlpg.purepos.model.internal.NGram;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -282,10 +284,15 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			final Set<NGram<Integer>> prevTagsSet,
 			IProbabilityModel<Integer, String> wordProbModel, String wordForm,
 			boolean isSpec, Set<Integer> tags, List<Integer> anals) {
+		Set<Integer> common = new HashSet<Integer>(tags);
+		if (anals != null)
+			common.retainAll(anals);
+		Collection<Integer> tagset = common.size() == 0 ? tags : common;
+
 		Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> ret = new HashMap<NGram<Integer>, Map<Integer, Pair<Double, Double>>>();
 		for (NGram<Integer> prevTags : prevTagsSet) {
 			Map<Integer, Pair<Double, Double>> tagProbs = new HashMap<Integer, Pair<Double, Double>>();
-			for (Integer tag : tags) {
+			for (Integer tag : tagset) {
 
 				Double tagProb = model.getTagTransitionModel().getLogProb(
 						prevTags.toList(), tag);
