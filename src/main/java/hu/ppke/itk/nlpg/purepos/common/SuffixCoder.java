@@ -76,7 +76,16 @@ public class SuffixCoder {
 		int cutSize = code.getRight() % SHIFT;
 		String add = code.getLeft();
 		String tag = vocab.getWord(tagCode);
-		String lemma = word.substring(0, word.length() - cutSize) + add;
+		String lemma = postprocess(word.substring(0, word.length() - cutSize)
+				+ add);
 		return new Token(word, lemma, tag);
+	}
+
+	protected static String postprocess(String string) {
+		int length = string.length();
+		if (length > 1 && string.charAt(length - 1) == '-') {
+			return string.substring(0, length - 1);
+		}
+		return string;
 	}
 }
