@@ -144,14 +144,14 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		// TODO: are you sure to calculate with the empty suffix as well?
 		// (Brants does this, but how about Halácsy?)
 		// return getTagProbTnT(word, word.length(), tag);
-		// return getTagProbHunPOS(word, tag);
-		Double ret = 0.0;
-		ret = getTagProbBoosted(word, tag, 2);
-		if (ret == 0)
-			ret = getTagProbBoosted(word, tag, 1);
-		if (ret == 0)
-			ret = getTagProbBoosted(word, tag, 0);
-		return ret;
+		return getTagProbHunPOS(word, tag);
+		// Double ret = 0.0;
+		// ret = getTagProbBoosted(word, tag, 2);
+		// if (ret == 0)
+		// ret = getTagProbBoosted(word, tag, 1);
+		// if (ret == 0)
+		// ret = getTagProbBoosted(word, tag, 0);
+		// return ret;
 		// return getTagProbRevHunPOS(word, tag);
 	}
 
