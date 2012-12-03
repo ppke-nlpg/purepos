@@ -44,7 +44,7 @@ public class TagMapper implements IMapper<Integer> {
 	}
 
 	private void init() {
-		add("^(.*)(\\|lat)(.*)$", "$1$3");
+		add("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
 	}
 
 	private void add(String regexp, String replacement) {
