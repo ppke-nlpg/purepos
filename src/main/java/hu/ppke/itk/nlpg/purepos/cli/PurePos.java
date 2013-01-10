@@ -66,7 +66,7 @@ public class PurePos implements Runnable {
 	public static void train(String encoding, String modelPath,
 			String inputPath, int tagOrder, int emissionOrder, int suffLength,
 			int rareFreq) throws ParsingException, Exception {
-		Scanner sc = createScanner(encoding, inputPath, false, null);
+		Scanner sc = createScanner(encoding, inputPath, false);
 		Trainer trainer = new Trainer(sc, new CorpusReader());
 
 		File modelFile = new File(modelPath);
@@ -89,7 +89,7 @@ public class PurePos implements Runnable {
 	}
 
 	protected static Scanner createScanner(String encoding, String inputPath,
-			boolean taggedSeq, String seps) throws Exception {
+			boolean taggedSeq) throws Exception {
 		Scanner sc;
 		if (inputPath != null) {
 			sc = new Scanner(new File(inputPath), encoding);
@@ -108,10 +108,10 @@ public class PurePos implements Runnable {
 	}
 
 	public static void tag(String encoding, String modelPath, String inputPath,
-			String analyzer, boolean noStemming, int maxGuessed,
-			String outPath, String separators) throws Exception {
+			String analyzer, boolean noStemming, int maxGuessed, String outPath)
+			throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
-				analyzer.equals(PRE_MA), separators);
+				analyzer.equals(PRE_MA));
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed);
 
 		PrintStream output;
@@ -179,7 +179,7 @@ public class PurePos implements Runnable {
 			} else if (options.command.equals(TAG_OPT)) {
 				tag(options.encoding, options.modelName, options.fromFile,
 						options.morphology, options.noStemming,
-						options.maxGuessed, options.toFile, options.separator);
+						options.maxGuessed, options.toFile);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());

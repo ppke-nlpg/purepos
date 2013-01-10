@@ -26,6 +26,8 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
+import hu.ppke.itk.nlpg.purepos.common.Global;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
@@ -67,8 +69,26 @@ public class POSTagger implements ITagger {
 				maxGuessedTags);
 	}
 
+	protected static List<String> preprocessSentence(List<String> sentence) {
+		Global.analysisQueue.init(sentence.size());
+		ArrayList<String> ret = new ArrayList<String>(sentence.size());
+		int i = 0;
+		for (String word : sentence) {
+			if (AnalysisQueue.isPreanalysed(word)) {
+				Global.analysisQueue.addWord(word, i);
+				ret.add(AnalysisQueue.clean(word));
+			} else {
+				ret.add(word);
+			}
+			++i;
+		}
+
+		return ret;
+	}
+
 	@Override
 	public ISentence tagSentence(List<String> sentence) {
+		sentence = preprocessSentence(sentence);
 		List<Integer> tags = decoder.decode(sentence);
 
 		Iterator<Integer> tagsIt = tags.iterator();
