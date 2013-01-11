@@ -89,6 +89,7 @@ public class BeamSearch extends AbstractDecoder {
 
 		beam.put(start, new Node(start, 0.0, null));
 		boolean isFirst = true;
+		int pos = 0;
 		for (String obs : observations) {
 			// System.err.println(obs);
 
@@ -106,7 +107,7 @@ public class BeamSearch extends AbstractDecoder {
 			Set<NGram<Integer>> contexts = beam.keySet();
 
 			Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> nexts = getNextProbs(
-					contexts, obs, isFirst);
+					contexts, obs, pos, isFirst);
 
 			for (Map.Entry<NGram<Integer>, Map<Integer, Pair<Double, Double>>> nextsEntry : nexts
 					.entrySet()) {
@@ -159,6 +160,7 @@ public class BeamSearch extends AbstractDecoder {
 			// logger.trace("\t\tNode state: " + e.getKey() + " "
 			// + e.getValue());
 			// }
+			++pos;
 		}
 		return findMax(beam);
 	}

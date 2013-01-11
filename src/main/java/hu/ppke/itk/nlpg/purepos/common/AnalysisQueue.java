@@ -22,11 +22,15 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.common;
 
+import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
+import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,6 +111,31 @@ public class AnalysisQueue {
 		if (useProb.size() > position)
 			return useProb.get(position) != null;
 		return false;
+
+	}
+
+	public IProbabilityModel<Integer, String> getLexicalModelForWord(
+			Integer position, IVocabulary<String, Integer> tagVocabulary) {
+		Map<Integer, Double> retMap = transformTags(position, tagVocabulary);
+		return new OneWordLexicalModel(retMap, this.words.get(position));
+	}
+
+	protected Map<Integer, Double> transformTags(Integer position,
+			IVocabulary<String, Integer> tagVocabulary) {
+		Map<Integer, Double> retMap = new HashMap<Integer, Double>();
+		for (Map.Entry<String, Double> entry : this.anals.get(position)
+				.entrySet()) {
+			Integer tag = tagVocabulary.getIndex(entry.getKey());
+			retMap.put(tag, entry.getValue());
+
+		}
+		return retMap;
+	}
+
+	public Set<Integer> getAnalsAsSet(Integer position,
+			IVocabulary<String, Integer> tagVocabulary) {
+		Map<Integer, Double> retMap = transformTags(position, tagVocabulary);
+		return retMap.keySet();
 
 	}
 
