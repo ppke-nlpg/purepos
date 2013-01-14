@@ -276,4 +276,9 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		return freqTable.toString();
 	}
 
+	@Override
+	public IMapper<T> getMapper() {
+		return mapper;
+	}
+
 }

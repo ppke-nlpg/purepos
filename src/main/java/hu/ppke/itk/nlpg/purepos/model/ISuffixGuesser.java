@@ -76,4 +76,6 @@ public interface ISuffixGuesser<W, T> {
 
 	public void setMapper(IMapper<T> mapper);
 
+	public IMapper<T> getMapper();
+
 }

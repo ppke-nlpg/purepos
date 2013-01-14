@@ -275,7 +275,8 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			Double emissionProb = 0.0;
 
 			Double transitionProb;
-			if (tag > model.getTagVocabulary().getMaximalIndex()) {
+			Integer newTag = guesser.getMapper().map(tag);
+			if (newTag > model.getTagVocabulary().getMaximalIndex()) {
 				emissionProb = UNKNOWN_TAG_WEIGHT;
 				// TODO: RESEARCH: new tags should handled better
 				transitionProb = Double.NEGATIVE_INFINITY;
@@ -285,8 +286,8 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 					ret.put(prevTags, tagProbs);
 				}
 			} else {
-				double logAprioriPorb = Math.log(model.getAprioriTagProbs()
-						.get(tag));
+				Double aprioriProb = model.getAprioriTagProbs().get(newTag);
+				Double logAprioriPorb = Math.log(aprioriProb);
 				emissionProb = guesser.getTagLogProbability(lWord, tag)
 						- logAprioriPorb;
 				for (NGram<Integer> prevTags : prevTagsSet) {
