@@ -39,12 +39,13 @@ public class TagMapperTest {
 		Integer fnlat = vocabulary.addElement("[FN|lat][NOM]");
 		Integer mnlat = vocabulary.addElement("[MN|lat][NOM]");
 		Integer ige = vocabulary.addElement("[IGE][Me3]");
+
 		TagMapper mapper = new TagMapper(vocabulary);
 		Assert.assertEquals(fn, mapper.map(fnlat));
-		Assert.assertEquals(fn, fn);
-		Assert.assertEquals(ige, ige);
-		Assert.assertEquals(fn, fn);
-		Assert.assertEquals(mn, mn);
+		Assert.assertEquals(fn, mapper.map(fn));
+		Assert.assertEquals(ige, mapper.map(ige));
+		Assert.assertEquals(fn, mapper.map(fn));
+		Assert.assertEquals(mn, mapper.map(mn));
 		List<Integer> from = Arrays.asList(fn, mnlat, fnlat);
 		List<Integer> to = Arrays.asList(fn, fn, fn);
 		Assert.assertEquals(to, mapper.map(from));
