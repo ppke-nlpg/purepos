@@ -160,28 +160,27 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 		AnalysisQueue userAnals = Global.analysisQueue;
 		if (userAnals.hasAnal(position)) {
+			Set<Integer> newTags = userAnals.getAnalsAsSet(position,
+					model.getTagVocabulary());
 			if (userAnals.useProbabilties(position)) {
 				IProbabilityModel<Integer, String> newWordModel = userAnals
 						.getLexicalModelForWord(position,
 								model.getTagVocabulary());
+				// newWordModel.setContextMapper(model.getStandardEmissionModel()
+				// .getContextMapper());
 				return getNextForSeenToken(prevTagsSet, newWordModel, wordForm,
-						isSpec, tags, anals);
+						isSpec, newTags, anals);
 			} else {
 				if (seen != SeenType.Unseen) {
 
-					Set<Integer> newTags = userAnals.getAnalsAsSet(position,
-							model.getTagVocabulary());
 					return getNextForSeenToken(prevTagsSet, wordProbModel,
 							wordForm, isSpec, newTags, anals);
 				} else {
-					Set<Integer> newAnals = userAnals.getAnalsAsSet(position,
-							model.getTagVocabulary());
-					if (Util.isNotEmpty(newAnals) && newAnals.size() == 1) {
-						return getNextForSingleTaggedToken(prevTagsSet,
-								newAnals);
+					if (Util.isNotEmpty(newTags) && newTags.size() == 1) {
+						return getNextForSingleTaggedToken(prevTagsSet, newTags);
 					} else {
 						return getNextForGuessedToken(prevTagsSet, lWord,
-								isUpper, newAnals, false);
+								isUpper, newTags, false);
 					}
 
 				}
@@ -335,6 +334,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 				List<Integer> actTags = new ArrayList<Integer>(
 						prevTags.toList());
 				actTags.add(tag);
+				// //
 				Double emissionProb = wordProbModel.getLogProb(actTags,
 						wordForm);
 				tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb,
