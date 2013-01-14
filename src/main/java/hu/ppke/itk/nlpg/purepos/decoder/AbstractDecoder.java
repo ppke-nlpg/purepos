@@ -160,7 +160,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 		AnalysisQueue userAnals = Global.analysisQueue;
 		if (userAnals.hasAnal(position)) {
-			Set<Integer> newTags = userAnals.getAnalsAsSet(position,
+			Set<Integer> newTags = userAnals.getTags(position,
 					model.getTagVocabulary());
 			if (userAnals.useProbabilties(position)) {
 				IProbabilityModel<Integer, String> newWordModel = userAnals

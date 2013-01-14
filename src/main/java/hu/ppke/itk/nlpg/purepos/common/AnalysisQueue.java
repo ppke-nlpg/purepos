@@ -22,12 +22,15 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.common;
 
+import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -136,11 +139,20 @@ public class AnalysisQueue {
 		return retMap;
 	}
 
-	public Set<Integer> getAnalsAsSet(Integer position,
+	public Set<Integer> getTags(Integer position,
 			IVocabulary<String, Integer> tagVocabulary) {
 		Map<Integer, Double> retMap = transformTags(position, tagVocabulary);
 		return retMap.keySet();
 
+	}
+
+	public Set<IToken> getAnalysises(Integer position) {
+		Set<String> fanals = anals.get(position).keySet();
+		Set<IToken> ret = new HashSet<IToken>();
+		for (String fa : fanals) {
+			ret.add(new Token(words.get(position), anal2lemma(fa), anal2tag(fa)));
+		}
+		return ret;
 	}
 
 	public static boolean isPreanalysed(String word) {
