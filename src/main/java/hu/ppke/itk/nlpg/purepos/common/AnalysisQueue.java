@@ -54,7 +54,7 @@ public class AnalysisQueue {
 
 	protected static String stringPat = "([" + alnumPat + punctPat + "]+)";
 	protected static String analPat = "((" + stringPat + "(\\[[" + alnumPat
-			+ "]+\\]))+(\\$\\$[0-9]+(\\.[0-9]+)?)?)";
+			+ "|]+\\])+)(\\$\\$[0-9]+(\\.[0-9]+)?)?)";
 
 	protected static String analSplitRe = "\\|\\|";
 	protected static String weightSplitPat = "\\$\\$";
@@ -125,7 +125,11 @@ public class AnalysisQueue {
 		Map<Integer, Double> retMap = new HashMap<Integer, Double>();
 		for (Map.Entry<String, Double> entry : this.anals.get(position)
 				.entrySet()) {
-			Integer tag = tagVocabulary.getIndex(entry.getKey());
+			String tagStr = anal2tag(entry.getKey());
+			Integer tag = tagVocabulary.getIndex(tagStr);
+			if (tag == null) {
+				tag = tagVocabulary.addElement(tagStr);
+			}
 			retMap.put(tag, entry.getValue());
 
 		}

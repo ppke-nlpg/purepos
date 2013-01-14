@@ -61,6 +61,11 @@ public class AnalysisQueueTest {
 				.isPreanalysed("alma{{alma[FN][NOM]||alom[FN][Pse3]}}"));
 		Assert.assertEquals(true,
 				AnalysisQueue.isPreanalysed("alma{{alma[FN][NOM]}}"));
+
+		Assert.assertEquals(true, AnalysisQueue.isPreanalysed(".{{.[PUNCT]}}"));
+		System.out.println(AnalysisQueue.analFormPat);
+		Assert.assertEquals(true,
+				AnalysisQueue.isPreanalysed("o.{{o.[FN|lat][NOM]}}"));
 		Assert.assertEquals(false, AnalysisQueue.isPreanalysed("alma"));
 	}
 
@@ -72,6 +77,8 @@ public class AnalysisQueueTest {
 				AnalysisQueue.clean("alma{{alma[FN][NOM]||alom[FN][Pse3]}}"));
 		Assert.assertEquals("alma",
 				AnalysisQueue.clean("alma{{alma[FN][NOM]}}"));
+
+		Assert.assertEquals("o.", AnalysisQueue.clean("o.{{o.[FN|lat][NOM]}}"));
 	}
 
 	@Test
