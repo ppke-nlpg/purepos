@@ -31,6 +31,11 @@ public class OneWordLexicalModel implements IProbabilityModel<Integer, String> {
 
 	@Override
 	public Double getProb(List<Integer> context, String word) {
+		return Math.exp(getLogProb(context, word));
+	}
+
+	@Override
+	public Double getLogProb(List<Integer> context, String word) {
 		if (elementMapper != null) {
 			word = elementMapper.map(word);
 		}
@@ -42,14 +47,7 @@ public class OneWordLexicalModel implements IProbabilityModel<Integer, String> {
 		if (word.equals(this.word) && probs.containsKey(tag)) {
 			return probs.get(tag);
 		}
-		return 0.0;
-	}
-
-	@Override
-	public Double getLogProb(List<Integer> context, String word) {
-		Double prob = getProb(context, word);
-		double lp = Math.log(prob);
-		return lp;
+		return Double.NEGATIVE_INFINITY;
 	}
 
 	@Override
