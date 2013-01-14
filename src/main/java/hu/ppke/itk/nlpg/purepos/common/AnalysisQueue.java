@@ -54,7 +54,7 @@ public class AnalysisQueue {
 
 	protected static String stringPat = "([" + alnumPat + punctPat + "]+)";
 	protected static String analPat = "((" + stringPat + "(\\[[" + alnumPat
-			+ "|]+\\])+)(\\$\\$[0-9]+(\\.[0-9]+)?)?)";
+			+ "|]+\\])+)(\\$\\$-?[0-9]+(\\.[0-9]+)?)?)";
 
 	protected static String analSplitRe = "\\|\\|";
 	protected static String weightSplitPat = "\\$\\$";
