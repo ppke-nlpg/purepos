@@ -34,6 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -58,7 +60,8 @@ public class BeamSearch extends AbstractDecoder {
 	// protected Logger logger = Logger.getLogger(this.getClass());
 
 	@Override
-	public List<Integer> decode(List<String> observations) {
+	public List<List<Integer>> decode(List<String> observations,
+			int maxResultsNumber) {
 		List<String> obs = new ArrayList<String>(observations);
 
 		obs.add(Model.getEOSToken()); // adds 1 EOS marker as in HunPos
@@ -72,18 +75,28 @@ public class BeamSearch extends AbstractDecoder {
 		NGram<Integer> startNGram = new NGram<Integer>(startTags,
 				model.getTaggingOrder());
 
-		List<Integer> list = beamSearch(startNGram, obs);
-		return list.subList(0, list.size() - 1);
+		List<List<Integer>> tagSeqList = beamSearch(startNGram, obs,
+				maxResultsNumber);
+		ArrayList<List<Integer>> ret = new ArrayList<List<Integer>>();
+		for (List<Integer> tagSeq : tagSeqList) {
+			ret.add(tagSeq.subList(0, tagSeqList.size() - 1));
+		}
+		return ret;
+	}
+
+	@Override
+	public List<Integer> decode(List<String> observations) {
+		return decode(observations, 1).get(0);
 
 	}
 
 	public List<Integer> beamSearch(final NGram<Integer> start,
 			final List<String> obs) {
-		return beamSearch(start, obs, 1);
+		return beamSearch(start, obs, 1).get(0);
 
 	}
 
-	public List<Integer> beamSearch(final NGram<Integer> start,
+	public List<List<Integer>> beamSearch(final NGram<Integer> start,
 			final List<String> observations, int resultsNumber) {
 		HashMap<NGram<Integer>, Node> beam = new HashMap<NGram<Integer>, Node>();
 
@@ -162,14 +175,27 @@ public class BeamSearch extends AbstractDecoder {
 			// }
 			++pos;
 		}
-		return findMax(beam);
+		return findMax(beam, resultsNumber);
 	}
 
-	private List<Integer> findMax(final HashMap<NGram<Integer>, Node> beam) {
+	private List<List<Integer>> findMax(
+			final HashMap<NGram<Integer>, Node> beam, int resultsNumber) {
 
-		Node max = Collections.max(beam.values());
+		// Node max = Collections.max(beam.values());
 		// Node act = max;
-		return decompose(max);
+		// return decompose(max);
+
+		SortedSet<Node> sortedKeys = new TreeSet<Node>(beam.values());
+
+		List<List<Integer>> ret = new ArrayList<List<Integer>>();
+		Node max;
+		for (int i = 0; i < resultsNumber; ++i) {
+			max = sortedKeys.last();
+			sortedKeys.remove(max);
+			List<Integer> maxTagSeq = decompose(max);
+			ret.add(maxTagSeq);
+		}
+		return ret;
 
 	}
 
@@ -229,4 +255,5 @@ public class BeamSearch extends AbstractDecoder {
 			// + context + " with " + newValue);
 		}
 	}
+
 }

@@ -40,4 +40,14 @@ public interface IPOSTaggerDecoder<W, T extends Comparable<T>> {
 	 */
 	List<T> decode(List<W> observations);
 
+	/**
+	 * Finds corresponding tags for observations
+	 * 
+	 * @param observations
+	 * @param maxResultsNumber
+	 *            maximum number of possible decoding sequences
+	 * @return tags
+	 */
+	List<List<T>> decode(List<W> observations, int maxResultsNumber);
+
 }
