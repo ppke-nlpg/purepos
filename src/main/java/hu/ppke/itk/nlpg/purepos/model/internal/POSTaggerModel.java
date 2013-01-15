@@ -53,6 +53,7 @@ import java.util.Vector;
  * @author György Orosz
  * 
  */
+@Deprecated
 public class POSTaggerModel extends CompiledModel<String, Integer> {
 	// protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
 

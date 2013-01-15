@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Tagger that performs full morphological disambiguation.
@@ -80,8 +81,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 		if (Util.isEmpty(stems)) {
 			// the guesser is used
-			stems = model.getLemmaTree().getLemmas(t.getToken(),
-					model.getTagVocabulary());
+			Map<IToken, Integer> lemmaFreqs = model.getLemmaTree()
+					.getLemmas(t.getToken(), model.getTagVocabulary());
+			stems = lemmaFreqs.keySet();
 		}
 		// matching tags
 		List<IToken> possibleStems = new ArrayList<IToken>();

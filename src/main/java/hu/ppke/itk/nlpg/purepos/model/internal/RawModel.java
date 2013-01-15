@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
+import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
@@ -112,14 +113,15 @@ public class RawModel extends Model<String, Integer> {
 		tagNGramModel.addWord(tags, eosTag);
 
 		for (int i = sentence.size() - 1; i >= 0; --i) {
-			String word = sentence.get(i).getToken();
+			IToken token = sentence.get(i);
+			String word = token.getToken();
 			Integer tag = tags.get(i);
 			// TEST: creating a trie from lemmas
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
-				SuffixCoder.addToken(word, sentence.get(i).getStem(), tag,
+				SuffixCoder.addToken(word, token.getStem(), tag,
 						lemmaTree, 1);
 				tagNGramModel.addWord(prevTags, tag);
 
