@@ -32,6 +32,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+@SuppressWarnings("static-access")
 public class SerializerTest {
 	@Test
 	public void readWriteTest() throws Exception {

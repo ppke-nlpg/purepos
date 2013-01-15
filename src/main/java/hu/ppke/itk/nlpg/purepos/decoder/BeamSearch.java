@@ -168,8 +168,14 @@ public class BeamSearch extends AbstractDecoder {
 	private List<Integer> findMax(final HashMap<NGram<Integer>, Node> beam) {
 
 		Node max = Collections.max(beam.values());
-		Node act, prev;
-		act = max;
+		// Node act = max;
+		return decompose(max);
+
+	}
+
+	protected List<Integer> decompose(Node node) {
+		Node act = node;
+		Node prev;
 		prev = act.getPrevious();
 		List<Integer> stack = new LinkedList<Integer>();
 		while (prev != null) {
@@ -179,7 +185,6 @@ public class BeamSearch extends AbstractDecoder {
 		}
 
 		return stack;
-
 	}
 
 	private HashMap<NGram<Integer>, Node> prune(

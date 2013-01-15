@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class HashSuffixGuesserTest {
 	HashSuffixGuesser<Integer> guesser;
 
@@ -84,6 +85,7 @@ public class HashSuffixGuesserTest {
 
 	}
 
+	@SuppressWarnings("static-access")
 	@Test
 	@Ignore
 	public void testProbs() {
@@ -114,6 +116,7 @@ public class HashSuffixGuesserTest {
 	}
 
 	@Test
+	@SuppressWarnings("static-access")
 	public void testBoostedProb() {
 		HashSuffixTree<Integer> suffixTree = new HashSuffixTree<Integer>(3);
 		Map<Integer, Double> m = new HashMap<Integer, Double>();

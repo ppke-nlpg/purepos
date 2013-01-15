@@ -27,6 +27,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 public class TrieNodeTest {
+	@SuppressWarnings("serial")
 	class Node extends TrieNode<Integer, Integer, String> {
 		public Node(Integer id) {
 			super(id);

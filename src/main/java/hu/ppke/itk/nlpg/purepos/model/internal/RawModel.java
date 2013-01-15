@@ -47,6 +47,7 @@ import java.util.Map.Entry;
 import java.util.Vector;
 
 public class RawModel extends Model<String, Integer> {
+	@SuppressWarnings("unused")
 	private RawModel() {
 		this(2, 2, 10, 10, new Lexicon<String, Integer>(),
 				new Lexicon<String, Integer>(), new IntVocabulary<String>());
@@ -121,8 +122,7 @@ public class RawModel extends Model<String, Integer> {
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
-				SuffixCoder.addToken(word, token.getStem(), tag,
-						lemmaTree, 1);
+				SuffixCoder.addToken(word, token.getStem(), tag, lemmaTree, 1);
 				tagNGramModel.addWord(prevTags, tag);
 
 				stat.incrementTokenCount();

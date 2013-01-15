@@ -65,7 +65,7 @@ public class MorphologicalTable extends AbstractMorphologicalAnalyzer {
 				mTable.put(token, anals);
 			}
 		}
-
+		br.close();
 		return mTable;
 	}
 
