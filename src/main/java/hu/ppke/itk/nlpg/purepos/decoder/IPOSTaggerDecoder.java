@@ -24,6 +24,8 @@ package hu.ppke.itk.nlpg.purepos.decoder;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * Implementors should implement method for decoding hidden states for the
  * observations.
@@ -33,7 +35,7 @@ import java.util.List;
  */
 public interface IPOSTaggerDecoder<W, T extends Comparable<T>> {
 	/**
-	 * Finds corresponding tags for observations
+	 * Finds corresponding best tags for observations
 	 * 
 	 * @param observations
 	 * @return tags
@@ -41,13 +43,14 @@ public interface IPOSTaggerDecoder<W, T extends Comparable<T>> {
 	List<T> decode(List<W> observations);
 
 	/**
-	 * Finds corresponding tags for observations
+	 * Finds corresponding n-best tags for observations
 	 * 
 	 * @param observations
 	 * @param maxResultsNumber
 	 *            maximum number of possible decoding sequences
-	 * @return tags
+	 * @return tag sequence and its score
 	 */
-	List<List<T>> decode(List<W> observations, int maxResultsNumber);
+	List<Pair<List<T>, Double>> decode(List<W> observations,
+			int maxResultsNumber);
 
 }

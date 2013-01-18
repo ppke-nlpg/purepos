@@ -55,6 +55,8 @@ public class CLIOptions {
 	boolean noStemming = false;
 	@Option(name = "-g", aliases = "--max-guessed", usage = "Limit the max guessed tags for each token. The default is 10. Tagging only option.", metaVar = "<number>")
 	int maxGuessed = 10;
+	@Option(name = "-n", aliases = "--max-results", usage = "Set the expected maximum number of tag sequences. The default is 1. Tagging only option.", metaVar = "<number>")
+	int maxResultsNumber = 1;
 	@Option(name = "-o", aliases = "--output-file", usage = "File where the tagging output is redirected. Tagging only option.", metaVar = "<file>")
 	String toFile;
 

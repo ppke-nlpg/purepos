@@ -22,7 +22,6 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos;
 
-import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
@@ -56,11 +55,12 @@ public class MorphTagger extends POSTagger implements ITagger {
 	}
 
 	@Override
-	public ISentence tagSentence(List<String> sentence) {
-		ISentence taggedSentence = super.tagSentence(sentence);
+	protected List<IToken> merge(List<String> sentence, List<Integer> tags) {
+		List<IToken> res = super.merge(sentence, tags);
+		// ISentence taggedSentence = super.tagSentence(sentence);
 		List<IToken> tmp = new ArrayList<IToken>();
 		int pos = 0;
-		for (IToken t : taggedSentence) {
+		for (IToken t : res) {
 			IToken bestStemmedToken = findBestLemma(t, pos);
 			bestStemmedToken = new Token(bestStemmedToken.getToken(),
 					bestStemmedToken.getStem().replace(" ", "_"),
@@ -81,8 +81,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 		if (Util.isEmpty(stems)) {
 			// the guesser is used
-			Map<IToken, Integer> lemmaFreqs = model.getLemmaTree()
-					.getLemmas(t.getToken(), model.getTagVocabulary());
+			Map<IToken, Integer> lemmaFreqs = model.getLemmaTree().getLemmas(
+					t.getToken(), model.getTagVocabulary());
 			stems = lemmaFreqs.keySet();
 		}
 		// matching tags

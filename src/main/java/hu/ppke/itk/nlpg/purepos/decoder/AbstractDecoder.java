@@ -41,6 +41,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -412,6 +413,61 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		}
 
 		return set;
+	}
+
+	protected List<Integer> decompose(Node node) {
+		Node act = node;
+		Node prev;
+		prev = act.getPrevious();
+		List<Integer> stack = new LinkedList<Integer>();
+		while (prev != null) {
+			stack.add(0, act.getState().getLast());
+			act = prev;
+			prev = act.getPrevious();
+		}
+
+		return stack;
+	}
+
+	@Override
+	public List<Integer> decode(List<String> observations) {
+		return decode(observations, 1).get(0).getKey();
+
+	}
+
+	protected List<Pair<List<Integer>, Double>> cleanResults(
+			List<Pair<List<Integer>, Double>> tagSeqList) {
+		List<Pair<List<Integer>, Double>> ret = new ArrayList<Pair<List<Integer>, Double>>();
+		for (Pair<List<Integer>, Double> element : tagSeqList) {
+			List<Integer> tagSeq = element.getKey();
+			List<Integer> newTagSeq = tagSeq.subList(0, tagSeq.size() - 1);
+			ret.add(Pair.of(newTagSeq, element.getValue()));
+		}
+		return ret;
+	}
+
+	protected List<String> prepareObservations(List<String> observations) {
+		List<String> obs = new ArrayList<String>(observations);
+
+		obs.add(Model.getEOSToken()); // adds 1 EOS marker as in HunPos
+		return obs;
+	}
+
+	protected NGram<Integer> createInitialElement() {
+		int n = model.getTaggingOrder();
+
+		ArrayList<Integer> startTags = new ArrayList<Integer>();
+		for (int j = 0; j <= n; ++j) {
+			startTags.add(model.getBOSIndex());
+		}
+
+		NGram<Integer> startNGram = new NGram<Integer>(startTags,
+				model.getTaggingOrder());
+		return startNGram;
+	}
+
+	protected Node startNode(final NGram<Integer> start) {
+		return new Node(start, 0.0, null);
 	}
 
 }

@@ -20,33 +20,53 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.purepos;
+package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.docmodel.ISentence;
-
-import java.io.PrintStream;
-import java.util.List;
-import java.util.Scanner;
 
 /**
- * Interface for a POS tagger implementation
+ * Represents a tag sequence and its probability.
  * 
  * @author György Orosz
  * 
  */
-public interface ITagger {
+public class History implements Comparable<History> {
 
-	public ISentence tagSentence(List<String> sentence);
+	protected final NGram<Integer> tagSeq;
+	protected final Double logProb;
 
-	public List<ISentence> tagSentence(List<String> sentence,
-			int maxResultsNumber);
+	public NGram<Integer> getTagSeq() {
+		return tagSeq;
+	}
 
-	public ISentence tagSentence(String sentence);
+	public Double getLogProb() {
+		return logProb;
+	}
 
-	public List<ISentence> tagSentence(String sentence, int maxResultsNumber);
+	public History(NGram<Integer> tagSeq, Double logProb) {
+		this.logProb = logProb;
+		this.tagSeq = tagSeq;
+	}
 
-	public void tag(Scanner scanner, PrintStream ps);
+	@Override
+	public int hashCode() {
+		return tagSeq.hashCode();
+	}
 
-	public void tag(Scanner scanner, PrintStream ps, int maxResultsNumber);
+	@Override
+	public int compareTo(History o) {
+		return Double.compare(logProb, o.logProb);
+	}
 
+	@Override
+	public String toString() {
+		return "{" + getTagSeq().toString() + ", " + getLogProb() + "}";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof History) {
+			return tagSeq.toList().equals(((History) obj).getTagSeq().toList());
+		}
+		return false;
+	}
 }

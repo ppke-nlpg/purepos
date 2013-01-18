@@ -108,8 +108,8 @@ public class PurePos implements Runnable {
 	}
 
 	public static void tag(String encoding, String modelPath, String inputPath,
-			String analyzer, boolean noStemming, int maxGuessed, String outPath)
-			throws Exception {
+			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
+			String outPath) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed);
@@ -121,7 +121,7 @@ public class PurePos implements Runnable {
 			output = new PrintStream(new File(outPath), encoding);
 		}
 		System.err.println("Tagging:");
-		t.tag(input, output);
+		t.tag(input, output, maxresnum);
 	}
 
 	public static ITagger createTagger(String modelPath, String analyzer,
@@ -159,11 +159,14 @@ public class PurePos implements Runnable {
 		CompiledModel<String, Integer> model = rawmodel.compile();
 		ITagger t;
 
+		// double beamLogTheta = Math.log(10000);
+		double beamLogTheta = Double.POSITIVE_INFINITY;
+		double suffixLogTheta = Math.log(10);
 		if (noStemming) {
-			t = new POSTagger(model, ma, Math.log(10000), Math.log(10),
+			t = new POSTagger(model, ma, beamLogTheta, suffixLogTheta,
 					maxGuessed);
 		} else {
-			t = new MorphTagger(model, ma, Math.log(10000), Math.log(10),
+			t = new MorphTagger(model, ma, beamLogTheta, suffixLogTheta,
 					maxGuessed);
 		}
 		return t;
@@ -179,7 +182,8 @@ public class PurePos implements Runnable {
 			} else if (options.command.equals(TAG_OPT)) {
 				tag(options.encoding, options.modelName, options.fromFile,
 						options.morphology, options.noStemming,
-						options.maxGuessed, options.toFile);
+						options.maxGuessed, options.maxResultsNumber,
+						options.toFile);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());
