@@ -52,6 +52,7 @@ public class StemmedTaggedTokenReader extends AbstractDocElementReader<IToken> {
 			return word;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.err.println(text);
 			return null;
 		}
 	}
