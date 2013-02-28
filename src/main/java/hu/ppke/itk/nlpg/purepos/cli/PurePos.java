@@ -32,13 +32,17 @@ import hu.ppke.itk.nlpg.purepos.common.TaggedSequenceReader;
 import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
-import hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -130,10 +134,10 @@ public class PurePos implements Runnable {
 		if (analyzer.equals(INTEGRATED_MA)) {
 			// TODO: set lex files through environment vars
 			try {
-				System.err
-						.println("Trying to use Humor morphological analyzer.");
-				ma = HumorAnalyzer.getInstance();
-			} catch (NoClassDefFoundError e) {
+				// System.err
+				// .println("Trying to use Humor morphological analyzer.");
+				ma = loadHumor();
+			} catch (ClassNotFoundException e) {
 				System.err
 						.println("Humor java files are not found. Not using any morphological analyzer.");
 				ma = new NullAnalyzer();
@@ -167,6 +171,39 @@ public class PurePos implements Runnable {
 					maxGuessed);
 		}
 		return t;
+	}
+
+	/**
+	 * Loads the latest Humor jar file and create an analyzer instance
+	 * 
+	 * @return analyzer instance
+	 */
+	protected static IMorphologicalAnalyzer loadHumor()
+			throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException, MalformedURLException {
+		String humorPath = System.getProperty("humor.path");
+		if (humorPath == null)
+			throw new ClassNotFoundException("Humor jar file is not present");
+
+		File dir = new File(humorPath);
+
+		File[] candidates = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String filename) {
+				return filename.endsWith(".jar")
+						&& filename.startsWith("humor-");
+			}
+		});
+
+		Arrays.sort(candidates);
+
+		URL humorURL = candidates[candidates.length - 1].toURL();
+
+		URLClassLoader myLoader = new URLClassLoader(new URL[] { humorURL },
+				PurePos.class.getClassLoader());
+		Class<?> humorClass = Class.forName(
+				"hu.ppke.itk.nlpg.purepos.morphology.HumorAnalyzer", true,
+				myLoader);
+		return (IMorphologicalAnalyzer) humorClass.newInstance();
 	}
 
 	@Override
