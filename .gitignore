@@ -1,3 +1,5 @@
+/.CHANGELOG.md~
+/.README.md~
 *.class
 *.java 
 .classpath
