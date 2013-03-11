@@ -71,6 +71,13 @@ public class HashLemmaTreeTest {
 		val = 100 * curTag + 0;
 		Assert.assertEquals(val, res.getRight());
 
+		t = new Token("arca", "arc", "2");
+		curTag = vocabulary.addElement("2");
+		res = SuffixCoder.addToken(t, vocabulary, tree, 1);
+		Assert.assertEquals("", res.getLeft());
+		val = 100 * curTag + 1;
+		Assert.assertEquals(val, res.getRight());
+
 	}
 
 	@Test

@@ -46,6 +46,7 @@ import java.util.Map.Entry;
 import java.util.Vector;
 
 public class RawModel extends Model<String, Integer> {
+	@SuppressWarnings("unused")
 	private RawModel() {
 		this(2, 2, 10, 10, new Lexicon<String, Integer>(),
 				new Lexicon<String, Integer>(), new IntVocabulary<String>());
@@ -58,6 +59,7 @@ public class RawModel extends Model<String, Integer> {
 	protected INGramModel<Integer, String> specEmissionNGramModel;
 	protected HashLemmaTree lemmaTree;
 	protected Integer eosTag;
+	protected Counter<String> lemmaCounter;
 
 	HashSuffixTree<Integer> lowerSuffixTree;
 	HashSuffixTree<Integer> upperSuffixTree;
@@ -73,6 +75,7 @@ public class RawModel extends Model<String, Integer> {
 		stdEmissionNGramModel = new NGramModel<String>(emissionOrder + 1);
 		specEmissionNGramModel = new NGramModel<String>(2);
 		lemmaTree = new HashLemmaTree(100);
+		lemmaCounter = new Counter<String>();
 
 	}
 
@@ -113,12 +116,14 @@ public class RawModel extends Model<String, Integer> {
 
 		for (int i = sentence.size() - 1; i >= 0; --i) {
 			String word = sentence.get(i).getToken();
+			String lemma = sentence.get(i).getStem();
 			Integer tag = tags.get(i);
 			// TEST: creating a trie from lemmas
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
+				lemmaCounter.increment(lemma);
 				SuffixCoder.addToken(word, sentence.get(i).getStem(), tag,
 						lemmaTree, 1);
 				tagNGramModel.addWord(prevTags, tag);
@@ -189,8 +194,9 @@ public class RawModel extends Model<String, Integer> {
 				taggingOrder, emissionOrder, suffixLength, rareFreqency,
 				tagTransitionModel, standardEmissionModel,
 				specTokensEmissionModel, lowerCaseSuffixGuesser,
-				upperCaseSuffixGuesser, lemmaTree, standardTokensLexicon,
-				specTokensLexicon, tagVocabulary, aprioriProbs);
+				upperCaseSuffixGuesser, lemmaTree, lemmaCounter,
+				standardTokensLexicon, specTokensLexicon, tagVocabulary,
+				aprioriProbs);
 		return model;
 
 	}

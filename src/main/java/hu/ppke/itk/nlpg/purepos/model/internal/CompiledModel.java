@@ -32,13 +32,16 @@ import java.util.Map;
 
 public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 
+	private Counter<W> lemmaCounter;
+
 	CompiledModel(int taggingOrder, int emissionOrder, int suffixLength,
 			int rareFrequency, IProbabilityModel<T, T> tagTransitionModel,
 			IProbabilityModel<T, W> standardEmissionModel,
 			IProbabilityModel<T, W> specTokensEmissionModel,
 			ISuffixGuesser<W, T> lowerCaseSuffixGuesser,
 			ISuffixGuesser<W, T> upperCaseSuffixGuesser,
-			HashLemmaTree lemmaTree, ILexicon<W, T> standardTokensLexicon,
+			HashLemmaTree lemmaTree, Counter<W> lemmaCounter,
+			ILexicon<W, T> standardTokensLexicon,
 			ILexicon<W, T> specTokensLexicon,
 			IVocabulary<String, T> tagVocabulary, Map<T, Double> aprioriTagProbs) {
 		super(taggingOrder, emissionOrder, suffixLength, rareFrequency,
@@ -50,8 +53,13 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 		this.lowerCaseSuffixGuesser = lowerCaseSuffixGuesser;
 		this.upperCaseSuffixGuesser = upperCaseSuffixGuesser;
 		this.lemmaTree = lemmaTree;
+		this.lemmaCounter = lemmaCounter;
 
 		this.aprioriTagProbs = aprioriTagProbs;
+	}
+
+	public Counter<W> getLemmaCounter() {
+		return lemmaCounter;
 	}
 
 	private static final long serialVersionUID = -3426883448646064198L;

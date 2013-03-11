@@ -3,6 +3,10 @@ Changelog
 
 1.2.1
 -----
+* Much better lemmatizing (through a bugfix)
+
+1.2.1
+-----
 * Humor dependency is removed.
 
 1.2

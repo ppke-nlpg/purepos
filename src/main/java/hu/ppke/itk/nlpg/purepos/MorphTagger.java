@@ -80,6 +80,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 			if (t.getTag().equals(ct.getTag())) {
 				possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
 						.getTag()));
+				possibleStems.add(new Token(ct.getToken(), Util.toLower(ct
+						.getStem()), ct.getTag()));
 			}
 		}
 
@@ -100,10 +102,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 				public int count(IToken t) {
 					// TODO: RESEARCH: cheat! - investigate
 					int plus = 0;
-					plus = t.getStem() == t.getToken() ? 1 : 0;
-					return model.getStandardTokensLexicon().getWordCount(
-							t.getStem())
-							+ plus;
+					// plus = t.getStem() == t.getToken() ? 1 : 0;
+					return model.getLemmaCounter().getCount(t.getStem()) + plus;
 				}
 
 				@Override

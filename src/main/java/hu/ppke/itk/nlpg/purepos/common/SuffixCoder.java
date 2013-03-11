@@ -43,6 +43,15 @@ public class SuffixCoder {
 
 	public static Pair<String, Integer> addToken(String word, String stem,
 			Integer tag, HashLemmaTree tree, int count) {
+		Pair<String, Pair<String, Integer>> ret = decode(word, stem, tag);
+
+		tree.addWord(ret.getLeft(), ret.getRight(), count);
+		return ret.getRight();
+
+	}
+
+	protected static Pair<String, Pair<String, Integer>> decode(String word,
+			String stem, Integer tag) {
 		int i;
 		for (i = 0; i < word.length() && i < stem.length(); ++i) {
 			if (word.charAt(i) != stem.charAt(i)) {
@@ -54,12 +63,9 @@ public class SuffixCoder {
 		String lemmaSuff = stem.substring(i);
 
 		int code = SHIFT * tag + cutSize;
-		Pair<String, Integer> ret = new ImmutablePair<String, Integer>(
-				lemmaSuff, code);
-
-		tree.addWord(wordSuff, ret, count);
+		Pair<String, Pair<String, Integer>> ret = new ImmutablePair<String, Pair<String, Integer>>(
+				wordSuff, new ImmutablePair<String, Integer>(lemmaSuff, code));
 		return ret;
-
 	}
 
 	public static Pair<String, Integer> addToken(IToken stemmedToken,
@@ -76,7 +82,11 @@ public class SuffixCoder {
 		int cutSize = code.getRight() % SHIFT;
 		String add = code.getLeft();
 		String tag = vocab.getWord(tagCode);
-		String lemma = word.substring(0, word.length() - cutSize) + add;
+		String lemma = encode(word, cutSize, add);
 		return new Token(word, lemma, tag);
+	}
+
+	protected static String encode(String word, int rightCutSize, String addRight) {
+		return word.substring(0, word.length() - rightCutSize) + addRight;
 	}
 }
