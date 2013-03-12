@@ -30,6 +30,8 @@ import hu.ppke.itk.nlpg.purepos.model.Model;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 
 	private Counter<W> lemmaCounter;
@@ -40,8 +42,8 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 			IProbabilityModel<T, W> specTokensEmissionModel,
 			ISuffixGuesser<W, T> lowerCaseSuffixGuesser,
 			ISuffixGuesser<W, T> upperCaseSuffixGuesser,
-			HashLemmaTree lemmaTree, Counter<W> lemmaCounter,
-			ILexicon<W, T> standardTokensLexicon,
+			ISuffixGuesser<W, Pair<W, Integer>> lemmaTree,
+			Counter<W> lemmaCounter, ILexicon<W, T> standardTokensLexicon,
 			ILexicon<W, T> specTokensLexicon,
 			IVocabulary<String, T> tagVocabulary, Map<T, Double> aprioriTagProbs) {
 		super(taggingOrder, emissionOrder, suffixLength, rareFrequency,
@@ -76,9 +78,9 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 
 	protected Map<T, Double> aprioriTagProbs;
 
-	protected HashLemmaTree lemmaTree;
+	protected ISuffixGuesser<W, Pair<W, Integer>> lemmaTree;
 
-	public HashLemmaTree getLemmaTree() {
+	public ISuffixGuesser<W, Pair<W, Integer>> getLemmaGuesser() {
 		return lemmaTree;
 	}
 

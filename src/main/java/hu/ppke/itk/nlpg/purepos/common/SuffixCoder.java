@@ -25,8 +25,11 @@ package hu.ppke.itk.nlpg.purepos.common;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
-import hu.ppke.itk.nlpg.purepos.model.internal.HashLemmaTree;
+import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 import hu.ppke.itk.nlpg.purepos.model.internal.Vocabulary;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,7 +45,8 @@ public class SuffixCoder {
 	private static final int SHIFT = 100;
 
 	public static Pair<String, Integer> addToken(String word, String stem,
-			Integer tag, HashLemmaTree tree, int count) {
+			Integer tag, SuffixTree<String, Pair<String, Integer>> tree,
+			int count) {
 		Pair<String, Pair<String, Integer>> ret = decode(word, stem, tag);
 
 		tree.addWord(ret.getLeft(), ret.getRight(), count);
@@ -69,7 +73,8 @@ public class SuffixCoder {
 	}
 
 	public static Pair<String, Integer> addToken(IToken stemmedToken,
-			Vocabulary<String, Integer> vocab, HashLemmaTree tree, int count) {
+			Vocabulary<String, Integer> vocab,
+			SuffixTree<String, Pair<String, Integer>> tree, int count) {
 		String word = stemmedToken.getToken();
 		String stem = stemmedToken.getStem();
 		String tag = stemmedToken.getTag();
@@ -86,7 +91,21 @@ public class SuffixCoder {
 		return new Token(word, lemma, tag);
 	}
 
-	protected static String encode(String word, int rightCutSize, String addRight) {
+	public static Map<IToken, Double> convertProbMap(
+			Map<Pair<String, Integer>, Double> probMap, String word,
+			IVocabulary<String, Integer> vocab) {
+		Map<IToken, Double> ret = new HashMap<IToken, Double>();
+		for (Map.Entry<Pair<String, Integer>, Double> entry : probMap
+				.entrySet()) {
+			IToken lemma = tokenForCode(entry.getKey(), word, vocab);
+			ret.put(lemma, entry.getValue());
+		}
+		return ret;
+
+	}
+
+	protected static String encode(String word, int rightCutSize,
+			String addRight) {
 		return word.substring(0, word.length() - rightCutSize) + addRight;
 	}
 }

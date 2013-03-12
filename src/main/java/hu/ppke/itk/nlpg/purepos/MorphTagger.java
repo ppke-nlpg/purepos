@@ -26,15 +26,18 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Tagger that performs full morphological disambiguation.
@@ -67,12 +70,17 @@ public class MorphTagger extends POSTagger implements ITagger {
 	}
 
 	private IToken findBestLemma(IToken t) {
-		List<IToken> stems = analyzer.analyze(t);
+		Collection<IToken> stems = analyzer.analyze(t);
+		final Map<IToken, Double> lemmaSuffixProbs = SuffixCoder
+				.convertProbMap(
+						model.getLemmaGuesser().getTagLogProbabilities(
+								t.getToken()), t.getToken(),
+						model.getTagVocabulary());
 
 		if (Util.isEmpty(stems)) {
 			// the guesser is used
-			stems = model.getLemmaTree().getLemmas(t.getToken(),
-					model.getTagVocabulary());
+
+			stems = lemmaSuffixProbs.keySet();
 		}
 		// matching tags
 		List<IToken> possibleStems = new ArrayList<IToken>();
@@ -108,7 +116,19 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 				@Override
 				public int compare(IToken o1, IToken o2) {
-					return count(o1) - count(o2);
+					int c1 = count(o1);
+					int c2 = count(o2);
+					if (c1 > 0 || c2 > 0)
+						return c1 - c2;
+					else {
+						Double prob1 = lemmaSuffixProbs.get(o1);
+						Double prob2 = lemmaSuffixProbs.get(o2);
+						if (prob1 == null)
+							prob1 = Double.NEGATIVE_INFINITY;
+						if (prob2 == null)
+							prob2 = Double.NEGATIVE_INFINITY;
+						return Double.compare(prob1, prob2);
+					}
 
 				}
 			});

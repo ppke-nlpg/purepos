@@ -100,8 +100,8 @@ public class HashSuffixGuesserTest {
 		m.put(3, 0.2);
 		m.put(4, 0.2);
 
-		guesser = (HashSuffixGuesser<Integer>) suffixTree.createGuesser(
-				suffixTree.calculateTheta(m), null);
+		guesser = (HashSuffixGuesser<Integer>) suffixTree
+				.createGuesser(suffixTree.calculateTheta(m));
 		// Assert.assertEquals(3, (int) guesser.getMaxProbabilityTag("alma"));
 		for (String word : Arrays.asList("alma", "körte", "ajtóhoz", "1"))
 			for (Map.Entry<Integer, Double> tagEntry : guesser

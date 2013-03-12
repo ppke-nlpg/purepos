@@ -51,8 +51,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	private final double theta;
 	private final double thetaPlusOne;
 	@SuppressWarnings("unused")
-	private final Map<T, Double> aprioriProbs;
-
+	// private final Map<T, Double> aprioriProbs;
 	protected IMapper<T> mapper = null;
 
 	public void setMapper(IMapper<T> mapper) {
@@ -67,8 +66,9 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 	HashSuffixGuesser(
 			HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable,
-			Map<T, Double> aprioriProbs, double theta) {
-		this.aprioriProbs = aprioriProbs;
+			// Map<T, Double> aprioriProbs,
+			double theta) {
+		// this.aprioriProbs = aprioriProbs;
 		this.freqTable = freqTable;
 		this.theta = theta;
 		this.thetaPlusOne = theta + 1;
@@ -106,10 +106,13 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 					Double tagSufFreqD = entry.getValue().doubleValue();
 					Double relFreq = 0.0;
 					Double ret = mret.get(tag);
+					if (ret == null)
+						ret = 0.0;
 
 					relFreq = tagSufFreqD / suffixValue.getRight();
 
 					mret.put(tag, (ret + (relFreq * theta)) / thetaPlusOne);
+
 					// logger.debug("accu(" + tag + ") = (prev(" + retP
 					// + ") + relfreq(" + relFreq + ") * theta(" + theta
 					// + "))/thetaPO(" + thetaPlusOne + ") =" + ret);

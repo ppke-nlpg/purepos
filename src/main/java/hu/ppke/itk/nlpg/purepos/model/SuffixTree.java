@@ -69,8 +69,9 @@ public abstract class SuffixTree<W, T> implements Serializable {
 	 * 
 	 * @return a suffix guesser
 	 */
-	public abstract ISuffixGuesser<W, T> createGuesser(double theta,
-			Map<T, Double> apriori);
+	public abstract ISuffixGuesser<W, T> createGuesser(double theta// ,
+	// Map<T, Double> apriori
+	);
 
 	/**
 	 * Calculate theta from the apriori probabilities.

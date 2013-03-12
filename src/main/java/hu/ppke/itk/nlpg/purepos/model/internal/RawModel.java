@@ -45,6 +45,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class RawModel extends Model<String, Integer> {
 	@SuppressWarnings("unused")
 	private RawModel() {
@@ -57,7 +59,7 @@ public class RawModel extends Model<String, Integer> {
 	protected INGramModel<Integer, Integer> tagNGramModel;
 	protected INGramModel<Integer, String> stdEmissionNGramModel;
 	protected INGramModel<Integer, String> specEmissionNGramModel;
-	protected HashLemmaTree lemmaTree;
+	protected SuffixTree<String, Pair<String, Integer>> lemmaTree;
 	protected Integer eosTag;
 	protected Counter<String> lemmaCounter;
 
@@ -186,15 +188,17 @@ public class RawModel extends Model<String, Integer> {
 		Map<Integer, Double> aprioriProbs = tagNGramModel.getWordAprioriProbs();
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
 		ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser = lowerSuffixTree
-				.createGuesser(theta, aprioriProbs);
+				.createGuesser(theta);
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
-				.createGuesser(theta, aprioriProbs);
+				.createGuesser(theta);
+		ISuffixGuesser<String, Pair<String, Integer>> lemmaSuffixGuesser = lemmaTree
+				.createGuesser(theta);
 
 		CompiledModel<String, Integer> model = new CompiledModel<String, Integer>(
 				taggingOrder, emissionOrder, suffixLength, rareFreqency,
 				tagTransitionModel, standardEmissionModel,
 				specTokensEmissionModel, lowerCaseSuffixGuesser,
-				upperCaseSuffixGuesser, lemmaTree, lemmaCounter,
+				upperCaseSuffixGuesser, lemmaSuffixGuesser, lemmaCounter,
 				standardTokensLexicon, specTokensLexicon, tagVocabulary,
 				aprioriProbs);
 		return model;
