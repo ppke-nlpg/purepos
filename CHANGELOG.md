@@ -1,7 +1,7 @@
 Changelog
 ========
 
-1.2.1
+1.2.2
 -----
 * Much better lemmatizing (through a bugfix)
 
