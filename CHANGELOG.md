@@ -3,7 +3,7 @@ Changelog
 
 1.2.2
 -----
-* Much better lemmatizing (through a bugfix)
+* Much better lemmatization
 
 1.2.1
 -----
