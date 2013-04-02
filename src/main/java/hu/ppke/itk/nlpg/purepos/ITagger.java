@@ -38,8 +38,15 @@ public interface ITagger {
 
 	public ISentence tagSentence(List<String> sentence);
 
+	public List<ISentence> tagSentence(List<String> sentence,
+			int maxResultsNumber);
+
 	public ISentence tagSentence(String sentence);
 
+	public List<ISentence> tagSentence(String sentence, int maxResultsNumber);
+
 	public void tag(Scanner scanner, PrintStream ps);
+
+	public void tag(Scanner scanner, PrintStream ps, int maxResultsNumber);
 
 }

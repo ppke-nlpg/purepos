@@ -62,4 +62,7 @@ public abstract class SuffixGuesser<W, T> implements ISuffixGuesser<W, T>,
 
 		return max.getKey();
 	}
+
+	public void setMapper(IMapper<T> mapper) {
+	}
 }

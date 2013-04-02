@@ -24,4 +24,11 @@ public class SuffixCoderTest {
 		Assert.assertEquals(new Integer(101), x.getRight().getRight());
 
 	}
+
+	@Test
+	public void conversionTest() {
+		Assert.assertEquals("alma", SuffixCoder.postprocess("alma"));
+		Assert.assertEquals("alma", SuffixCoder.postprocess("alma-"));
+		Assert.assertEquals("-", SuffixCoder.postprocess("-"));
+	}
 }

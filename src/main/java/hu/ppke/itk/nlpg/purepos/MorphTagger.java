@@ -22,10 +22,10 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos;
 
-import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.common.Global;
 import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
@@ -56,21 +56,30 @@ public class MorphTagger extends POSTagger implements ITagger {
 	}
 
 	@Override
-	public ISentence tagSentence(List<String> sentence) {
-		ISentence taggedSentence = super.tagSentence(sentence);
+	protected List<IToken> merge(List<String> sentence, List<Integer> tags) {
+		List<IToken> res = super.merge(sentence, tags);
+		// ISentence taggedSentence = super.tagSentence(sentence);
 		List<IToken> tmp = new ArrayList<IToken>();
-		for (IToken t : taggedSentence) {
-			IToken bestStemmedToken = findBestLemma(t);
+		int pos = 0;
+		for (IToken t : res) {
+			IToken bestStemmedToken = findBestLemma(t, pos);
 			bestStemmedToken = new Token(bestStemmedToken.getToken(),
 					bestStemmedToken.getStem().replace(" ", "_"),
 					bestStemmedToken.getTag());
 			tmp.add(bestStemmedToken);
+			pos++;
 		}
 		return new Sentence(tmp);
 	}
 
-	private IToken findBestLemma(IToken t) {
-		Collection<IToken> stems = analyzer.analyze(t);
+	private IToken findBestLemma(IToken t, int position) {
+		Collection<IToken> stems;
+		if (Global.analysisQueue.hasAnal(position)) {
+			stems = Global.analysisQueue.getAnalysises(position);
+		} else {
+			stems = analyzer.analyze(t);
+		}
+
 		final Map<IToken, Double> lemmaSuffixProbs = SuffixCoder
 				.convertProbMap(
 						model.getLemmaGuesser().getTagLogProbabilities(

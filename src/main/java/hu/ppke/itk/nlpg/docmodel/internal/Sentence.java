@@ -34,6 +34,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 public class Sentence extends AbstractDocElementContainer<IToken> implements
 		ISentence {
 	protected final String SEP = " ";
+	protected Double score = null;
 
 	public Sentence(Iterable<IToken> elements) {
 		super(elements);
@@ -75,6 +76,15 @@ public class Sentence extends AbstractDocElementContainer<IToken> implements
 		for (IToken t : this)
 			buf.append(t.getToken());
 		return buf.toString();
+	}
+
+	@Override
+	public Double getScore() {
+		return score;
+	}
+
+	public void setScore(Double score) {
+		this.score = score;
 	}
 
 }

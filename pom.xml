@@ -4,7 +4,7 @@
 
 	<groupId>hu.ppke.itk.nlpg</groupId>
 	<artifactId>purepos</artifactId>
-	<version>1.2.2</version>
+	<version>1.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>purepos</name>
@@ -105,6 +105,8 @@
 	</organization>
 	<scm>
 		<developerConnection>György Orosz</developerConnection>
+		<url>https://github.com/ppke-nlpg/purepos</url>
+		<connection>scm:git:git://github.com/ppke-nlpg/purepos.git</connection>
 	</scm>
 	<pluginRepositories>
 		<pluginRepository>
@@ -112,4 +114,8 @@
 			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<issueManagement>
+		<url>https://github.com/ppke-nlpg/purepos/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 </project>

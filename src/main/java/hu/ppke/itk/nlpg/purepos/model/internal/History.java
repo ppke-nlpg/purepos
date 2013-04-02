@@ -20,40 +20,53 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.corpusreader;
+package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.docmodel.IToken;
-import hu.ppke.itk.nlpg.docmodel.internal.Token;
 
 /**
- * Reader class for reading a tagged, unstemmed token.
+ * Represents a tag sequence and its probability.
  * 
  * @author György Orosz
  * 
  */
-public class StemmedTaggedTokenReader extends AbstractDocElementReader<IToken> {
+public class History implements Comparable<History> {
 
-	public StemmedTaggedTokenReader() {
-		separator = "#";
+	protected final NGram<Integer> tagSeq;
+	protected final Double logProb;
+
+	public NGram<Integer> getTagSeq() {
+		return tagSeq;
 	}
 
-	public StemmedTaggedTokenReader(String separator) {
-		this.separator = separator;
+	public Double getLogProb() {
+		return logProb;
+	}
+
+	public History(NGram<Integer> tagSeq, Double logProb) {
+		this.logProb = logProb;
+		this.tagSeq = tagSeq;
 	}
 
 	@Override
-	public IToken read(String text) {
-		try {
-			String[] wordParts = text.split(separator);
-			if (wordParts.length == 0)
-				return null;
-			IToken word = new Token(wordParts[0],
-					wordParts[1].replace('_', ' '), wordParts[2]);
-			return word;
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println(text);
-			return null;
+	public int hashCode() {
+		return tagSeq.hashCode();
+	}
+
+	@Override
+	public int compareTo(History o) {
+		return Double.compare(logProb, o.logProb);
+	}
+
+	@Override
+	public String toString() {
+		return "{" + getTagSeq().toString() + ", " + getLogProb() + "}";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof History) {
+			return tagSeq.toList().equals(((History) obj).getTagSeq().toList());
 		}
+		return false;
 	}
 }

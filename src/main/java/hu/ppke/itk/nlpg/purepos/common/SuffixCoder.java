@@ -104,8 +104,19 @@ public class SuffixCoder {
 
 	}
 
+	protected static String postprocess(String string) {
+		int length = string.length();
+		if (length > 1 && string.charAt(length - 1) == '-') {
+			return string.substring(0, length - 1);
+		}
+		return string;
+
+	}
+
 	protected static String encode(String word, int rightCutSize,
 			String addRight) {
-		return word.substring(0, word.length() - rightCutSize) + addRight;
+		String candidate = word.substring(0, word.length() - rightCutSize)
+				+ addRight;
+		return postprocess(candidate);
 	}
 }

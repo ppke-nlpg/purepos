@@ -26,8 +26,8 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,6 +39,7 @@ public class HashLemmaTree extends HashSuffixTree<Pair<String, Integer>> {
 	 */
 	private static final long serialVersionUID = -4680124440505966799L;
 
+	@SuppressWarnings("unused")
 	private HashLemmaTree() {
 		this(10);
 	}
@@ -54,17 +55,19 @@ public class HashLemmaTree extends HashSuffixTree<Pair<String, Integer>> {
 
 	// TODO: the relative probabilities just left out, it should be calculated
 	// in the model
-	public List<IToken> getLemmas(String word,
+	public Map<IToken, Integer> getLemmas(String word,
 			IVocabulary<String, Integer> vocab) {
-		List<IToken> ret = new ArrayList<IToken>();
+		Map<IToken, Integer> ret = new HashMap<IToken, Integer>();
 		String wordSuffix;
 		for (int i = 0; i < word.length(); ++i) {
 			wordSuffix = word.substring(word.length() - i);
 			if (representation.containsKey(wordSuffix)) {
-				Set<Pair<String, Integer>> codes = representation
-						.get(wordSuffix).getLeft().keySet();
+				HashMap<Pair<String, Integer>, Integer> anals = representation
+						.get(wordSuffix).getLeft();
+				Set<Pair<String, Integer>> codes = anals.keySet();
 				for (Pair<String, Integer> code : codes) {
-					ret.add(SuffixCoder.tokenForCode(code, word, vocab));
+					ret.put(SuffixCoder.tokenForCode(code, word, vocab),
+							anals.get(code));
 				}
 			}
 		}

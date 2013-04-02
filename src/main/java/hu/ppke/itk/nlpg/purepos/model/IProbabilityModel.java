@@ -23,7 +23,6 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Implementors should implement a n-gram probability model upon an n-rgam
@@ -75,7 +74,12 @@ public interface IProbabilityModel<T, W> {
 	 * @param context
 	 *            list of tags, must not be null
 	 */
-	@Deprecated
-	public Map<W, Double> getWordProbs(List<T> context);
+	// @Deprecated
+	// public Map<W, Double> getWordProbs(List<T> context);
+	public abstract void setContextMapper(IMapper<Integer> mapper);
+
+	public abstract void setElementMapper(IMapper<W> mapper);
+
+	public abstract IMapper<Integer> getContextMapper();
 
 }

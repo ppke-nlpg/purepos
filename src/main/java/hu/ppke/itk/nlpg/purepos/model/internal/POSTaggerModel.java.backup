@@ -53,6 +53,7 @@ import java.util.Vector;
  * @author György Orosz
  * 
  */
+@Deprecated
 public class POSTaggerModel extends CompiledModel<String, Integer> {
 	// protected static Logger logger = Logger.getLogger(POSTaggerModel.class);
 
@@ -146,6 +147,10 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 		ISuffixGuesser<String, Integer> upperCaseSuffixGuesser = upperSuffixTree
 				.createGuesser(theta, aprioriProbs);
 
+		// addMappings(standardEmissionModel, specTokensEmissionModel,
+		// tagTransitionModel, lowerCaseSuffixGuesser,
+		// upperCaseSuffixGuesser, tagVocabulary);
+
 		Model<String, Integer> model = new POSTaggerModel(tagOrder,
 				emissionOrder, maxSuffixLength, rareFrequency,
 				tagTransitionModel, standardEmissionModel,
@@ -233,8 +238,6 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 				// logger.trace(tag);
 				// stat.incrementTokenCount();
 				// logger.trace("token is added:" + word);
-				standardTokensLexicon.addToken(word, tag);
-				stdEmissionNGramModel.addWord(context, word);
 
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
@@ -243,6 +246,9 @@ public class POSTaggerModel extends CompiledModel<String, Integer> {
 					specTokensLexicon.addToken(specName, tag);
 					// this is how it is used in HunPOS:
 					// specTokensLexicon.addToken(word, tag);
+				} else {
+					standardTokensLexicon.addToken(word, tag);
+					stdEmissionNGramModel.addWord(context, word);
 				}
 			}
 		}

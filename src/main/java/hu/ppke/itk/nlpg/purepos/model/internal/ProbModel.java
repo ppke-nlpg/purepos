@@ -45,10 +45,12 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 	protected IMapper<W> elementMapper = null;
 	protected IMapper<Integer> contextMapper = null;
 
+	@Override
 	public void setElementMapper(IMapper<W> mapper) {
 		this.elementMapper = mapper;
 	}
 
+	@Override
 	public void setContextMapper(IMapper<Integer> mapper) {
 		this.contextMapper = mapper;
 	}
@@ -111,7 +113,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		return lp;
 	}
 
-	@Override
+	// @Override
 	// TODO: PERF: implement getProb() using this function
 	public Map<W, Double> getWordProbs(List<Integer> context) {
 		ListIterator<Integer> iterator = context.listIterator(context.size());
@@ -202,6 +204,11 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 
 	public String getReprString() {
 		return root.getReprString();
+	}
+
+	@Override
+	public IMapper<Integer> getContextMapper() {
+		return this.contextMapper;
 	}
 
 }

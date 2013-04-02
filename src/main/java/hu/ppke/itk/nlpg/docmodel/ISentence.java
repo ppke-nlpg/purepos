@@ -30,4 +30,14 @@ package hu.ppke.itk.nlpg.docmodel;
  */
 public interface ISentence extends IDocElementContainer<IToken> {
 
+	/**
+	 * Returns the given score for a sentence. null if it is not given
+	 * previously.
+	 * 
+	 * @return
+	 */
+	public Double getScore();
+
+	public void setScore(Double score);
+
 }

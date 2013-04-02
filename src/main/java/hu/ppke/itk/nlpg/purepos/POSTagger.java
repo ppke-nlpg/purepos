@@ -26,6 +26,8 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
+import hu.ppke.itk.nlpg.purepos.common.Global;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
@@ -37,8 +39,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Joiner;
 
@@ -63,14 +68,51 @@ public class POSTagger implements ITagger {
 			int maxGuessedTags) {
 		this.model = model;
 		this.analyzer = analyzer;
-		this.decoder = new BeamSearch(model, analyzer, logTheta, sufTheta,
+		// this.decoder = new BeamedViterbi(model, analyzer, logTheta, sufTheta,
+		// maxGuessedTags);
+		this.decoder = new BeamSearch(model, analyzer, 10, sufTheta,
 				maxGuessedTags);
+	}
+
+	protected static List<String> preprocessSentence(List<String> sentence) {
+		Global.analysisQueue.init(sentence.size());
+		ArrayList<String> ret = new ArrayList<String>(sentence.size());
+		int i = 0;
+		for (String word : sentence) {
+			if (AnalysisQueue.isPreanalysed(word)) {
+				Global.analysisQueue.addWord(word, i);
+				ret.add(AnalysisQueue.clean(word));
+			} else {
+				ret.add(word);
+			}
+			++i;
+		}
+
+		return ret;
 	}
 
 	@Override
 	public ISentence tagSentence(List<String> sentence) {
-		List<Integer> tags = decoder.decode(sentence);
+		return tagSentence(sentence, 1).get(0);
+	}
 
+	@Override
+	public List<ISentence> tagSentence(List<String> sentence, int maxRes) {
+		sentence = preprocessSentence(sentence);
+		List<Pair<List<Integer>, Double>> tagList = decoder.decode(sentence,
+				maxRes);
+		List<ISentence> ret = new ArrayList<ISentence>();
+		for (Pair<List<Integer>, Double> tags : tagList) {
+			List<IToken> tokens = merge(sentence, tags.getKey());
+			Sentence sent = new Sentence(tokens);
+			sent.setScore(tags.getValue());
+			ret.add(sent);
+		}
+
+		return ret;
+	}
+
+	protected List<IToken> merge(List<String> sentence, List<Integer> tags) {
 		Iterator<Integer> tagsIt = tags.iterator();
 		Iterator<String> tokensIt = sentence.iterator();
 		List<IToken> tokens = new ArrayList<IToken>();
@@ -82,33 +124,67 @@ public class POSTagger implements ITagger {
 			IToken t = new Token(nextToken, nextTagS);
 			tokens.add(t);
 		}
-		return new Sentence(tokens);
+		return tokens;
 	}
 
 	@Override
 	public ISentence tagSentence(String sentence) {
+		return tagSentence(sentence, 1).get(0);
+	}
+
+	@Override
+	public List<ISentence> tagSentence(String sentence, int maxRes) {
 		if (sentence == null || sentence.trim().equals(""))
 			return null;
-		ISentence s = tagSentence(Arrays.asList(sentence.split("\\s")));
-		return s;
+		List<ISentence> sents = tagSentence(
+				Arrays.asList(sentence.split("\\s")), maxRes);
+		return sents;
 	}
 
 	@Override
 	public void tag(Scanner scanner, PrintStream ps) {
+		tag(scanner, ps, 1);
+	}
+
+	protected String tagAndFormat(String line, int maxResNum) {
+		String sentString = "";
+		boolean showProb = maxResNum > 1;
+		if (!line.trim().equals("")) {
+			List<ISentence> s = tagSentence(line, maxResNum);
+			sentString = sentences2string(s, showProb);
+		}
+		return sentString;
+	}
+
+	@Override
+	public void tag(Scanner scanner, PrintStream ps, int maxResultsNumber) {
 		String line;
 		while (scanner.hasNext()) {
 			line = scanner.nextLine();
-			if (!line.trim().equals("")) {
-				ISentence s = tagSentence(line);
-				ps.println(sentence2string(s));
-			} else {
-				ps.println();
-			}
+			String sentString = tagAndFormat(line, maxResultsNumber);
+			ps.println(sentString);
+
 		}
+
 	}
 
-	protected String sentence2string(ISentence s) {
-		return Joiner.on(" ").join(s);
+	protected String sentences2string(List<ISentence> sents) {
+		return sentences2string(sents, false);
 	}
 
+	protected String sentences2string(List<ISentence> sents, boolean showProb) {
+		LinkedList<String> sentStrings = new LinkedList<String>();
+		for (ISentence s : sents) {
+			sentStrings.add(sentence2string(s, showProb));
+		}
+		return Joiner.on("\t").join(sentStrings);
+	}
+
+	protected String sentence2string(ISentence s, boolean showProb) {
+		String ret = Joiner.on(" ").join(s);
+		if (showProb) {
+			ret = ret + "$$" + s.getScore() + "$$";
+		}
+		return ret;
+	}
 }

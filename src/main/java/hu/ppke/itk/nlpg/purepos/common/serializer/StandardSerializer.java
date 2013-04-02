@@ -39,6 +39,7 @@ public class StandardSerializer implements ISerializer {
 		ObjectInputStream input = new ObjectInputStream(fis);
 		RawModel model;
 		model = (RawModel) input.readObject();
+		input.close();
 		return model;
 	}
 

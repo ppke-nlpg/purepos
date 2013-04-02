@@ -23,25 +23,28 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TagMapper implements IMapper<Integer> {
 	LinkedHashMap<Pattern, String> mapping;
-	private Vocabulary<String, Integer> vocabulary;
+	private IVocabulary<String, Integer> vocabulary;
 
-	public TagMapper(Vocabulary<String, Integer> vocabulary) {
-		this.vocabulary = vocabulary;
+	public TagMapper(IVocabulary<String, Integer> tagVocabulary) {
+		this.vocabulary = tagVocabulary;
 		mapping = new LinkedHashMap<Pattern, String>();
 		init();
 	}
 
 	private void init() {
-		add("^(.*)(\\|lat)(.*)$", "$1$3");
+		add("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
 	}
 
 	private void add(String regexp, String replacement) {
@@ -71,6 +74,19 @@ public class TagMapper implements IMapper<Integer> {
 		ArrayList<Integer> ret = new ArrayList<Integer>();
 		for (Integer e : elements) {
 			ret.add(map(e));
+		}
+		return ret;
+	}
+
+	@Override
+	public Collection<Integer> filter(Collection<Integer> morphAnals,
+			Collection<Integer> possibleTags) {
+		List<Integer> ret = new LinkedList<Integer>();
+		for (Integer anal : morphAnals) {
+			Integer mappedTag = map(anal);
+			if (possibleTags.contains(mappedTag)) {
+				ret.add(anal);
+			}
 		}
 		return ret;
 	}

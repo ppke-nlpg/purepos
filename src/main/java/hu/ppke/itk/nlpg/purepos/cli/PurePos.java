@@ -28,7 +28,6 @@ import hu.ppke.itk.nlpg.purepos.ITagger;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
-import hu.ppke.itk.nlpg.purepos.common.TaggedSequenceReader;
 import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
@@ -61,7 +60,8 @@ public class PurePos implements Runnable {
 	private static final String NONE_MA = "none";
 	private static final String INTEGRATED_MA = "integrated";
 	protected CLIOptions options;
-	protected static TaggedSequenceReader taggedSeqReader;
+
+	// protected static TaggedSequenceReader taggedSeqReader;
 
 	public PurePos(CLIOptions options) {
 		this.options = options;
@@ -70,7 +70,7 @@ public class PurePos implements Runnable {
 	public static void train(String encoding, String modelPath,
 			String inputPath, int tagOrder, int emissionOrder, int suffLength,
 			int rareFreq) throws ParsingException, Exception {
-		Scanner sc = createScanner(encoding, inputPath, false, null);
+		Scanner sc = createScanner(encoding, inputPath, false);
 		Trainer trainer = new Trainer(sc, new CorpusReader());
 
 		File modelFile = new File(modelPath);
@@ -93,29 +93,29 @@ public class PurePos implements Runnable {
 	}
 
 	protected static Scanner createScanner(String encoding, String inputPath,
-			boolean taggedSeq, String seps) throws Exception {
+			boolean taggedSeq) throws Exception {
 		Scanner sc;
 		if (inputPath != null) {
 			sc = new Scanner(new File(inputPath), encoding);
 		} else {
 			sc = new Scanner(System.in, encoding);
 		}
-		if (taggedSeq) {
-			String[] parts = seps.split(" ");
-			if (parts == null || parts.length < 4)
-				throw new Exception("Badly formatted separator parameter!");
-			taggedSeqReader = new TaggedSequenceReader(sc, parts[0], parts[1],
-					parts[2], parts[3]);
-			return taggedSeqReader.getScanner();
-		} else
-			return sc;
+		// if (taggedSeq) {
+		// String[] parts = seps.split(" ");
+		// if (parts == null || parts.length < 4)
+		// throw new Exception("Badly formatted separator parameter!");
+		// taggedSeqReader = new TaggedSequenceReader(sc, parts[0], parts[1],
+		// parts[2], parts[3]);
+		// return taggedSeqReader.getScanner();
+		// } else
+		return sc;
 	}
 
 	public static void tag(String encoding, String modelPath, String inputPath,
-			String analyzer, boolean noStemming, int maxGuessed,
-			String outPath, String separators) throws Exception {
+			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
+			String outPath) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
-				analyzer.equals(PRE_MA), separators);
+				analyzer.equals(PRE_MA));
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed);
 
 		PrintStream output;
@@ -125,7 +125,7 @@ public class PurePos implements Runnable {
 			output = new PrintStream(new File(outPath), encoding);
 		}
 		System.err.println("Tagging:");
-		t.tag(input, output);
+		t.tag(input, output, maxresnum);
 	}
 
 	public static ITagger createTagger(String modelPath, String analyzer,
@@ -149,8 +149,8 @@ public class PurePos implements Runnable {
 		} else if (analyzer.equals(NONE_MA)) {
 			ma = new NullAnalyzer();
 
-		} else if (analyzer.equals(PRE_MA)) {
-			ma = taggedSeqReader.getMorphologicalAnalyzer();
+			// } else if (analyzer.equals(PRE_MA)) {
+			// ma = taggedSeqReader.getMorphologicalAnalyzer();
 		} else {
 			System.err.println("Using morphological table at: " + analyzer
 					+ ".");
@@ -163,11 +163,14 @@ public class PurePos implements Runnable {
 		CompiledModel<String, Integer> model = rawmodel.compile();
 		ITagger t;
 
+		// double beamLogTheta = Math.log(10000);
+		double beamLogTheta = Double.POSITIVE_INFINITY;
+		double suffixLogTheta = Math.log(10);
 		if (noStemming) {
-			t = new POSTagger(model, ma, Math.log(10000), Math.log(10),
+			t = new POSTagger(model, ma, beamLogTheta, suffixLogTheta,
 					maxGuessed);
 		} else {
-			t = new MorphTagger(model, ma, Math.log(10000), Math.log(10),
+			t = new MorphTagger(model, ma, beamLogTheta, suffixLogTheta,
 					maxGuessed);
 		}
 		return t;
@@ -216,7 +219,8 @@ public class PurePos implements Runnable {
 			} else if (options.command.equals(TAG_OPT)) {
 				tag(options.encoding, options.modelName, options.fromFile,
 						options.morphology, options.noStemming,
-						options.maxGuessed, options.toFile, options.separator);
+						options.maxGuessed, options.maxResultsNumber,
+						options.toFile);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());

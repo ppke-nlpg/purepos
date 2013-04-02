@@ -43,6 +43,7 @@ public class HashLemmaTreeTest {
 		vocabulary = new IntVocabulary<String>();
 	}
 
+	@SuppressWarnings("unused")
 	private Pair<String, Integer> create(String s, Integer i) {
 		return new ImmutablePair<String, Integer>(s, i);
 	}

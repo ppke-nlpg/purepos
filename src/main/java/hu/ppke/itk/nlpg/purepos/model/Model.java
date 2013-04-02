@@ -23,6 +23,7 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
 
 import java.io.Serializable;
 
@@ -181,6 +182,25 @@ public abstract class Model<W, T extends Comparable<T>> implements Serializable 
 	 */
 	public T getBOSIndex() {
 		return bosIndex;
+	}
+
+	protected static void addMappings(
+			IProbabilityModel<Integer, String> standardEmissionModel,
+			IProbabilityModel<Integer, String> specTokensEmissionModel,
+			IProbabilityModel<Integer, Integer> tagTransitionModel,
+			ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser,
+			ISuffixGuesser<String, Integer> upperCaseSuffixGuesser,
+			IVocabulary<String, Integer> tagVocabulary) {
+		TagMapper mapper = new TagMapper(tagVocabulary);
+		standardEmissionModel.setContextMapper(mapper);
+		specTokensEmissionModel.setContextMapper(mapper);
+
+		tagTransitionModel.setContextMapper(mapper);
+		tagTransitionModel.setElementMapper(mapper);
+
+		lowerCaseSuffixGuesser.setMapper(mapper);
+		upperCaseSuffixGuesser.setMapper(mapper);
+
 	}
 
 }
