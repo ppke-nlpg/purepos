@@ -49,7 +49,8 @@ public class SpecTokenMatcher implements ISpecTokenMatcher {
 		addPattern("@CARDSUFFIX", "^[0-9]+[a-zA-Z][a-zA-Z]?[a-zA-Z]?$");
 		addPattern("@HTMLENTITY", "^&[^;]+;?$");
 		addPattern("@PUNCT", "^\\pP+$");
-		addPattern("@ABBREV", "^[A-Za-zöüóőúéáűíÖÜÓŐÚÉÁŰÍ][öüóőúéáűía-z]*\\.$");
+		// addPattern("@ABBREV",
+		// "^[A-Za-zöüóőúéáűíÖÜÓŐÚÉÁŰÍ][öüóőúéáűía-z]*\\.$");
 	}
 
 	@Override

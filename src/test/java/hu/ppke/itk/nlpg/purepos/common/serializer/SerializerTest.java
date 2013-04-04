@@ -88,13 +88,13 @@ public class SerializerTest {
 						+ " estém#este#[FN][PSe1][NOM] .#.#[PUNCT] ");
 		RawModel model = new RawModel(3, 3, 10, 10);
 		model.train(d1);
-		Assert.assertEquals(4, model.getStandardTokensLexicon().size());
+		Assert.assertEquals(6, model.getStandardTokensLexicon().size());
 		String pathname = "./_test.model";
 		File f = new File(pathname);
 		SSerializer.writeModel(model, f);
 		RawModel readModel = SSerializer.readModel(f);
 		readModel.train(d2);
-		Assert.assertEquals(9, readModel.getStandardTokensLexicon().size());
+		Assert.assertEquals(12, readModel.getStandardTokensLexicon().size());
 		SSerializer.deleteModel(f);
 	}
 }

@@ -158,6 +158,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		// return getTagProbRevHunPOS(word, tag);
 	}
 
+	@Deprecated
 	protected double getTagProbBoosted(String word, T tag, Integer offset) {
 		Double ret = 0.0;
 		for (int i = word.length() - offset; i >= 0; --i) {

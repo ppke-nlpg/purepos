@@ -132,6 +132,9 @@ public class RawModel extends Model<String, Integer> {
 
 				stat.incrementTokenCount();
 
+				standardTokensLexicon.addToken(word, tag);
+				stdEmissionNGramModel.addWord(context, word);
+
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
 					specEmissionNGramModel.addWord(context, specName);
@@ -139,10 +142,11 @@ public class RawModel extends Model<String, Integer> {
 					specTokensLexicon.addToken(specName, tag);
 					// this is how it is used in HunPOS:
 					// specTokensLexicon.addToken(word, tag);
-				} else {
-					standardTokensLexicon.addToken(word, tag);
-					stdEmissionNGramModel.addWord(context, word);
 				}
+				// else {
+				// standardTokensLexicon.addToken(word, tag);
+				// stdEmissionNGramModel.addWord(context, word);
+				// }
 			}
 		}
 

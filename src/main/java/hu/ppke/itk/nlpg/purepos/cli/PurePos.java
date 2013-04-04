@@ -163,8 +163,8 @@ public class PurePos implements Runnable {
 		CompiledModel<String, Integer> model = rawmodel.compile();
 		ITagger t;
 
-		// double beamLogTheta = Math.log(10000);
-		double beamLogTheta = Double.POSITIVE_INFINITY;
+		double beamLogTheta = Math.log(10000);
+		// double beamLogTheta = Double.POSITIVE_INFINITY;
 		double suffixLogTheta = Math.log(10);
 		if (noStemming) {
 			t = new POSTagger(model, ma, beamLogTheta, suffixLogTheta,
