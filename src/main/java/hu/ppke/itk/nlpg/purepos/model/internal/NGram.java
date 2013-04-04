@@ -66,8 +66,8 @@ public class NGram<T extends Comparable<T>> implements INGram<T>, Serializable {
 
 	public NGram(List<T> tokens, T newElement, int compareLength) {
 		this.compareLength = compareLength;
-		// List<T> tmp = new LinkedList<T>(tokens);
-		List<T> tmp = new LinkedList<T>();
+		List<T> tmp = new LinkedList<T>(tokens);
+		// List<T> tmp = new LinkedList<T>();
 		tmp.add(newElement);
 		this.tokenList = tmp;
 		this.hashCode = initHashCode();

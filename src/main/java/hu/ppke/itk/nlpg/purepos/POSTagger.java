@@ -29,7 +29,7 @@ import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
 import hu.ppke.itk.nlpg.purepos.common.Global;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
-import hu.ppke.itk.nlpg.purepos.decoder.BeamedViterbi;
+import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
@@ -68,10 +68,10 @@ public class POSTagger implements ITagger {
 			int maxGuessedTags) {
 		this.model = model;
 		this.analyzer = analyzer;
-		this.decoder = new BeamedViterbi(model, analyzer, logTheta, sufTheta,
-				maxGuessedTags);
-		// this.decoder = new BeamSearch(model, analyzer, 10, sufTheta,
+		// this.decoder = new BeamedViterbi(model, analyzer, logTheta, sufTheta,
 		// maxGuessedTags);
+		this.decoder = new BeamSearch(model, analyzer, logTheta, sufTheta,
+				maxGuessedTags);
 	}
 
 	protected static List<String> preprocessSentence(List<String> sentence) {

@@ -164,6 +164,7 @@ public class PurePos implements Runnable {
 		ITagger t;
 
 		double beamLogTheta = Math.log(10000);
+		// double beamLogTheta = Math.log(10000000);
 		// double beamLogTheta = Double.POSITIVE_INFINITY;
 		double suffixLogTheta = Math.log(10);
 		if (noStemming) {

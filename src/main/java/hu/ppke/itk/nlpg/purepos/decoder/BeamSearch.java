@@ -56,7 +56,7 @@ public class BeamSearch extends AbstractDecoder {
 	}
 
 	private List<Integer> clean(List<Integer> tagSeq) {
-		return tagSeq.subList(model.getTaggingOrder() + 1, tagSeq.size() - 1);
+		return tagSeq.subList(model.getTaggingOrder(), tagSeq.size() - 1);
 	}
 
 	private MinMaxPriorityQueue<History> beamSearch(List<String> observations) {
@@ -117,7 +117,8 @@ public class BeamSearch extends AbstractDecoder {
 			}
 		} else {
 			History max = beam.peekLast();
-			while (beam.peekFirst().getLogProb() < max.getLogProb() + logTheta) {
+			while (!(beam.peekFirst().getLogProb() > max.getLogProb()
+					- logTheta)) {
 				beam.removeFirst();
 			}
 		}
@@ -128,5 +129,18 @@ public class BeamSearch extends AbstractDecoder {
 		NGram<Integer> initNGram = createInitialElement();
 		beam.add(new History(initNGram, 0.0));
 		return beam;
+	}
+
+	protected NGram<Integer> createInitialElement() {
+		int n = model.getTaggingOrder() - 1;
+
+		ArrayList<Integer> startTags = new ArrayList<Integer>();
+		for (int j = 0; j <= n; ++j) {
+			startTags.add(model.getBOSIndex());
+		}
+
+		NGram<Integer> startNGram = new NGram<Integer>(startTags,
+				model.getTaggingOrder());
+		return startNGram;
 	}
 }
