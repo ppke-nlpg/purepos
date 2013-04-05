@@ -113,11 +113,12 @@ public class PurePos implements Runnable {
 
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
-			int beamTheta, String outPath) throws Exception {
+			int beamTheta, boolean useBeamSearch, String outPath)
+			throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed,
-				Math.log(beamTheta));
+				Math.log(beamTheta), useBeamSearch);
 
 		PrintStream output;
 		if (outPath == null) {
@@ -130,8 +131,8 @@ public class PurePos implements Runnable {
 	}
 
 	public static ITagger createTagger(String modelPath, String analyzer,
-			boolean noStemming, int maxGuessed, double beamLogTheta)
-			throws Exception {
+			boolean noStemming, int maxGuessed, double beamLogTheta,
+			boolean useBeamSearch) throws Exception {
 		IMorphologicalAnalyzer ma;
 		if (analyzer.equals(INTEGRATED_MA)) {
 			// TODO: set lex files through environment vars
@@ -171,10 +172,10 @@ public class PurePos implements Runnable {
 		double suffixLogTheta = Math.log(10);
 		if (noStemming) {
 			t = new POSTagger(model, ma, beamLogTheta, suffixLogTheta,
-					maxGuessed);
+					maxGuessed, useBeamSearch);
 		} else {
 			t = new MorphTagger(model, ma, beamLogTheta, suffixLogTheta,
-					maxGuessed);
+					maxGuessed, useBeamSearch);
 		}
 		return t;
 	}
@@ -223,7 +224,8 @@ public class PurePos implements Runnable {
 				tag(options.encoding, options.modelName, options.fromFile,
 						options.morphology, options.noStemming,
 						options.maxGuessed, options.maxResultsNumber,
-						options.beamTheta, options.toFile);
+						options.beamTheta, options.useBeamSearch,
+						options.toFile);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());

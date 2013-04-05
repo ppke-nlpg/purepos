@@ -50,8 +50,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 	public MorphTagger(CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
-			int maxGuessedTags) {
-		super(model, analyzer, logTheta, sufTheta, maxGuessedTags);
+			int maxGuessedTags, boolean useBeamSearch) {
+		super(model, analyzer, logTheta, sufTheta, maxGuessedTags,
+				useBeamSearch);
 		stemFilter = Util.crateStemFilter();
 	}
 

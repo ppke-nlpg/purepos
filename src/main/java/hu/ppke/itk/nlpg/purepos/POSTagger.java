@@ -30,6 +30,7 @@ import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
 import hu.ppke.itk.nlpg.purepos.common.Global;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
+import hu.ppke.itk.nlpg.purepos.decoder.BeamedViterbi;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
@@ -60,18 +61,21 @@ public class POSTagger implements ITagger {
 
 	public POSTagger(final CompiledModel<String, Integer> model,
 			double logTheta, double sufTheta, int maxGuessedTags) {
-		this(model, new NullAnalyzer(), logTheta, sufTheta, maxGuessedTags);
+		this(model, new NullAnalyzer(), logTheta, sufTheta, maxGuessedTags,
+				false);
 	}
 
 	public POSTagger(final CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
-			int maxGuessedTags) {
+			int maxGuessedTags, boolean useBeamSearch) {
 		this.model = model;
 		this.analyzer = analyzer;
-		// this.decoder = new BeamedViterbi(model, analyzer, logTheta, sufTheta,
-		// maxGuessedTags);
-		this.decoder = new BeamSearch(model, analyzer, logTheta, sufTheta,
-				maxGuessedTags);
+		if (useBeamSearch)
+			this.decoder = new BeamSearch(model, analyzer, logTheta, sufTheta,
+					maxGuessedTags);
+		else
+			this.decoder = new BeamedViterbi(model, analyzer, logTheta,
+					sufTheta, maxGuessedTags);
 	}
 
 	protected static List<String> preprocessSentence(List<String> sentence) {

@@ -81,6 +81,9 @@ public class CLIOptions {
 	@Option(name = "-i", aliases = "--input-file", usage = "File containg the training set (for tagging) or the text to be tagged (for tagging). The default is the standard input.", metaVar = "<file>")
 	String fromFile = null;
 
+	@Option(name = "-d", aliases = "--beam-decoder", usage = "Use Beam Search decoder. The default is to employ the Viterbi algorithm. Tagging only option.")
+	boolean useBeamSearch = false;
+
 	// Other stuff
 	String formatMessage = "";
 
