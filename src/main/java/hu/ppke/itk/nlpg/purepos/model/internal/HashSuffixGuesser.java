@@ -50,7 +50,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	private final HashMap<String, MutablePair<HashMap<T, Integer>, Integer>> freqTable;
 	private final double theta;
 	private final double thetaPlusOne;
-	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	// private final Map<T, Double> aprioriProbs;
 	protected IMapper<T> mapper = null;
 

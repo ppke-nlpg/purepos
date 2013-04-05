@@ -248,12 +248,13 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 				Double tagTransProb = model.getTagTransitionModel().getLogProb(
 						prevTags.toList(), tag);
+				double aprioriProb = Math.log(model.getAprioriTagProbs()
+						.get(tag));
 				tagProbs.put(
 						tag,
 						new ImmutablePair<Double, Double>(tagTransProb,
 								emissionProb
-										- Math.log(model.getAprioriTagProbs()
-												.get(tag))));
+										- aprioriProb));
 
 			}
 			ret.put(prevTags, tagProbs);
@@ -454,7 +455,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	}
 
 	protected NGram<Integer> createInitialElement() {
-		int n = model.getTaggingOrder();
+		int n = model.getTaggingOrder() - 1;
 
 		ArrayList<Integer> startTags = new ArrayList<Integer>();
 		for (int j = 0; j <= n; ++j) {

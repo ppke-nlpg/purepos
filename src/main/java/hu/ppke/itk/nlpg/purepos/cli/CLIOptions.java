@@ -51,12 +51,17 @@ public class CLIOptions {
 	// "Separator characters and tag starting character for annotated input (divided by spaces). Eg.: \"{{ || }} [\"",
 	// metaVar = "<characters>")
 	// String separator = "{{ || }} [";
-	@Option(name = "-p", aliases = "--only-pos-tags", usage = "Do not perform stemming, output only POS tags. Tagging only option.")
+	// @Option(name = "-p", aliases = "--only-pos-tags", usage =
+	// "Do not perform stemming, output only POS tags. Tagging only option.")
 	boolean noStemming = false;
 	@Option(name = "-g", aliases = "--max-guessed", usage = "Limit the max guessed tags for each token. The default is 10. Tagging only option.", metaVar = "<number>")
 	int maxGuessed = 10;
-	@Option(name = "-n", aliases = "--max-results", usage = "Set the expected maximum number of tag sequences. The default is 1. Tagging only option.", metaVar = "<number>")
+	@Option(name = "-n", aliases = "--max-results", usage = "Set the expected maximum number of tag sequences (with its score). The default is 1. Tagging only option.", metaVar = "<number>")
 	int maxResultsNumber = 1;
+
+	@Option(name = "-b", aliases = "--beam-theta", usage = "Set the beam-search limit. The default is 1000. Tagging only option.", metaVar = "<theta>")
+	int beamTheta = 1000;
+
 	@Option(name = "-o", aliases = "--output-file", usage = "File where the tagging output is redirected. Tagging only option.", metaVar = "<file>")
 	String toFile;
 
@@ -64,7 +69,7 @@ public class CLIOptions {
 	@Argument(metaVar = "tag|train", usage = "Mode selection: train for training the tagger, tag for tagging a text with the given model.", required = true)
 	String command;
 
-	@Option(name = "-c", aliases = "--encoding", usage = "Encoding used to read the training set, or write the results. The default is your OS default.")
+	@Option(name = "-c", aliases = "--encoding", usage = "Encoding used to read the training set, or write the results. The default is your OS default.", metaVar = "<encoding>")
 	String encoding = System.getProperty("file.encoding");
 
 	@Option(name = "-h", aliases = "--help", usage = "Print this message.")
