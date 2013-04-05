@@ -66,8 +66,13 @@ public class BeamSearch extends AbstractDecoder {
 			Set<NGram<Integer>> contexts = collectContexts(beam);
 			Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> probs = getNextProbs(
 					contexts, word, position, position == 0);
+			// try {
 			beam = updateBeam(beam, probs);
 			prune(beam);
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
+
 		}
 		position++;
 

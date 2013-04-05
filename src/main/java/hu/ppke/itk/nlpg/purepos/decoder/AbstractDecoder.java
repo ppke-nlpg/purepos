@@ -56,6 +56,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	private static final double EOS_EMISSION_PROB = 1.0;
 	// protected Logger logger = Logger.getLogger(getClass());
 	protected static final double UNKNOWN_TAG_WEIGHT = -99.0;
+	private static final double UNKOWN_TAG_TRANSITION = -99.0; // Double.NEGATIVE_INFINITY;
 	protected IMorphologicalAnalyzer morphologicalAnalyzer;
 	protected double logTheta;
 	protected double sufTheta;
@@ -248,13 +249,10 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 				Double tagTransProb = model.getTagTransitionModel().getLogProb(
 						prevTags.toList(), tag);
-				double aprioriProb = Math.log(model.getAprioriTagProbs()
-						.get(tag));
-				tagProbs.put(
-						tag,
-						new ImmutablePair<Double, Double>(tagTransProb,
-								emissionProb
-										- aprioriProb));
+				double aprioriProb = Math.log(model.getAprioriTagProbs().get(
+						tag));
+				tagProbs.put(tag, new ImmutablePair<Double, Double>(
+						tagTransProb, emissionProb - aprioriProb));
 
 			}
 			ret.put(prevTags, tagProbs);
@@ -280,7 +278,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			if (newTag > model.getTagVocabulary().getMaximalIndex()) {
 				emissionProb = UNKNOWN_TAG_WEIGHT;
 				// TODO: RESEARCH: new tags should handled better
-				transitionProb = Double.NEGATIVE_INFINITY;
+				transitionProb = UNKOWN_TAG_TRANSITION;
 				tagProbs.put(tag, new ImmutablePair<Double, Double>(
 						transitionProb, emissionProb));
 				for (NGram<Integer> prevTags : prevTagsSet) {
@@ -289,8 +287,12 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			} else {
 				Double aprioriProb = model.getAprioriTagProbs().get(newTag);
 				Double logAprioriPorb = Math.log(aprioriProb);
-				emissionProb = guesser.getTagLogProbability(lWord, tag)
-						- logAprioriPorb;
+				double tagLogProbability = guesser.getTagLogProbability(lWord,
+						tag);
+				if (tagLogProbability == Double.NEGATIVE_INFINITY)
+					emissionProb = UNKNOWN_TAG_WEIGHT;
+				else
+					emissionProb = tagLogProbability - logAprioriPorb;
 				for (NGram<Integer> prevTags : prevTagsSet) {
 					transitionProb = model.getTagTransitionModel().getLogProb(
 							prevTags.toList(), tag);
