@@ -28,9 +28,12 @@ import hu.ppke.itk.nlpg.purepos.ITagger;
 import hu.ppke.itk.nlpg.purepos.MorphTagger;
 import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
+import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
+import hu.ppke.itk.nlpg.purepos.cli.configuration.ConfigurationReader;
 import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
@@ -42,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -113,12 +117,21 @@ public class PurePos implements Runnable {
 
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
-			int beamTheta, boolean useBeamSearch, String outPath)
-			throws Exception {
+			int beamTheta, boolean useBeamSearch, String outPath,
+			String configFile) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
+
+		Configuration conf;
+		if (configFile != null) {
+			ConfigurationReader reader = new ConfigurationReader();
+			conf = reader.read(new File(configFile));
+		} else {
+			conf = new Configuration(new LinkedList<TagMapping>());
+		}
+
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed,
-				Math.log(beamTheta), useBeamSearch);
+				Math.log(beamTheta), useBeamSearch, conf);
 
 		PrintStream output;
 		if (outPath == null) {
@@ -132,7 +145,7 @@ public class PurePos implements Runnable {
 
 	public static ITagger createTagger(String modelPath, String analyzer,
 			boolean noStemming, int maxGuessed, double beamLogTheta,
-			boolean useBeamSearch) throws Exception {
+			boolean useBeamSearch, Configuration conf) throws Exception {
 		IMorphologicalAnalyzer ma;
 		if (analyzer.equals(INTEGRATED_MA)) {
 			// TODO: set lex files through environment vars
@@ -163,7 +176,7 @@ public class PurePos implements Runnable {
 		System.err.println("Reading model... ");
 		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
 		System.err.println("Compiling model... ");
-		CompiledModel<String, Integer> model = rawmodel.compile();
+		CompiledModel<String, Integer> model = rawmodel.compile(conf);
 		ITagger t;
 
 		// double beamLogTheta = Math.log(1000);
@@ -225,7 +238,7 @@ public class PurePos implements Runnable {
 						options.morphology, options.noStemming,
 						options.maxGuessed, options.maxResultsNumber,
 						options.beamTheta, options.useBeamSearch,
-						options.toFile);
+						options.toFile, options.configFile);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());

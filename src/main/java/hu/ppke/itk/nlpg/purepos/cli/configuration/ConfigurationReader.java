@@ -20,35 +20,34 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.purepos.model.internal;
+package hu.ppke.itk.nlpg.purepos.cli.configuration;
 
-import java.util.Arrays;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
+
+import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.tree.ConfigurationNode;
 
-import org.junit.Test;
+public class ConfigurationReader {
+	private static final String TAG = "to";
+	private static final String PATTERN = "pattern";
+	private static final String MAPPING = "mapping";
 
-public class TagMapperTest {
+	public Configuration read(File f) throws ConfigurationException {
+		XMLConfiguration xconf = new XMLConfiguration(f);
+		List<ConfigurationNode> mappings = xconf.getRootNode().getChildren(
+				MAPPING);
+		LinkedList<TagMapping> ret = new LinkedList<TagMapping>();
+		for (ConfigurationNode m : mappings) {
+			String spat = (String) m.getAttributes(PATTERN).get(0).getValue();
+			String stag = (String) m.getAttributes(TAG).get(0).getValue();
+			ret.add(new TagMapping(spat, stag));
+		}
 
-	@Test
-	public void test() {
-		Vocabulary<String, Integer> vocabulary = new IntVocabulary<String>();
-		Integer fn = vocabulary.addElement("[FN][NOM]");
-		Integer mn = vocabulary.addElement("[MN][NOM]");
-		Integer fnlat = vocabulary.addElement("[FN|lat][NOM]");
-		Integer mnlat = vocabulary.addElement("[MN|lat][NOM]");
-		Integer ige = vocabulary.addElement("[IGE][Me3]");
-
-		TagMapping m = new TagMapping("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
-		TagMapper mapper = new TagMapper(vocabulary, Arrays.asList(m));
-		Assert.assertEquals(fn, mapper.map(fnlat));
-		Assert.assertEquals(fn, mapper.map(fn));
-		Assert.assertEquals(ige, mapper.map(ige));
-		Assert.assertEquals(fn, mapper.map(fn));
-		Assert.assertEquals(mn, mapper.map(mn));
-		List<Integer> from = Arrays.asList(fn, mnlat, fnlat);
-		List<Integer> to = Arrays.asList(fn, fn, fn);
-		Assert.assertEquals(to, mapper.map(from));
+		return new Configuration(ret);
 	}
 }

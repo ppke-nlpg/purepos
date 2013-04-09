@@ -20,35 +20,21 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.purepos.model.internal;
+package hu.ppke.itk.nlpg.purepos.cli.configuration;
 
-import java.util.Arrays;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
+
 import java.util.List;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-
-public class TagMapperTest {
-
-	@Test
-	public void test() {
-		Vocabulary<String, Integer> vocabulary = new IntVocabulary<String>();
-		Integer fn = vocabulary.addElement("[FN][NOM]");
-		Integer mn = vocabulary.addElement("[MN][NOM]");
-		Integer fnlat = vocabulary.addElement("[FN|lat][NOM]");
-		Integer mnlat = vocabulary.addElement("[MN|lat][NOM]");
-		Integer ige = vocabulary.addElement("[IGE][Me3]");
-
-		TagMapping m = new TagMapping("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
-		TagMapper mapper = new TagMapper(vocabulary, Arrays.asList(m));
-		Assert.assertEquals(fn, mapper.map(fnlat));
-		Assert.assertEquals(fn, mapper.map(fn));
-		Assert.assertEquals(ige, mapper.map(ige));
-		Assert.assertEquals(fn, mapper.map(fn));
-		Assert.assertEquals(mn, mapper.map(mn));
-		List<Integer> from = Arrays.asList(fn, mnlat, fnlat);
-		List<Integer> to = Arrays.asList(fn, fn, fn);
-		Assert.assertEquals(to, mapper.map(from));
+public class Configuration {
+	public Configuration(List<TagMapping> mappings) {
+		this.tagMappings = mappings;
 	}
+
+	protected List<TagMapping> tagMappings;
+
+	public List<TagMapping> getTagMappings() {
+		return tagMappings;
+	}
+
 }

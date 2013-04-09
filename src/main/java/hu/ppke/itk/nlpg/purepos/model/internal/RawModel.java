@@ -26,6 +26,7 @@ import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
@@ -181,7 +182,7 @@ public class RawModel extends Model<String, Integer> {
 
 	}
 
-	public CompiledModel<String, Integer> compile() {
+	public CompiledModel<String, Integer> compile(Configuration conf) {
 		tagVocabulary.storeMaximalElement();
 		IProbabilityModel<Integer, Integer> tagTransitionModel = tagNGramModel
 				.createProbabilityModel();
@@ -200,7 +201,7 @@ public class RawModel extends Model<String, Integer> {
 
 		addMappings(standardEmissionModel, specTokensEmissionModel,
 				tagTransitionModel, lowerCaseSuffixGuesser,
-				upperCaseSuffixGuesser, tagVocabulary);
+				upperCaseSuffixGuesser, tagVocabulary, conf.getTagMappings());
 
 		CompiledModel<String, Integer> model = new CompiledModel<String, Integer>(
 				taggingOrder, emissionOrder, suffixLength, rareFreqency,

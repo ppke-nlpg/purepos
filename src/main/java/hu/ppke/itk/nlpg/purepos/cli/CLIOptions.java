@@ -44,7 +44,6 @@ public class CLIOptions {
 	int rareFreq = 10;
 
 	// Tagging options
-	// TODO: use it better
 	@Option(name = "-a", aliases = "--analyzer", usage = "Set the morphological analyzer. <analyzer> can be 'none', 'integrated' or a file : <morphologicalTableFile>. The default is to use the integrated one. Tagging only option. ", metaVar = "<analyzer>")
 	String morphology = "integrated"; // integrated, none, morphtable
 	// @Option(name = "-d", aliases = "--separator", usage =
@@ -83,6 +82,9 @@ public class CLIOptions {
 
 	@Option(name = "-d", aliases = "--beam-decoder", usage = "Use Beam Search decoder. The default is to employ the Viterbi algorithm. Tagging only option.")
 	boolean useBeamSearch = false;
+
+	@Option(name = "-f", aliases = "--config-file", usage = "Configuratoin file containg tag mappings. Defaults to do not map any tag.", metaVar = "<file>")
+	String configFile = null;
 
 	// Other stuff
 	String formatMessage = "";

@@ -27,38 +27,40 @@ import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TagMapper implements IMapper<Integer> {
-	LinkedHashMap<Pattern, String> mapping;
+	// LinkedHashMap<Pattern, String> mapping;
+	List<TagMapping> tagMappings;
 	private IVocabulary<String, Integer> vocabulary;
 
-	public TagMapper(IVocabulary<String, Integer> tagVocabulary) {
+	public TagMapper(IVocabulary<String, Integer> tagVocabulary,
+			List<TagMapping> tagMappings) {
 		this.vocabulary = tagVocabulary;
-		mapping = new LinkedHashMap<Pattern, String>();
-		init();
+		this.tagMappings = tagMappings;
+		// init();
 	}
 
-	private void init() {
-		add("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
-	}
+	// private void init() {
+	// add("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
+	// }
 
-	private void add(String regexp, String replacement) {
-		Pattern p = Pattern.compile(regexp);
-		mapping.put(p, replacement);
-	}
+	// private void add(String regexp, String replacement) {
+	// Pattern p = Pattern.compile(regexp);
+	// mapping.put(p, replacement);
+	// }
 
 	@Override
 	public Integer map(Integer tag) {
 		String tagStr = vocabulary.getWord(tag);
-		for (Pattern p : mapping.keySet()) {
+		for (TagMapping m : tagMappings) {
+			Pattern p = m.getTagPattern();
 			Matcher matcher = p.matcher(tagStr);
 			if (matcher.matches()) {
-				String replacement = mapping.get(p);
+				String replacement = m.getReplacement();
 				String repTagStr = matcher.replaceAll(replacement);
 				Integer retTag = vocabulary.getIndex(repTagStr);
 				if (retTag != null)

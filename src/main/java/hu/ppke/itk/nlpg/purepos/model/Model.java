@@ -24,8 +24,10 @@ package hu.ppke.itk.nlpg.purepos.model;
 
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
 import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * An object of this class is representing the model of a POS tagger.
@@ -190,8 +192,9 @@ public abstract class Model<W, T extends Comparable<T>> implements Serializable 
 			IProbabilityModel<Integer, Integer> tagTransitionModel,
 			ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser,
 			ISuffixGuesser<String, Integer> upperCaseSuffixGuesser,
-			IVocabulary<String, Integer> tagVocabulary) {
-		TagMapper mapper = new TagMapper(tagVocabulary);
+			IVocabulary<String, Integer> tagVocabulary,
+			List<TagMapping> mappings) {
+		TagMapper mapper = new TagMapper(tagVocabulary, mappings);
 		standardEmissionModel.setContextMapper(mapper);
 		specTokensEmissionModel.setContextMapper(mapper);
 

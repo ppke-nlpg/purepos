@@ -22,33 +22,38 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-
-public class TagMapperTest {
-
-	@Test
-	public void test() {
-		Vocabulary<String, Integer> vocabulary = new IntVocabulary<String>();
-		Integer fn = vocabulary.addElement("[FN][NOM]");
-		Integer mn = vocabulary.addElement("[MN][NOM]");
-		Integer fnlat = vocabulary.addElement("[FN|lat][NOM]");
-		Integer mnlat = vocabulary.addElement("[MN|lat][NOM]");
-		Integer ige = vocabulary.addElement("[IGE][Me3]");
-
-		TagMapping m = new TagMapping("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
-		TagMapper mapper = new TagMapper(vocabulary, Arrays.asList(m));
-		Assert.assertEquals(fn, mapper.map(fnlat));
-		Assert.assertEquals(fn, mapper.map(fn));
-		Assert.assertEquals(ige, mapper.map(ige));
-		Assert.assertEquals(fn, mapper.map(fn));
-		Assert.assertEquals(mn, mapper.map(mn));
-		List<Integer> from = Arrays.asList(fn, mnlat, fnlat);
-		List<Integer> to = Arrays.asList(fn, fn, fn);
-		Assert.assertEquals(to, mapper.map(from));
+/**
+ * Stores a tag mapping.
+ * 
+ * @author György Orosz
+ * 
+ */
+public class TagMapping {
+	/**
+	 * 
+	 * @param tagPattern
+	 *            pattern of the tag, should be an unsescaped Java regexp
+	 * @param replacement
+	 *            replacement string
+	 * 
+	 */
+	public TagMapping(String tagPattern, String replacement) {
+		// this.tagPattern = Pattern.compile(Pattern.quote(tagPattern));
+		this.tagPattern = Pattern.compile(tagPattern);
+		this.replacement = replacement;
 	}
+
+	protected Pattern tagPattern;
+	protected String replacement;
+
+	public Pattern getTagPattern() {
+		return tagPattern;
+	}
+
+	public String getReplacement() {
+		return replacement;
+	}
+
 }

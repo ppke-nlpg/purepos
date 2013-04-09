@@ -37,6 +37,30 @@ For tagging, you must provide a file that has:
 
 For further help run the jar file with `-h`.
 
+### Configuration file
+
+With the `-f` option one can provide a configuration file that describes tag mappings.
+A tag mapping is composed of two parts: a regular expression pattern and a replacement string.
+If the tagger is informed by the analyzer about a theoretically possible but previously unseen morphosyntactic label, 
+its probabilities are calculated according to a mapped tag. 
+
+An example configuration file is below, that removes `|lat` substrings from tags.
+
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <config>
+    <mapping pattern="^(.*)(\|lat)(.*)$" to="$1FN$3" />
+    </config>
+    
+### Preanalyzed input
+
+The disambiguator can be pipelined with a morphological analyzer. For this the analyzer tool must provide an analyzed sentences per line where tokens are separated with spaces and have the following format (with or without the scores):
+
+    token{{lemma1[tag1]$$score1||lemma2[tag2]$$score2}}
+    token{{lemma1[tag1]||lemma2[tag2]}}
+    
+Scores are incorporated as lexical log probabilities.
+
+
 Reference
 ---------------
 
