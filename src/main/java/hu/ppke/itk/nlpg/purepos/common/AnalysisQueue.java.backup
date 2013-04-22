@@ -34,9 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Global holder for tags and stems in a pretagged input.
@@ -53,20 +52,19 @@ public class AnalysisQueue {
 	protected ArrayList<Boolean> useProb;
 	protected ArrayList<String> words;
 
-	// protected static String alnumPat = "\\p{L}\\p{N}";
-	// protected static String punctPat = "\\p{P}";
-	// protected static String tagPat = "[^\\]]";
-	//
-	// protected static String stringPat = "([" + alnumPat + punctPat + "]+)";
-	// protected static String analPat = "((" + stringPat + "(\\[[" + tagPat
-	// + "|]+\\])+)(\\$\\$-?[0-9]+(\\.[0-9]+)?)?)";
-	//
-	protected static String analSplitRe = "\\|\\|";
+	protected static String alnumPat = "\\p{L}\\p{N}";
+	protected static String punctPat = "\\p{P}";
+	protected static String tagPat = "[^\\]]";
 
-	// protected static String weightSplitPat = "\\$\\$";
-	//
-	// protected static Pattern analFormPat = Pattern.compile(stringPat
-	// + "\\{\\{(" + analPat + "(\\|\\|" + analPat + ")*" + ")\\}\\}");
+	protected static String stringPat = "([" + alnumPat + punctPat + "]+)";
+	protected static String analPat = "((" + stringPat + "(\\[[" + tagPat
+			+ "|]+\\])+)(\\$\\$-?[0-9]+(\\.[0-9]+)?)?)";
+
+	protected static String analSplitRe = "\\|\\|";
+	protected static String weightSplitPat = "\\$\\$";
+
+	protected static Pattern analFormPat = Pattern.compile(stringPat
+			+ "\\{\\{(" + analPat + "(\\|\\|" + analPat + ")*" + ")\\}\\}");
 
 	public void init(int capacity) {
 		anals = new ArrayList<Map<String, Double>>(capacity);
@@ -82,13 +80,14 @@ public class AnalysisQueue {
 	}
 
 	public void addWord(String input, Integer position) {
-		Pair<String, List<String>> res = parse(input);
-		String word = res.getLeft();
-		List<String> analsList = res.getRight();
+		Matcher m = analFormPat.matcher(input);
+		String word = m.replaceAll("$1");
+		String analsStrings = m.replaceAll("$2");
 
 		words.set(position, word);
 		anals.set(position, new HashMap<String, Double>());
 
+		List<String> analsList = Arrays.asList(analsStrings.split(analSplitRe));
 		for (String anal : analsList) {
 			int indexOfValSep = anal.indexOf("$$");
 			String lemmaTag = anal;
@@ -157,21 +156,12 @@ public class AnalysisQueue {
 		return ret;
 	}
 
-	public static Pair<String, List<String>> parse(String token) {
-		int wordRB = token.indexOf("{{");
-		int analRB = token.indexOf("}}");
-		String word = token.substring(0, wordRB);
-		String analsStrings = token.substring(wordRB + 2, analRB);
-		List<String> analsList = Arrays.asList(analsStrings.split(analSplitRe));
-		return ImmutablePair.of(word, analsList);
-	}
-
 	public static boolean isPreanalysed(String word) {
-		return word.indexOf("{{") > 0 && word.lastIndexOf("}}") > 0;
+		return analFormPat.matcher(word).matches();
 	}
 
 	public static String clean(String word) {
-		return word.substring(0, word.indexOf("{{"));
+		return analFormPat.matcher(word).replaceAll("$1");
 	}
 
 	public static String anal2tag(String anal) {
