@@ -121,10 +121,14 @@ public class BeamSearch extends AbstractDecoder {
 				beam.removeFirst();
 			}
 		} else {
-			History max = beam.peekLast();
-			while (!(beam.peekFirst().getLogProb() > max.getLogProb()
-					- logTheta)) {
-				beam.removeFirst();
+			try {
+				History max = beam.peekLast();
+				while (!(beam.peekFirst().getLogProb() > max.getLogProb()
+						- logTheta)) {
+					beam.removeFirst();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}

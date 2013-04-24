@@ -341,6 +341,10 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 				// //
 				Double emissionProb = wordProbModel.getLogProb(actTags,
 						wordForm);
+				if (tagProb == Double.NEGATIVE_INFINITY)
+					tagProb = UNKOWN_TAG_TRANSITION;
+				if (emissionProb == Double.NEGATIVE_INFINITY)
+					emissionProb = UNKNOWN_TAG_WEIGHT;
 				tagProbs.put(tag, new ImmutablePair<Double, Double>(tagProb,
 						emissionProb));
 			}
