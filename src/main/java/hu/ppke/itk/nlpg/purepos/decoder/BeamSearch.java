@@ -72,9 +72,8 @@ public class BeamSearch extends AbstractDecoder {
 			// } catch (Exception e) {
 			// e.printStackTrace();
 			// }
-
+			position++;
 		}
-		position++;
 
 		return beam;
 	}

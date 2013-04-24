@@ -46,6 +46,39 @@ import java.util.Map;
  * 
  */
 public class MorphTagger extends POSTagger implements ITagger {
+	protected final class LemmaComparator implements Comparator<IToken> {
+		private final Map<IToken, Double> lemmaSuffixProbs;
+
+		protected LemmaComparator(Map<IToken, Double> lemmaSuffixProbs) {
+			this.lemmaSuffixProbs = lemmaSuffixProbs;
+		}
+
+		public int count(IToken t) {
+			// TODO: RESEARCH: cheat! - investigate
+			int plus = 0;
+			// plus = t.getStem() == t.getToken() ? 1 : 0;
+			return model.getLemmaCounter().getCount(t.getStem()) + plus;
+		}
+
+		@Override
+		public int compare(IToken o1, IToken o2) {
+			int c1 = count(o1);
+			int c2 = count(o2);
+			if (c1 > 0 || c2 > 0)
+				return c1 - c2;
+			else {
+				Double prob1 = lemmaSuffixProbs.get(o1);
+				Double prob2 = lemmaSuffixProbs.get(o2);
+				if (prob1 == null)
+					prob1 = Double.NEGATIVE_INFINITY;
+				if (prob2 == null)
+					prob2 = Double.NEGATIVE_INFINITY;
+				return Double.compare(prob1, prob2);
+			}
+
+		}
+	}
+
 	StemFilter stemFilter;
 
 	public MorphTagger(CompiledModel<String, Integer> model,
@@ -86,6 +119,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 						model.getLemmaGuesser().getTagLogProbabilities(
 								t.getToken()), t.getToken(),
 						model.getTagVocabulary());
+		LemmaComparator lemmaComparator = new LemmaComparator(lemmaSuffixProbs);
 
 		if (Util.isEmpty(stems)) {
 			// the guesser is used
@@ -116,32 +150,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 			if (stemFilter != null) {
 				possibleStems = stemFilter.filterStem(possibleStems);
 			}
-			best = Collections.max(possibleStems, new Comparator<IToken>() {
-				public int count(IToken t) {
-					// TODO: RESEARCH: cheat! - investigate
-					int plus = 0;
-					// plus = t.getStem() == t.getToken() ? 1 : 0;
-					return model.getLemmaCounter().getCount(t.getStem()) + plus;
-				}
 
-				@Override
-				public int compare(IToken o1, IToken o2) {
-					int c1 = count(o1);
-					int c2 = count(o2);
-					if (c1 > 0 || c2 > 0)
-						return c1 - c2;
-					else {
-						Double prob1 = lemmaSuffixProbs.get(o1);
-						Double prob2 = lemmaSuffixProbs.get(o2);
-						if (prob1 == null)
-							prob1 = Double.NEGATIVE_INFINITY;
-						if (prob2 == null)
-							prob2 = Double.NEGATIVE_INFINITY;
-						return Double.compare(prob1, prob2);
-					}
-
-				}
-			});
+			best = Collections.max(possibleStems, lemmaComparator);
 		}
 		return best;
 	}
