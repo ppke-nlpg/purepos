@@ -64,6 +64,17 @@ public class HashSuffixTree<T> extends SuffixTree<String, T> {
 		totalTagCount += count;
 	}
 
+	@Override
+	public void addWord(String word, T tag, int count, int minLen) {
+		int end = word.length() - minLen;
+		int start = Math.max(0, end - maxSuffixLength);
+		for (int pointer = start; pointer <= end; pointer++) {
+			String suffix = word.substring(pointer);
+			increment(suffix, tag, count);
+		}
+		totalTagCount += count;
+	}
+
 	protected void increment(String suffix, T tag, int count) {
 		if (representation.containsKey(suffix)) {
 			MutablePair<HashMap<T, Integer>, Integer> value = representation

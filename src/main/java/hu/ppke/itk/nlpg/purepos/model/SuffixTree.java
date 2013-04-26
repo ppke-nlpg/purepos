@@ -65,6 +65,23 @@ public abstract class SuffixTree<W, T> implements Serializable {
 	public abstract void addWord(W word, T tag, int count);
 
 	/**
+	 * Adds a word with a specific and count and minimum length to the
+	 * representation.
+	 * 
+	 * @param word
+	 *            word added
+	 * @param tag
+	 *            tag added
+	 * 
+	 * @param minLen
+	 *            minimum number of suffixes stored in the tree
+	 * 
+	 * @param count
+	 *            tag count added
+	 */
+	public abstract void addWord(W word, T tag, int count, int minLen);
+
+	/**
 	 * Using theta, it creates the guesser object.
 	 * 
 	 * @return a suffix guesser

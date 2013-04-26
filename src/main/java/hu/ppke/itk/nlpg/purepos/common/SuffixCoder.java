@@ -48,8 +48,8 @@ public class SuffixCoder {
 			Integer tag, SuffixTree<String, Pair<String, Integer>> tree,
 			int count) {
 		Pair<String, Pair<String, Integer>> ret = decode(word, stem, tag);
-
-		tree.addWord(ret.getLeft(), ret.getRight(), count);
+		int minLen = ret.getRight().getRight() % SHIFT;
+		tree.addWord(ret.getLeft(), ret.getRight(), count, minLen);
 		return ret.getRight();
 
 	}
@@ -68,7 +68,7 @@ public class SuffixCoder {
 
 		int code = SHIFT * tag + cutSize;
 		Pair<String, Pair<String, Integer>> ret = new ImmutablePair<String, Pair<String, Integer>>(
-				wordSuff, new ImmutablePair<String, Integer>(lemmaSuff, code));
+				word, new ImmutablePair<String, Integer>(lemmaSuff, code));
 		return ret;
 	}
 

@@ -27,7 +27,6 @@ import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -92,10 +91,10 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 
 	public Map<T, Double> getTagProbabilities(String word) {
 		Map<T, Double> mret = new HashMap<T, Double>();
-		Set<T> tags = freqTable.get("").getLeft().keySet();
-		for (T tag : tags) {
-			mret.put(tag, 0.0);
-		}
+		// Set<T> tags = freqTable.get("").getLeft().keySet();
+		// for (T tag : tags) {
+		// mret.put(tag, 0.0);
+		// }
 		for (int i = word.length(); i >= 0; --i) {
 			String suff = word.substring(i);
 			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable

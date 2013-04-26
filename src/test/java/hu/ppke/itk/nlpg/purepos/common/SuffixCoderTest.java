@@ -11,7 +11,7 @@ public class SuffixCoderTest {
 	public void testCoding() {
 		Pair<String, Pair<String, Integer>> x = SuffixCoder.decode("alma",
 				"alom", 1);
-		Assert.assertEquals("ma", x.getLeft());
+		Assert.assertEquals("alma", x.getLeft());
 		Assert.assertEquals("om", x.getRight().getLeft());
 		Assert.assertEquals(new Integer(102), x.getRight().getRight());
 
@@ -19,7 +19,7 @@ public class SuffixCoderTest {
 
 		x = SuffixCoder.decode("tűnt", "tűnik", 1);
 		System.out.println(x);
-		Assert.assertEquals("t", x.getLeft());
+		Assert.assertEquals("tűnt", x.getLeft());
 		Assert.assertEquals("ik", x.getRight().getLeft());
 		Assert.assertEquals(new Integer(101), x.getRight().getRight());
 
