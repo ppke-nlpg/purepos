@@ -15,7 +15,7 @@ public class RawModelData extends AbstractRawModelData<String, Integer> {
 		specEmissionNGramModel = new NGramModel<String>(2);
 		lemmaTree = new HashLemmaTree(100);
 		lemmaUnigramModel = new LemmaUnigramModel<String>();
-		combiner = new LogLinearCombiner();
+		combiner = new LogLinearCostumCombiner();
 	}
 
 	@Deprecated

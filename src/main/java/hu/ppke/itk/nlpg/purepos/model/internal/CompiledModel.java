@@ -22,12 +22,12 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -90,9 +90,13 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 		return compiledData.tagTransitionModel;
 	}
 
-	public List<Double> getLemmaLambdas() {
-		return compiledData.lemmaLambdas;
+	public ICombiner getCombiner() {
+		return compiledData.combiner;
 	}
+
+	// public List<Double> getLemmaLambdas() {
+	// return compiledData.combiner.getParameters();
+	// }
 
 	/**
 	 * @return the standardEmissionModel

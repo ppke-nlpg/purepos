@@ -1,17 +1,17 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 public class CompiledModelData<W, T extends Comparable<T>> {
 	public LemmaUnigramModel<W> unigramLemmaModel;
-	public List<Double> lemmaLambdas;
+	public ICombiner combiner;
 	public ISuffixGuesser<W, Pair<W, Integer>> lemmaTree;
 
 	public IProbabilityModel<T, T> tagTransitionModel;
@@ -39,14 +39,14 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 		ret.upperCaseSuffixGuesser = rawModeldata.upperSuffixTree
 				.createGuesser(theta);
 		ret.lemmaTree = rawModeldata.lemmaTree.createGuesser(theta);
-		ret.lemmaLambdas = rawModeldata.combiner.getLambdas();
+		ret.combiner = rawModeldata.combiner;
 
 		return ret;
 	}
 
+	@Deprecated
 	public CompiledModelData(LemmaUnigramModel<W> unigramLemmaModel,
-			List<Double> lemmaLambdas,
-			IProbabilityModel<T, T> tagTransitionModel,
+			ICombiner combiner, IProbabilityModel<T, T> tagTransitionModel,
 			IProbabilityModel<T, W> standardEmissionModel,
 			IProbabilityModel<T, W> specTokensEmissionModel,
 			ISuffixGuesser<W, T> lowerCaseSuffixGuesser,
@@ -54,7 +54,7 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 			Map<T, Double> aprioriTagProbs,
 			ISuffixGuesser<W, Pair<W, Integer>> lemmaTree) {
 		this.unigramLemmaModel = unigramLemmaModel;
-		this.lemmaLambdas = lemmaLambdas;
+		this.combiner = combiner;
 		this.tagTransitionModel = tagTransitionModel;
 		this.standardEmissionModel = standardEmissionModel;
 		this.specTokensEmissionModel = specTokensEmissionModel;

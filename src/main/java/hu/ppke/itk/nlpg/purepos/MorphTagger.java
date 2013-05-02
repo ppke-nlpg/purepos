@@ -29,7 +29,9 @@ import hu.ppke.itk.nlpg.purepos.common.Globals;
 import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
+import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
+import hu.ppke.itk.nlpg.purepos.model.internal.LemmaUnigramModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
@@ -48,7 +50,8 @@ import java.util.Map;
 public class MorphTagger extends POSTagger implements ITagger {
 	protected final class LemmaComparator implements Comparator<IToken> {
 		private final Map<IToken, Double> lemmaSuffixProbs;
-		List<Double> lambdas = model.getLemmaLambdas();
+
+		// List<Double> lambdas = model.getLemsmaLambdas();
 
 		protected LemmaComparator(Map<IToken, Double> lemmaSuffixProbs) {
 			this.lemmaSuffixProbs = lemmaSuffixProbs;
@@ -64,25 +67,29 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 		@Override
 		public int compare(IToken t1, IToken t2) {
-			Double uniScore1 = model.getUnigramLemmaModel().getLogProb(
+			LemmaUnigramModel<String> unigramLemmaModel = model.getUnigramLemmaModel();
+			Double uniScore1 = unigramLemmaModel.getLogProb(
 					t1.getStem());
-			Double uniScore2 = model.getUnigramLemmaModel().getLogProb(
+			Double uniScore2 = unigramLemmaModel.getLogProb(
 					t2.getStem());
 
 			Double suffixScore1 = suffixLogProb(t1);
 			Double suffixScore2 = suffixLogProb(t2);
 
-			Double finalScore1 = combine(uniScore1, suffixScore1);
-			Double finalScore2 = combine(uniScore2, suffixScore2);
+			ICombiner combiner = model.getCombiner();
+			Double finalScore1 = combiner.combine(uniScore1,
+					suffixScore1);
+			Double finalScore2 = combiner.combine(uniScore2,
+					suffixScore2);
 
 			return Double.compare(finalScore1, finalScore2);
 		}
 
-		private Double combine(Double uniScore, Double suffixScore) {
-
-			Double lambda1 = lambdas.get(0), lambda2 = lambdas.get(1);
-			return uniScore * lambda1 + suffixScore * lambda2;
-		}
+		// private Double combine(Double uniScore, Double suffixScore) {
+		//
+		// Double lambda1 = lambdas.get(0), lambda2 = lambdas.get(1);
+		// return uniScore * lambda1 + suffixScore * lambda2;
+		// }
 
 	}
 
