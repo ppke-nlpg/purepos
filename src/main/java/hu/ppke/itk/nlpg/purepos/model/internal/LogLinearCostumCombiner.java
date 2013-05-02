@@ -62,16 +62,19 @@ public class LogLinearCostumCombiner extends LogLinearCombiner {
 				Double uniProp = actUniProb - uniMax.getValue(), suffProp = actSuffProb
 						- suffixMax.getValue();
 				if (uniProp > suffProp) {
-					lambdaU += suffProp;// uniProp - suffProp;
+					// lambdaU += suffProp;// uniProp - suffProp;
+					lambdaU += uniProp - suffProp;
 				} else if (suffProp > uniProp) {
-					lambdaS += uniProp; // suffProp - uniProp;
+					// lambdaS += uniProp; // suffProp - uniProp;
+					lambdaS += suffProp - uniProp;
 				}
 
 			}
 
 		}
-		lambdaU = lambdaU / (lambdaU + lambdaS);
-		lambdaS = lambdaS / (lambdaU + lambdaS);
+		double sum = lambdaU + lambdaS;
+		lambdaU = lambdaU / sum;
+		lambdaS = lambdaS / sum;
 		lambdas.add(lambdaU);
 		lambdas.add(lambdaS);
 		// return lambdas;
