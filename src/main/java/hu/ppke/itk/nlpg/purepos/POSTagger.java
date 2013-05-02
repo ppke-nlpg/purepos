@@ -27,7 +27,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
-import hu.ppke.itk.nlpg.purepos.common.Global;
+import hu.ppke.itk.nlpg.purepos.common.Globals;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamedViterbi;
@@ -79,12 +79,12 @@ public class POSTagger implements ITagger {
 	}
 
 	protected static List<String> preprocessSentence(List<String> sentence) {
-		Global.analysisQueue.init(sentence.size());
+		Globals.analysisQueue.init(sentence.size());
 		ArrayList<String> ret = new ArrayList<String>(sentence.size());
 		int i = 0;
 		for (String word : sentence) {
 			if (AnalysisQueue.isPreanalysed(word)) {
-				Global.analysisQueue.addWord(word, i);
+				Globals.analysisQueue.addWord(word, i);
 				ret.add(AnalysisQueue.clean(word));
 			} else {
 				ret.add(word);

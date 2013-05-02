@@ -54,7 +54,13 @@ public class SuffixCoder {
 
 	}
 
-	protected static Pair<String, Pair<String, Integer>> decode(String word,
+	public static Pair<String, Integer> decode(IToken tok,
+			IVocabulary<String, Integer> vocab) {
+		return decode(tok.getToken(), tok.getStem(),
+				vocab.getIndex(tok.getTag())).getRight();
+	}
+
+	public static Pair<String, Pair<String, Integer>> decode(String word,
 			String stem, Integer tag) {
 		int i;
 		for (i = 0; i < word.length() && i < stem.length(); ++i) {

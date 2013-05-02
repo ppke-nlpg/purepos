@@ -8,7 +8,7 @@ public class CounterTest {
 
 	@Test
 	public void testCounter() {
-		Counter<String> c = new Counter<String>();
+		LemmaUnigramModel<String> c = new LemmaUnigramModel<String>();
 		Assert.assertEquals(0, c.getCount("alma"));
 		c.increment("alma");
 		Assert.assertEquals(1, c.getCount("alma"));

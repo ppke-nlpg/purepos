@@ -1,6 +1,6 @@
 package hu.ppke.itk.nlpg.purepos;
 
-import hu.ppke.itk.nlpg.purepos.common.Global;
+import hu.ppke.itk.nlpg.purepos.common.Globals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +20,7 @@ public class POSTaggerTest {
 		Assert.assertEquals("ház", outList.get(1));
 		Assert.assertEquals("alma", outList.get(2));
 
-		Assert.assertEquals(true, Global.analysisQueue.hasAnal(2));
-		Assert.assertEquals(false, Global.analysisQueue.hasAnal(1));
+		Assert.assertEquals(true, Globals.analysisQueue.hasAnal(2));
+		Assert.assertEquals(false, Globals.analysisQueue.hasAnal(1));
 	}
 }

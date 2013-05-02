@@ -25,7 +25,7 @@ package hu.ppke.itk.nlpg.purepos;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
-import hu.ppke.itk.nlpg.purepos.common.Global;
+import hu.ppke.itk.nlpg.purepos.common.Globals;
 import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
@@ -48,36 +48,61 @@ import java.util.Map;
 public class MorphTagger extends POSTagger implements ITagger {
 	protected final class LemmaComparator implements Comparator<IToken> {
 		private final Map<IToken, Double> lemmaSuffixProbs;
+		List<Double> lambdas = model.getLemmaLambdas();
 
 		protected LemmaComparator(Map<IToken, Double> lemmaSuffixProbs) {
 			this.lemmaSuffixProbs = lemmaSuffixProbs;
 		}
 
-		public int count(IToken t) {
-			// TODO: RESEARCH: cheat! - investigate
-			int plus = 0;
-			// plus = t.getStem() == t.getToken() ? 1 : 0;
-			return model.getLemmaCounter().getCount(t.getStem()) + plus;
+		public Double suffixLogProb(IToken o1) {
+			Double ret = this.lemmaSuffixProbs.get(o1);
+			if (ret == null) {
+				return Util.UNKOWN_VALUE;
+			}
+			return ret;
 		}
 
 		@Override
-		public int compare(IToken o1, IToken o2) {
-			int c1 = count(o1);
-			int c2 = count(o2);
-			if (c1 > 0 || c2 > 0)
-				return c1 - c2;
-			else {
-				Double prob1 = lemmaSuffixProbs.get(o1);
-				Double prob2 = lemmaSuffixProbs.get(o2);
-				if (prob1 == null)
-					prob1 = Double.NEGATIVE_INFINITY;
-				if (prob2 == null)
-					prob2 = Double.NEGATIVE_INFINITY;
-				return Double.compare(prob1, prob2);
-			}
+		public int compare(IToken t1, IToken t2) {
+			Double uniScore1 = model.getUnigramLemmaModel().getLogProb(
+					t1.getStem());
+			Double uniScore2 = model.getUnigramLemmaModel().getLogProb(
+					t2.getStem());
 
+			Double suffixScore1 = suffixLogProb(t1);
+			Double suffixScore2 = suffixLogProb(t2);
+
+			Double finalScore1 = combine(uniScore1, suffixScore1);
+			Double finalScore2 = combine(uniScore2, suffixScore2);
+
+			return Double.compare(finalScore1, finalScore2);
 		}
+
+		private Double combine(Double uniScore, Double suffixScore) {
+
+			Double lambda1 = lambdas.get(0), lambda2 = lambdas.get(1);
+			return uniScore * lambda1 + suffixScore * lambda2;
+		}
+
 	}
+
+	// public int compare1(IToken o1, IToken o2) {
+	// int c1 = unigramProb(o1);
+	// int c2 = unigramProb(o2);
+	// if (c1 > 0 || c2 > 0)
+	// return c1 - c2;
+	// else {
+	// Double prob1 = suffixLogProb(o1);
+	// Double prob2 = suffixLogProb(o2);
+	// if (prob1 == null)
+	// prob1 = UNKOWN_VALUE;
+	// if (prob2 == null)
+	// prob2 = UNKOWN_VALUE;
+	// return Double.compare(prob1, prob2);
+	// }
+	//
+	// }
+	// }
 
 	StemFilter stemFilter;
 
@@ -86,7 +111,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 			int maxGuessedTags, boolean useBeamSearch) {
 		super(model, analyzer, logTheta, sufTheta, maxGuessedTags,
 				useBeamSearch);
-		stemFilter = Util.crateStemFilter();
+		stemFilter = Util.createStemFilter();
 	}
 
 	@Override
@@ -108,8 +133,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 	private IToken findBestLemma(IToken t, int position) {
 		Collection<IToken> stems;
-		if (Global.analysisQueue.hasAnal(position)) {
-			stems = Global.analysisQueue.getAnalysises(position);
+		if (Globals.analysisQueue.hasAnal(position)) {
+			stems = Globals.analysisQueue.getAnalysises(position);
 		} else {
 			stems = analyzer.analyze(t);
 		}

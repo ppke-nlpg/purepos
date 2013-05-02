@@ -89,6 +89,26 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		return ret;
 	}
 
+	@Override
+	public Map<T, Double> getSmoothedTagLogProbabilities(String word) {
+		HashMap<T, Double> ret = new HashMap<T, Double>();
+		// Set<T> tags = freqTable.get("").getLeft().keySet();
+		// for (T tag : tags) {
+		// ret.put(tag, getTagLogProbability(word, tag));
+		// }
+		// return ret;
+		Map<T, Double> probs = getTagProbabilities(word);
+		for (Map.Entry<T, Double> entry : probs.entrySet()) {
+			ret.put(entry.getKey(), Math.log(entry.getValue()));
+		}
+		return ret;
+	}
+
+	// protected Double smooth(Double val) {
+	// return val;
+	//
+	// }
+
 	public Map<T, Double> getTagProbabilities(String word) {
 		Map<T, Double> mret = new HashMap<T, Double>();
 		// Set<T> tags = freqTable.get("").getLeft().keySet();

@@ -23,10 +23,16 @@
 package hu.ppke.itk.nlpg.purepos.common;
 
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
+import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
+import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModelData;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class Util {
 	protected static final String STEM_FILTER_FILE = "purepos_stems.txt";
@@ -54,7 +60,7 @@ public class Util {
 		return !isNotEmpty(c);
 	}
 
-	public static StemFilter crateStemFilter() {
+	public static StemFilter createStemFilter() {
 		File localFile = new File(STEM_FILTER_FILE);
 		String path = null;
 		if (STEM_FILTER_PROPERTY != null) {
@@ -75,5 +81,33 @@ public class Util {
 		} catch (FileNotFoundException e) {
 			return null;
 		}
+	}
+
+	public static <K> Map.Entry<K, Double> findMax(Map<K, Double> map) {
+		Map.Entry<K, Double> ret = null;
+		for (Map.Entry<K, Double> e : map.entrySet()) {
+			if (ret == null || e.getValue() > ret.getValue()) {
+				ret = e;
+			}
+		}
+		return ret;
+	}
+
+	public static final double UNKOWN_VALUE = -99;// Double.NEGATIVE_INFINITY;
+
+	public static void addMappings(
+			CompiledModelData<String, Integer> compiledModelData,
+			IVocabulary<String, Integer> tagVocabulary,
+			List<TagMapping> mappings) {
+		TagMapper mapper = new TagMapper(tagVocabulary, mappings);
+		compiledModelData.standardEmissionModel.setContextMapper(mapper);
+		compiledModelData.specTokensEmissionModel.setContextMapper(mapper);
+	
+		compiledModelData.tagTransitionModel.setContextMapper(mapper);
+		compiledModelData.tagTransitionModel.setElementMapper(mapper);
+	
+		compiledModelData.lowerCaseSuffixGuesser.setMapper(mapper);
+		compiledModelData.upperCaseSuffixGuesser.setMapper(mapper);
+	
 	}
 }

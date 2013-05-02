@@ -22,12 +22,8 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model;
 
-import hu.ppke.itk.nlpg.purepos.common.Statistics;
-import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
-import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * An object of this class is representing the model of a POS tagger.
@@ -42,52 +38,31 @@ import java.util.List;
  * 
  */
 public abstract class Model<W, T extends Comparable<T>> implements Serializable {
+	@Deprecated
 	protected Model(int taggingOrder, int emissionOrder, int suffixLength,
 			int rareFrequency, ILexicon<W, T> standardTokensLexicon,
 			ILexicon<W, T> specTokensLexicon,
 			IVocabulary<String, T> tagVocabulary) {
-		this.taggingOrder = taggingOrder;
-		this.emissionOrder = emissionOrder;
-		this.suffixLength = suffixLength;
-		this.rareFreqency = rareFrequency;
+		data = new ModelData<W, T>();
+		this.data.taggingOrder = taggingOrder;
+		this.data.emissionOrder = emissionOrder;
+		this.data.suffixLength = suffixLength;
+		this.data.rareFreqency = rareFrequency;
 
-		this.standardTokensLexicon = standardTokensLexicon;
-		this.specTokensLexicon = specTokensLexicon;
-		this.tagVocabulary = tagVocabulary;
-		eosIndex = tagVocabulary.addElement(EOS_TAG);
-		bosIndex = tagVocabulary.addElement(BOS_TAG);
-		stat = new Statistics();
+		this.data.standardTokensLexicon = standardTokensLexicon;
+		this.data.specTokensLexicon = specTokensLexicon;
+		this.data.tagVocabulary = tagVocabulary;
+		this.data.eosIndex = tagVocabulary.addElement(ModelData.EOS_TAG);
+		this.data.bosIndex = tagVocabulary.addElement(ModelData.BOS_TAG);
+	}
+
+	protected Model(ModelData<W, T> modelData) {
+		this.data = modelData;
 	}
 
 	private static final long serialVersionUID = -8584335542969140286L;
 
-	protected static final String EOS_TAG = "</S>";
-
-	protected static final String BOS_TAG = "<S>";
-
-	protected static final String EOS_TOKEN = "<SE>";
-
-	protected static final String BOS_TOKEN = "<SB>";
-
-	protected Statistics stat;
-
-	protected int taggingOrder;
-
-	protected int emissionOrder;
-
-	protected int suffixLength;
-
-	protected int rareFreqency;
-
-	protected ILexicon<W, T> standardTokensLexicon;
-
-	protected ILexicon<W, T> specTokensLexicon;
-
-	protected IVocabulary<String, T> tagVocabulary;
-
-	protected T eosIndex;
-
-	protected T bosIndex;
+	protected ModelData<W, T> data;
 
 	// protected double theta;
 
@@ -95,115 +70,91 @@ public abstract class Model<W, T extends Comparable<T>> implements Serializable 
 	 * @return the eosTag
 	 */
 	public static String getEOSTag() {
-		return EOS_TAG;
+		return ModelData.EOS_TAG;
 	}
 
 	/**
 	 * @return the bosTag
 	 */
 	public static String getBOSTag() {
-		return BOS_TAG;
+		return ModelData.BOS_TAG;
 	}
 
 	/**
 	 * @return the eosToken
 	 */
 	public static String getEOSToken() {
-		return EOS_TOKEN;
+		return ModelData.EOS_TOKEN;
 	}
 
 	/**
 	 * @return the bosToken
 	 */
 	public static String getBOSToken() {
-		return BOS_TOKEN;
-	}
-
-	public Statistics getLastStat() {
-		return stat;
+		return ModelData.BOS_TOKEN;
 	}
 
 	/**
 	 * @return the taggingOrder
 	 */
 	public int getTaggingOrder() {
-		return taggingOrder;
+		return data.taggingOrder;
 	}
 
 	/**
 	 * @return the emissionOrder
 	 */
 	public int getEmissionOrder() {
-		return emissionOrder;
+		return data.emissionOrder;
 	}
 
 	/**
 	 * @return the suffixLength
 	 */
 	public int getSuffixLength() {
-		return suffixLength;
+		return data.suffixLength;
 	}
 
 	/**
 	 * @return the rareFreqency
 	 */
 	public int getRareFreqency() {
-		return rareFreqency;
+		return data.rareFreqency;
 	}
 
 	/**
 	 * @return the standardTokensLexicon
 	 */
 	public ILexicon<W, T> getStandardTokensLexicon() {
-		return standardTokensLexicon;
+		return data.standardTokensLexicon;
 	}
 
 	/**
 	 * @return the specTokensLexicon
 	 */
 	public ILexicon<W, T> getSpecTokensLexicon() {
-		return specTokensLexicon;
+		return data.specTokensLexicon;
 	}
 
 	/**
 	 * @return the tagVocabulary
 	 */
 	public IVocabulary<String, T> getTagVocabulary() {
-		return tagVocabulary;
+		return data.tagVocabulary;
 	}
 
 	/**
 	 * @return the eosIndex
 	 */
 	public T getEOSIndex() {
-		return eosIndex;
+		return data.eosIndex;
 	}
 
 	/**
 	 * @return the bosIndex
 	 */
 	public T getBOSIndex() {
-		return bosIndex;
-	}
-
-	protected static void addMappings(
-			IProbabilityModel<Integer, String> standardEmissionModel,
-			IProbabilityModel<Integer, String> specTokensEmissionModel,
-			IProbabilityModel<Integer, Integer> tagTransitionModel,
-			ISuffixGuesser<String, Integer> lowerCaseSuffixGuesser,
-			ISuffixGuesser<String, Integer> upperCaseSuffixGuesser,
-			IVocabulary<String, Integer> tagVocabulary,
-			List<TagMapping> mappings) {
-		TagMapper mapper = new TagMapper(tagVocabulary, mappings);
-		standardEmissionModel.setContextMapper(mapper);
-		specTokensEmissionModel.setContextMapper(mapper);
-
-		tagTransitionModel.setContextMapper(mapper);
-		tagTransitionModel.setElementMapper(mapper);
-
-		lowerCaseSuffixGuesser.setMapper(mapper);
-		upperCaseSuffixGuesser.setMapper(mapper);
-
+		return data.bosIndex;
 	}
 
 }

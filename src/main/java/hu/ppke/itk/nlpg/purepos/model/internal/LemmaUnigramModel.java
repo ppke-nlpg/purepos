@@ -22,15 +22,17 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.Util;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class Counter<W> implements Serializable {
+public class LemmaUnigramModel<W> implements Serializable {
 
 	private static final long serialVersionUID = -8789613645680834581L;
 	protected HashMap<W, Integer> counterMap;
 
-	public Counter() {
+	public LemmaUnigramModel() {
 		counterMap = new HashMap<W, Integer>();
 	}
 
@@ -47,5 +49,21 @@ public class Counter<W> implements Serializable {
 			return 0;
 		return ret;
 
+	}
+
+	public int size() {
+		return counterMap.size();
+	}
+
+	public Double getProb(W s) {
+		return (double) (getCount(s)) / size();
+	}
+
+	public Double getLogProb(W s) {
+		Double prob = getProb(s);
+		if (prob > 0) {
+			return Math.log(prob);
+		}
+		return Util.UNKOWN_VALUE;
 	}
 }
