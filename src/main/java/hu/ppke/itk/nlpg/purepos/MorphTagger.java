@@ -26,8 +26,8 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.Globals;
-import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
@@ -67,20 +67,17 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 		@Override
 		public int compare(IToken t1, IToken t2) {
-			LemmaUnigramModel<String> unigramLemmaModel = model.getUnigramLemmaModel();
-			Double uniScore1 = unigramLemmaModel.getLogProb(
-					t1.getStem());
-			Double uniScore2 = unigramLemmaModel.getLogProb(
-					t2.getStem());
+			LemmaUnigramModel<String> unigramLemmaModel = model
+					.getUnigramLemmaModel();
+			Double uniScore1 = unigramLemmaModel.getLogProb(t1.getStem());
+			Double uniScore2 = unigramLemmaModel.getLogProb(t2.getStem());
 
 			Double suffixScore1 = suffixLogProb(t1);
 			Double suffixScore2 = suffixLogProb(t2);
 
 			ICombiner combiner = model.getCombiner();
-			Double finalScore1 = combiner.combine(uniScore1,
-					suffixScore1);
-			Double finalScore2 = combiner.combine(uniScore2,
-					suffixScore2);
+			Double finalScore1 = combiner.combine(uniScore1, suffixScore1);
+			Double finalScore2 = combiner.combine(uniScore2, suffixScore2);
 
 			return Double.compare(finalScore1, finalScore2);
 		}
@@ -146,8 +143,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 			stems = analyzer.analyze(t);
 		}
 
-		final Map<IToken, Double> lemmaSuffixProbs = SuffixCoder
-				.convertProbMap(
+		final Map<IToken, Double> lemmaSuffixProbs = LemnmaTransformationUtil
+				.batchConvert(
 						model.getLemmaGuesser().getTagLogProbabilities(
 								t.getToken()), t.getToken(),
 						model.getTagVocabulary());

@@ -22,17 +22,10 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.docmodel.IToken;
-import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
-import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
+import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-public class HashLemmaTree extends HashSuffixTree<Pair<String, Integer>> {
+public class HashLemmaTree extends
+		HashSuffixTree<ILemmaTransformation<String, Integer>> {
 
 	/**
 	 * 
@@ -49,28 +42,32 @@ public class HashLemmaTree extends HashSuffixTree<Pair<String, Integer>> {
 	}
 
 	@Override
-	public void addWord(String suffString, Pair<String, Integer> tag, int count) {
+	public void addWord(String suffString,
+			ILemmaTransformation<String, Integer> tag, int count) {
 		increment(suffString, tag, count);
 	}
 
 	// TODO: the relative probabilities just left out, it should be calculated
 	// in the model
-	public Map<IToken, Integer> getLemmas(String word,
-			IVocabulary<String, Integer> vocab) {
-		Map<IToken, Integer> ret = new HashMap<IToken, Integer>();
-		String wordSuffix;
-		for (int i = 0; i < word.length(); ++i) {
-			wordSuffix = word.substring(word.length() - i);
-			if (representation.containsKey(wordSuffix)) {
-				HashMap<Pair<String, Integer>, Integer> anals = representation
-						.get(wordSuffix).getLeft();
-				Set<Pair<String, Integer>> codes = anals.keySet();
-				for (Pair<String, Integer> code : codes) {
-					ret.put(SuffixCoder.tokenForCode(code, word, vocab),
-							anals.get(code));
-				}
-			}
-		}
-		return ret;
-	}
+	// @Deprecated
+	// public Map<IToken, Integer> getLemmas(String word,
+	// IVocabulary<String, Integer> vocab) {
+	// Map<IToken, Integer> ret = new HashMap<IToken, Integer>();
+	// String wordSuffix;
+	// for (int i = 0; i < word.length(); ++i) {
+	// wordSuffix = word.substring(word.length() - i);
+	// if (representation.containsKey(wordSuffix)) {
+	// HashMap<ILemmaTransformation<String, Integer>, Integer> anals =
+	// representation
+	// .get(wordSuffix).getLeft();
+	// Set<ILemmaTransformation<String, Integer>> codes = anals
+	// .keySet();
+	// for (ILemmaTransformation<String, Integer> code : codes) {
+	// ret.put(SuffixCoder.tokenForCode(code, word, vocab),
+	// anals.get(code));
+	// }
+	// }
+	// }
+	// return ret;
+	// }
 }

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
@@ -29,8 +30,6 @@ import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
 
 import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 
@@ -75,7 +74,7 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 
 	protected CompiledModelData<W, T> compiledData;
 
-	public ISuffixGuesser<W, Pair<W, Integer>> getLemmaGuesser() {
+	public ISuffixGuesser<W, ILemmaTransformation<W, Integer>> getLemmaGuesser() {
 		return compiledData.lemmaTree;
 	}
 

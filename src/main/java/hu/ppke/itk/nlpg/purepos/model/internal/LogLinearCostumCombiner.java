@@ -3,8 +3,9 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
-import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
@@ -12,8 +13,6 @@ import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 public class LogLinearCostumCombiner extends LogLinearCombiner {
 
@@ -28,17 +27,17 @@ public class LogLinearCostumCombiner extends LogLinearCombiner {
 		Map<Integer, Double> aprioriProbs = rawModeldata.tagNGramModel
 				.getWordAprioriProbs();
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
-		ISuffixGuesser<String, Pair<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaTree
+		ISuffixGuesser<String, ILemmaTransformation<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaTree
 				.createGuesser(theta);
 		lambdas = new ArrayList<Double>(2);
 
 		Double lambdaS = 1.0, lambdaU = 1.0;
 		for (ISentence sentence : doc.getSentences()) {
 			for (IToken tok : sentence) {
-				Map<IToken, Double> suffixProbs = SuffixCoder.convertProbMap(
-						lemmaSuffixGuesser.getTagLogProbabilities(tok
-								.getToken()), tok.getToken(),
-						data.tagVocabulary);
+				Map<IToken, Double> suffixProbs = LemnmaTransformationUtil
+						.batchConvert(lemmaSuffixGuesser
+								.getTagLogProbabilities(tok.getToken()), tok
+								.getToken(), data.tagVocabulary);
 
 				Map<IToken, Double> uniProbs = new HashMap<IToken, Double>();
 				for (IToken t : suffixProbs.keySet()) {

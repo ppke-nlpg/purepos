@@ -14,8 +14,8 @@ public class SuffixLemmaTransformatoinTest {
 		Assert.assertEquals("om", t.representation.getLeft());
 		Assert.assertEquals(new Integer(102), t.representation.getRight());
 
-		Assert.assertEquals("alom", t.toAnalysis("alma").getLeft());
-		Assert.assertEquals(new Integer(1), t.toAnalysis("alma").getRight());
+		Assert.assertEquals("alom", t.analyze("alma").getLeft());
+		Assert.assertEquals(new Integer(1), t.analyze("alma").getRight());
 
 		SuffixLemmaTransformation t1 = new SuffixLemmaTransformation("tűnt",
 				"tűnik", 1);

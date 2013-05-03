@@ -29,8 +29,8 @@ import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
-import hu.ppke.itk.nlpg.purepos.common.SuffixCoder;
 import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
 import hu.ppke.itk.nlpg.purepos.model.ISpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
@@ -100,8 +100,7 @@ public class RawModel extends Model<String, Integer> {
 			addSentence(mySentence);
 		}
 		buildSuffixTrees();
-		rawModeldata.combiner.calculateParameters(document, rawModeldata,
-				data);
+		rawModeldata.combiner.calculateParameters(document, rawModeldata, data);
 	}
 
 	protected void addSentenceMarkers(ISentence mySentence) {
@@ -196,7 +195,8 @@ public class RawModel extends Model<String, Integer> {
 
 	protected void addLemma(String word, String lemma, Integer tag) {
 		rawModeldata.lemmaUnigramModel.increment(lemma);
-		SuffixCoder.addToken(word, lemma, tag, rawModeldata.lemmaTree, 1);
+		LemnmaTransformationUtil.addToken(word, lemma, tag,
+				rawModeldata.lemmaTree);
 	}
 
 	protected Double smooth(Double val) {

@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
@@ -7,12 +8,10 @@ import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 public class CompiledModelData<W, T extends Comparable<T>> {
 	public LemmaUnigramModel<W> unigramLemmaModel;
 	public ICombiner combiner;
-	public ISuffixGuesser<W, Pair<W, Integer>> lemmaTree;
+	public ISuffixGuesser<W, ILemmaTransformation<W, Integer>> lemmaTree;
 
 	public IProbabilityModel<T, T> tagTransitionModel;
 	public IProbabilityModel<T, W> standardEmissionModel;
@@ -52,7 +51,7 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 			ISuffixGuesser<W, T> lowerCaseSuffixGuesser,
 			ISuffixGuesser<W, T> upperCaseSuffixGuesser,
 			Map<T, Double> aprioriTagProbs,
-			ISuffixGuesser<W, Pair<W, Integer>> lemmaTree) {
+			ISuffixGuesser<W, ILemmaTransformation<W, Integer>> lemmaTree) {
 		this.unigramLemmaModel = unigramLemmaModel;
 		this.combiner = combiner;
 		this.tagTransitionModel = tagTransitionModel;

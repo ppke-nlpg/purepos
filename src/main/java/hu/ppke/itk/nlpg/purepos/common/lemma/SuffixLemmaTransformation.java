@@ -25,7 +25,7 @@ package hu.ppke.itk.nlpg.purepos.common.lemma;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class SuffixLemmaTransformation extends
-		AbstractLemmaTransformation<String, Integer, Pair<String, Integer>> {
+		AbstractLemmaTransformation<Pair<String, Integer>> {
 
 	private static final long serialVersionUID = 1160747425706872720L;
 
@@ -60,6 +60,11 @@ public class SuffixLemmaTransformation extends
 		String add = representation.getLeft();
 		String lemma = word.substring(0, word.length() - cutSize) + add;
 		return Pair.of(lemma, tagCode);
+	}
+
+	@Override
+	public int minimalCutLength() {
+		return representation.getRight() % SHIFT;
 	}
 
 }

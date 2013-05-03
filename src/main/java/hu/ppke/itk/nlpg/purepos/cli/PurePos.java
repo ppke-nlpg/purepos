@@ -216,6 +216,7 @@ public class PurePos implements Runnable {
 
 		Arrays.sort(candidates);
 
+		@SuppressWarnings("deprecation")
 		URL humorURL = candidates[candidates.length - 1].toURL();
 
 		URLClassLoader myLoader = new URLClassLoader(new URL[] { humorURL },

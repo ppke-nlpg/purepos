@@ -44,43 +44,8 @@ import org.apache.commons.lang3.tuple.Pair;
 @Deprecated
 public class SuffixCoder {
 
-	private static final int SHIFT = 100;
-
-	public static Pair<String, Integer> addToken(String word, String stem,
-			Integer tag, SuffixTree<String, Pair<String, Integer>> tree,
-			int count) {
-		Pair<String, Pair<String, Integer>> ret = decode(word, stem, tag);
-		int minLen = ret.getRight().getRight() % SHIFT;
-		tree.addWord(ret.getLeft(), ret.getRight(), count, minLen);
-		return ret.getRight();
-
-	}
-
-	public static Pair<String, Integer> decode(IToken tok,
-			IVocabulary<String, Integer> vocab) {
-		return decode(tok.getToken(), tok.getStem(),
-				vocab.getIndex(tok.getTag())).getRight();
-	}
-
-	public static Pair<String, Pair<String, Integer>> decode(String word,
-			String stem, Integer tag) {
-		int i;
-		for (i = 0; i < word.length() && i < stem.length(); ++i) {
-			if (word.charAt(i) != stem.charAt(i)) {
-				break;
-			}
-		}
-		String wordSuff = word.substring(i);
-		int cutSize = wordSuff.length();
-		String lemmaSuff = stem.substring(i);
-
-		int code = SHIFT * tag + cutSize;
-		Pair<String, Pair<String, Integer>> ret = new ImmutablePair<String, Pair<String, Integer>>(
-				word, new ImmutablePair<String, Integer>(lemmaSuff, code));
-		return ret;
-	}
-
-	public static Pair<String, Integer> addToken(IToken stemmedToken,
+	@Deprecated
+	protected static Pair<String, Integer> addToken(IToken stemmedToken,
 			Vocabulary<String, Integer> vocab,
 			SuffixTree<String, Pair<String, Integer>> tree, int count) {
 		String word = stemmedToken.getToken();
@@ -89,7 +54,7 @@ public class SuffixCoder {
 		return addToken(word, stem, vocab.getIndex(tag), tree, count);
 	}
 
-	public static IToken tokenForCode(Pair<String, Integer> code, String word,
+	private static IToken tokenForCode(Pair<String, Integer> code, String word,
 			IVocabulary<String, Integer> vocab) {
 		int tagCode = code.getRight() / SHIFT;
 		int cutSize = code.getRight() % SHIFT;
@@ -112,7 +77,44 @@ public class SuffixCoder {
 
 	}
 
-	public static String postprocess(String string) {
+	private static final int SHIFT = 100;
+
+	@Deprecated
+	protected static Pair<String, Integer> addToken(String word, String stem,
+			Integer tag, SuffixTree<String, Pair<String, Integer>> tree,
+			int count) {
+		Pair<String, Pair<String, Integer>> ret = decode(word, stem, tag);
+		int minLen = ret.getRight().getRight() % SHIFT;
+		tree.addWord(ret.getLeft(), ret.getRight(), count, minLen);
+		return ret.getRight();
+
+	}
+
+	protected static Pair<String, Integer> decode(IToken tok,
+			IVocabulary<String, Integer> vocab) {
+		return decode(tok.getToken(), tok.getStem(),
+				vocab.getIndex(tok.getTag())).getRight();
+	}
+
+	protected static Pair<String, Pair<String, Integer>> decode(String word,
+			String stem, Integer tag) {
+		int i;
+		for (i = 0; i < word.length() && i < stem.length(); ++i) {
+			if (word.charAt(i) != stem.charAt(i)) {
+				break;
+			}
+		}
+		String wordSuff = word.substring(i);
+		int cutSize = wordSuff.length();
+		String lemmaSuff = stem.substring(i);
+
+		int code = SHIFT * tag + cutSize;
+		Pair<String, Pair<String, Integer>> ret = new ImmutablePair<String, Pair<String, Integer>>(
+				word, new ImmutablePair<String, Integer>(lemmaSuff, code));
+		return ret;
+	}
+
+	protected static String postprocess(String string) {
 		int length = string.length();
 		if (length > 1 && string.charAt(length - 1) == '-') {
 			return string.substring(0, length - 1);
@@ -121,7 +123,8 @@ public class SuffixCoder {
 
 	}
 
-	public static String encode(String word, int rightCutSize, String addRight) {
+	protected static String encode(String word, int rightCutSize,
+			String addRight) {
 		String candidate = word.substring(0, word.length() - rightCutSize)
 				+ addRight;
 		return postprocess(candidate);
