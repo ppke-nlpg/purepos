@@ -40,6 +40,8 @@ import org.apache.commons.lang3.tuple.Pair;
  * @author György Orosz
  * 
  */
+
+@Deprecated
 public class SuffixCoder {
 
 	private static final int SHIFT = 100;
@@ -110,7 +112,7 @@ public class SuffixCoder {
 
 	}
 
-	protected static String postprocess(String string) {
+	public static String postprocess(String string) {
 		int length = string.length();
 		if (length > 1 && string.charAt(length - 1) == '-') {
 			return string.substring(0, length - 1);
@@ -119,8 +121,7 @@ public class SuffixCoder {
 
 	}
 
-	protected static String encode(String word, int rightCutSize,
-			String addRight) {
+	public static String encode(String word, int rightCutSize, String addRight) {
 		String candidate = word.substring(0, word.length() - rightCutSize)
 				+ addRight;
 		return postprocess(candidate);

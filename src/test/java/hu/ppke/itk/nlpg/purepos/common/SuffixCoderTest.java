@@ -5,10 +5,12 @@ import junit.framework.Assert;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class SuffixCoderTest {
 
 	@Test
 	public void testCoding() {
+
 		Pair<String, Pair<String, Integer>> x = SuffixCoder.decode("alma",
 				"alom", 1);
 		Assert.assertEquals("alma", x.getLeft());
