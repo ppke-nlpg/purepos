@@ -27,6 +27,7 @@ import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.Globals;
 import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
@@ -143,10 +144,10 @@ public class MorphTagger extends POSTagger implements ITagger {
 			stems = analyzer.analyze(t);
 		}
 
+		Map<ILemmaTransformation<String, Integer>, Double> tagLogProbabilities = model
+				.getLemmaGuesser().getTagLogProbabilities(t.getToken());
 		final Map<IToken, Double> lemmaSuffixProbs = LemnmaTransformationUtil
-				.batchConvert(
-						model.getLemmaGuesser().getTagLogProbabilities(
-								t.getToken()), t.getToken(),
+				.batchConvert(tagLogProbabilities, t.getToken(),
 						model.getTagVocabulary());
 		LemmaComparator lemmaComparator = new LemmaComparator(lemmaSuffixProbs);
 

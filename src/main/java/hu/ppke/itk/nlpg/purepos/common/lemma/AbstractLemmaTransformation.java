@@ -34,19 +34,18 @@ public abstract class AbstractLemmaTransformation<R> implements
 	private static final long serialVersionUID = -919727645396686443L;
 	protected R representation;
 
-	public AbstractLemmaTransformation(String Stringord, String lemma,
-			Integer tag) {
-		representation = decode(Stringord, lemma, tag);
+	public AbstractLemmaTransformation(String word, String lemma, Integer tag) {
+		representation = decode(word, lemma, tag);
 	}
 
-	protected abstract R decode(String Stringord, String lemma, Integer tag);
+	protected abstract R decode(String word, String lemma, Integer tag);
 
-	protected abstract Pair<String, Integer> encode(String Stringord,
+	protected abstract Pair<String, Integer> encode(String word,
 			R representation);
 
 	@Override
-	public Pair<String, Integer> analyze(String Stringord) {
-		Pair<String, Integer> ret = encode(Stringord, representation);
+	public Pair<String, Integer> analyze(String word) {
+		Pair<String, Integer> ret = encode(word, representation);
 		return Pair.of(postprocess(ret.getLeft()), ret.getRight());
 
 	}
@@ -81,10 +80,10 @@ public abstract class AbstractLemmaTransformation<R> implements
 	}
 
 	@Override
-	public IToken convert(String Stringord, IVocabulary<String, Integer> vocab) {
-		Pair<String, Integer> anal = this.analyze(Stringord);
+	public IToken convert(String word, IVocabulary<String, Integer> vocab) {
+		Pair<String, Integer> anal = this.analyze(word);
 		String tag = vocab.getWord(anal.getRight());
-		return token(Stringord, anal.getLeft(), tag);
+		return token(word, anal.getLeft(), tag);
 	}
 
 	protected IToken token(String word, String lemma, String tag) {

@@ -14,8 +14,8 @@ public class LogLinearMLCombiner extends LogLinearCombiner {
 			ModelData<String, Integer> data) {
 		// TODO Auto-generated method stub
 		lambdas = new ArrayList<Double>();
-		lambdas.add(1.0);
 		lambdas.add(0.0);
+		lambdas.add(0.1);
 
 	}
 

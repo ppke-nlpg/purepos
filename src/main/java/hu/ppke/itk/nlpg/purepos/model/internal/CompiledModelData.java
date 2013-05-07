@@ -4,7 +4,6 @@ import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
-import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 import java.util.Map;
 
@@ -20,30 +19,7 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 	public ISuffixGuesser<W, T> upperCaseSuffixGuesser;
 	public Map<T, Double> aprioriTagProbs;
 
-	public static CompiledModelData<String, Integer> compile(
-			RawModelData rawModeldata) {
-		CompiledModelData<String, Integer> ret = new CompiledModelData<String, Integer>();
-		ret.unigramLemmaModel = rawModeldata.lemmaUnigramModel;
-
-		ret.tagTransitionModel = rawModeldata.tagNGramModel
-				.createProbabilityModel();
-		ret.standardEmissionModel = rawModeldata.stdEmissionNGramModel
-				.createProbabilityModel();
-		ret.specTokensEmissionModel = rawModeldata.specEmissionNGramModel
-				.createProbabilityModel();
-		ret.aprioriTagProbs = rawModeldata.tagNGramModel.getWordAprioriProbs();
-		Double theta = SuffixTree.calculateTheta(ret.aprioriTagProbs);
-		ret.lowerCaseSuffixGuesser = rawModeldata.lowerSuffixTree
-				.createGuesser(theta);
-		ret.upperCaseSuffixGuesser = rawModeldata.upperSuffixTree
-				.createGuesser(theta);
-		ret.lemmaTree = rawModeldata.lemmaTree.createGuesser(theta);
-		ret.combiner = rawModeldata.combiner;
-
-		return ret;
-	}
-
-	@Deprecated
+	// @Deprecated
 	public CompiledModelData(LemmaUnigramModel<W> unigramLemmaModel,
 			ICombiner combiner, IProbabilityModel<T, T> tagTransitionModel,
 			IProbabilityModel<T, W> standardEmissionModel,
@@ -63,8 +39,8 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 		this.lemmaTree = lemmaTree;
 	}
 
-	@Deprecated
-	protected CompiledModelData() {
+	// @Deprecated
+	CompiledModelData() {
 
 	}
 

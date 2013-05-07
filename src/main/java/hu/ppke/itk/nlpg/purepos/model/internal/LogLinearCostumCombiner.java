@@ -30,7 +30,6 @@ public class LogLinearCostumCombiner extends LogLinearCombiner {
 		ISuffixGuesser<String, ILemmaTransformation<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaTree
 				.createGuesser(theta);
 		lambdas = new ArrayList<Double>(2);
-
 		Double lambdaS = 1.0, lambdaU = 1.0;
 		for (ISentence sentence : doc.getSentences()) {
 			for (IToken tok : sentence) {

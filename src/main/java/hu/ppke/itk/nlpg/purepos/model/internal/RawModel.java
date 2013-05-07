@@ -249,7 +249,7 @@ public class RawModel extends Model<String, Integer> {
 
 	public CompiledModel<String, Integer> compile(Configuration conf) {
 		data.tagVocabulary.storeMaximalElement();
-		CompiledModelData<String, Integer> compiledModelData = CompiledModelData
+		CompiledModelData<String, Integer> compiledModelData = RawModelData
 				.compile(this.rawModeldata);
 
 		Util.addMappings(compiledModelData, data.tagVocabulary,
