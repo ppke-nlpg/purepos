@@ -30,7 +30,7 @@ import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
 import hu.ppke.itk.nlpg.purepos.common.Util;
-import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaUtil;
 import hu.ppke.itk.nlpg.purepos.model.ISpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
@@ -55,9 +55,9 @@ public class RawModel extends Model<String, Integer> {
 		return rawModeldata.stat;
 	}
 
-	public List<Double> getLemmaLambdas() {
-		return rawModeldata.lemmaLambdas;
-	}
+	// public List<Double> getLemmaLambdas() {
+	// return rawModeldata.lemmaLambdas;
+	// }
 
 	// @Deprecated
 	// private RawModel(int taggingOrder, int emissionOrder, int suffixLength,
@@ -125,13 +125,14 @@ public class RawModel extends Model<String, Integer> {
 		for (int i = sentence.size() - 1; i >= 0; --i) {
 			String word = sentence.get(i).getToken();
 			String lemma = sentence.get(i).getStem();
+			String tagStr = sentence.get(i).getTag();
 			Integer tag = tags.get(i);
 			// TEST: creating a trie from lemmas
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
-				addLemma(word, lemma, tag);
+				LemmaUtil.storeLemma(word, lemma, tag, tagStr, rawModeldata);
 
 				rawModeldata.tagNGramModel.addWord(prevTags, tag);
 
@@ -191,12 +192,6 @@ public class RawModel extends Model<String, Integer> {
 			}
 		}
 
-	}
-
-	protected void addLemma(String word, String lemma, Integer tag) {
-		rawModeldata.lemmaUnigramModel.increment(lemma);
-		LemnmaTransformationUtil.addToken(word, lemma, tag,
-				rawModeldata.lemmaTree);
 	}
 
 	protected Double smooth(Double val) {

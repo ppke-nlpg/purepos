@@ -23,7 +23,6 @@
 package hu.ppke.itk.nlpg.purepos.decoder;
 
 import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
-import hu.ppke.itk.nlpg.purepos.common.Globals;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.IMapper;
@@ -160,7 +159,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			}
 		}
 
-		AnalysisQueue userAnals = Globals.analysisQueue;
+		AnalysisQueue userAnals = Util.analysisQueue;
 		if (userAnals.hasAnal(position)) {
 			Set<Integer> newTags = userAnals.getTags(position,
 					model.getTagVocabulary());

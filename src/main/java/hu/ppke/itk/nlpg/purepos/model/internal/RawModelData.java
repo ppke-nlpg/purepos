@@ -1,6 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaUtil;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
 
 public class RawModelData extends AbstractRawModelData<String, Integer> {
@@ -14,9 +15,10 @@ public class RawModelData extends AbstractRawModelData<String, Integer> {
 		tagNGramModel = new NGramModel<Integer>(taggingOrder + 1);
 		stdEmissionNGramModel = new NGramModel<String>(emissionOrder + 1);
 		specEmissionNGramModel = new NGramModel<String>(2);
-		lemmaTree = new HashLemmaTree(100);
+		lemmaSuffixTree = new HashLemmaTree(100);
+		lemmaFreqTree = new HashSuffixTree<String>(5);
 		lemmaUnigramModel = new LemmaUnigramModel<String>();
-		combiner = new LogLinearCostumCombiner();
+		combiner = LemmaUtil.defaultCombiner();
 	}
 
 	public static CompiledModelData<String, Integer> compile(
@@ -36,7 +38,8 @@ public class RawModelData extends AbstractRawModelData<String, Integer> {
 				.createGuesser(theta);
 		ret.upperCaseSuffixGuesser = rawModeldata.upperSuffixTree
 				.createGuesser(theta);
-		ret.lemmaTree = rawModeldata.lemmaTree.createGuesser(theta);
+		ret.lemmaGuesser = rawModeldata.lemmaSuffixTree.createGuesser(theta);
+		ret.suffixLemmaModel = rawModeldata.lemmaFreqTree.createGuesser(theta);
 		ret.combiner = rawModeldata.combiner;
 
 		return ret;

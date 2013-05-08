@@ -5,7 +5,7 @@ import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
-import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaUtil;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LogLinearCostumCombiner extends LogLinearCombiner {
+import org.apache.commons.lang3.tuple.Pair;
+
+public class LogLinearBiCombiner extends LogLinearCombiner {
 
 	/**
 	 * 
@@ -27,13 +29,13 @@ public class LogLinearCostumCombiner extends LogLinearCombiner {
 		Map<Integer, Double> aprioriProbs = rawModeldata.tagNGramModel
 				.getWordAprioriProbs();
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
-		ISuffixGuesser<String, ILemmaTransformation<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaTree
+		ISuffixGuesser<String, ILemmaTransformation<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaSuffixTree
 				.createGuesser(theta);
 		lambdas = new ArrayList<Double>(2);
 		Double lambdaS = 1.0, lambdaU = 1.0;
 		for (ISentence sentence : doc.getSentences()) {
 			for (IToken tok : sentence) {
-				Map<IToken, Double> suffixProbs = LemnmaTransformationUtil
+				Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> suffixProbs = LemmaUtil
 						.batchConvert(lemmaSuffixGuesser
 								.getTagLogProbabilities(tok.getToken()), tok
 								.getToken(), data.tagVocabulary);
@@ -46,14 +48,14 @@ public class LogLinearCostumCombiner extends LogLinearCombiner {
 				}
 
 				Map.Entry<IToken, Double> uniMax = Util.findMax(uniProbs);
-				Map.Entry<IToken, Double> suffixMax = Util.findMax(suffixProbs);
+				Pair<IToken, Double> suffixMax = Util.findMax2(suffixProbs);
 				Double actUniProb = rawModeldata.lemmaUnigramModel
 						.getLogProb(tok.getStem());
 				// Pair<String, Integer> lemmaCode = SuffixCoder.decode(tok,
 				// data.tagVocabulary);
 				Double actSuffProb;
 				if (suffixProbs.containsKey(tok)) {
-					actSuffProb = suffixProbs.get(tok);
+					actSuffProb = suffixProbs.get(tok).getValue();
 				} else {
 					actSuffProb = Util.UNKOWN_VALUE;
 				}
@@ -78,4 +80,15 @@ public class LogLinearCostumCombiner extends LogLinearCombiner {
 		// return lambdas;
 	}
 
+	@Override
+	public Double combine(IToken tok, ILemmaTransformation<String, Integer> t,
+			CompiledModelData<String, Integer> compiledModelData,
+			ModelData<String, Integer> modelData) {
+		LemmaUnigramModel<String> unigramLemmaModel = compiledModelData.unigramLemmaModel;
+		Double uniScore = unigramLemmaModel.getLogProb(tok.getStem());
+		Double suffixScore = smooth(compiledModelData.lemmaGuesser
+				.getTagLogProbability(tok.getToken(), t));
+
+		return uniScore * lambdas.get(0) + suffixScore * lambdas.get(1);
+	}
 }

@@ -22,7 +22,6 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model;
 
-
 import java.io.Serializable;
 
 /**
@@ -148,6 +147,10 @@ public abstract class Model<W, T extends Comparable<T>> implements Serializable 
 	 */
 	public T getEOSIndex() {
 		return data.eosIndex;
+	}
+
+	public ModelData<W, T> getData() {
+		return data;
 	}
 
 	/**

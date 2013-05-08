@@ -70,12 +70,16 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 		this.compiledData = compiledData;
 	}
 
+	public CompiledModelData<W, T> getCompiledData() {
+		return compiledData;
+	}
+
 	private static final long serialVersionUID = -3426883448646064198L;
 
 	protected CompiledModelData<W, T> compiledData;
 
 	public ISuffixGuesser<W, ILemmaTransformation<W, Integer>> getLemmaGuesser() {
-		return compiledData.lemmaTree;
+		return compiledData.lemmaGuesser;
 	}
 
 	public LemmaUnigramModel<W> getUnigramLemmaModel() {

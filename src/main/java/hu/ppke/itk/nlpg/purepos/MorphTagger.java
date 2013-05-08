@@ -25,22 +25,23 @@ package hu.ppke.itk.nlpg.purepos;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
-import hu.ppke.itk.nlpg.purepos.common.Globals;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
-import hu.ppke.itk.nlpg.purepos.common.lemma.LemnmaTransformationUtil;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaComparator;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaUtil;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
-import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
-import hu.ppke.itk.nlpg.purepos.model.internal.LemmaUnigramModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Tagger that performs full morphological disambiguation.
@@ -49,66 +50,8 @@ import java.util.Map;
  * 
  */
 public class MorphTagger extends POSTagger implements ITagger {
-	protected final class LemmaComparator implements Comparator<IToken> {
-		private final Map<IToken, Double> lemmaSuffixProbs;
 
-		// List<Double> lambdas = model.getLemsmaLambdas();
-
-		protected LemmaComparator(Map<IToken, Double> lemmaSuffixProbs) {
-			this.lemmaSuffixProbs = lemmaSuffixProbs;
-		}
-
-		public Double suffixLogProb(IToken o1) {
-			Double ret = this.lemmaSuffixProbs.get(o1);
-			if (ret == null) {
-				return Util.UNKOWN_VALUE;
-			}
-			return ret;
-		}
-
-		@Override
-		public int compare(IToken t1, IToken t2) {
-			LemmaUnigramModel<String> unigramLemmaModel = model
-					.getUnigramLemmaModel();
-			Double uniScore1 = unigramLemmaModel.getLogProb(t1.getStem());
-			Double uniScore2 = unigramLemmaModel.getLogProb(t2.getStem());
-
-			Double suffixScore1 = suffixLogProb(t1);
-			Double suffixScore2 = suffixLogProb(t2);
-
-			ICombiner combiner = model.getCombiner();
-			Double finalScore1 = combiner.combine(uniScore1, suffixScore1);
-			Double finalScore2 = combiner.combine(uniScore2, suffixScore2);
-
-			return Double.compare(finalScore1, finalScore2);
-		}
-
-		// private Double combine(Double uniScore, Double suffixScore) {
-		//
-		// Double lambda1 = lambdas.get(0), lambda2 = lambdas.get(1);
-		// return uniScore * lambda1 + suffixScore * lambda2;
-		// }
-
-	}
-
-	// public int compare1(IToken o1, IToken o2) {
-	// int c1 = unigramProb(o1);
-	// int c2 = unigramProb(o2);
-	// if (c1 > 0 || c2 > 0)
-	// return c1 - c2;
-	// else {
-	// Double prob1 = suffixLogProb(o1);
-	// Double prob2 = suffixLogProb(o2);
-	// if (prob1 == null)
-	// prob1 = UNKOWN_VALUE;
-	// if (prob2 == null)
-	// prob2 = UNKOWN_VALUE;
-	// return Double.compare(prob1, prob2);
-	// }
-	//
-	// }
-	// }
-
+	LemmaComparator lemmaComparator;
 	StemFilter stemFilter;
 
 	public MorphTagger(CompiledModel<String, Integer> model,
@@ -116,6 +59,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 			int maxGuessedTags, boolean useBeamSearch) {
 		super(model, analyzer, logTheta, sufTheta, maxGuessedTags,
 				useBeamSearch);
+
+		lemmaComparator = new LemmaComparator(model.getCompiledData(),
+				model.getData());
 		stemFilter = Util.createStemFilter();
 	}
 
@@ -138,18 +84,17 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 	private IToken findBestLemma(IToken t, int position) {
 		Collection<IToken> stems;
-		if (Globals.analysisQueue.hasAnal(position)) {
-			stems = Globals.analysisQueue.getAnalysises(position);
+		if (Util.analysisQueue.hasAnal(position)) {
+			stems = Util.analysisQueue.getAnalysises(position);
 		} else {
 			stems = analyzer.analyze(t);
 		}
 
 		Map<ILemmaTransformation<String, Integer>, Double> tagLogProbabilities = model
 				.getLemmaGuesser().getTagLogProbabilities(t.getToken());
-		final Map<IToken, Double> lemmaSuffixProbs = LemnmaTransformationUtil
+		Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> lemmaSuffixProbs = LemmaUtil
 				.batchConvert(tagLogProbabilities, t.getToken(),
 						model.getTagVocabulary());
-		LemmaComparator lemmaComparator = new LemmaComparator(lemmaSuffixProbs);
 
 		if (Util.isEmpty(stems)) {
 			// the guesser is used
@@ -157,7 +102,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 			stems = lemmaSuffixProbs.keySet();
 		}
 		// matching tags
-		List<IToken> possibleStems = new ArrayList<IToken>();
+		Collection<IToken> possibleStems = new HashSet<IToken>();
 		for (IToken ct : stems) {
 			if (t.getTag().equals(ct.getTag())) {
 				possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
@@ -175,13 +120,33 @@ public class MorphTagger extends POSTagger implements ITagger {
 		// most frequrent stem
 		IToken best;
 		if (possibleStems.size() == 1) {
-			best = possibleStems.get(0);
+			best = possibleStems.iterator().next();
 		} else {
+
 			if (stemFilter != null) {
 				possibleStems = stemFilter.filterStem(possibleStems);
 			}
+			List<Pair<IToken, ILemmaTransformation<String, Integer>>> comp = new LinkedList<Pair<IToken, ILemmaTransformation<String, Integer>>>();
+			for (IToken possTok : possibleStems) {
+				Pair<ILemmaTransformation<String, Integer>, Double> pair = lemmaSuffixProbs
+						.get(possTok);
+				ILemmaTransformation<String, Integer> traf;
+				if (pair != null) {
+					traf = pair.getKey();
 
-			best = Collections.max(possibleStems, lemmaComparator);
+				} else {
+					traf = LemmaUtil.defaultLemmaRepresentation(possTok,
+							model.getData());
+				}
+				comp.add(Pair.of(possTok, traf));
+
+			}
+			try {
+				best = Collections.max(comp, lemmaComparator).getKey();
+			} catch (Exception e) {
+				System.err.println(t);
+				return null;
+			}
 		}
 		return best;
 	}

@@ -1,5 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 
 import java.util.List;
@@ -16,6 +17,13 @@ public abstract class LogLinearCombiner implements ICombiner {
 	@Override
 	public List<Double> getParameters() {
 		return lambdas;
+	}
+
+	public Double smooth(Double val) {
+		if (val == null) {
+			return Util.UNKOWN_VALUE;
+		}
+		return val;
 	}
 
 	@Override

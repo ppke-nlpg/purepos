@@ -5,6 +5,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ public class StemFilter {
 		return ret;
 	}
 
-	public List<IToken> filterStem(List<IToken> candidates) {
+	public Collection<IToken> filterStem(Collection<IToken> candidates) {
 		if (stems.isEmpty())
 			return candidates;
 		List<IToken> ret = new ArrayList<IToken>();

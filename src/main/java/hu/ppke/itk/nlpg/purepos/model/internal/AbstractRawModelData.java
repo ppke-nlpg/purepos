@@ -19,7 +19,8 @@ public abstract class AbstractRawModelData<W, T extends Comparable<T>>
 	public INGramModel<T, W> stdEmissionNGramModel;
 	public INGramModel<T, W> specEmissionNGramModel;
 	public T eosTag;
-	public SuffixTree<W, ILemmaTransformation<W, Integer>> lemmaTree;
+	public SuffixTree<W, ILemmaTransformation<W, Integer>> lemmaSuffixTree;
+	public SuffixTree<W, String> lemmaFreqTree;
 	public LemmaUnigramModel<W> lemmaUnigramModel;
 	public HashSuffixTree<T> lowerSuffixTree;
 	public HashSuffixTree<T> upperSuffixTree;

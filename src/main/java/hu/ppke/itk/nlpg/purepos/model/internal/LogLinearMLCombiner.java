@@ -1,6 +1,8 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.docmodel.IDocument;
+import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
 
 import java.util.ArrayList;
@@ -19,4 +21,15 @@ public class LogLinearMLCombiner extends LogLinearCombiner {
 
 	}
 
+	@Override
+	public Double combine(IToken tok, ILemmaTransformation<String, Integer> t,
+			CompiledModelData<String, Integer> compiledModelData,
+			ModelData<String, Integer> modelData) {
+		LemmaUnigramModel<String> unigramLemmaModel = compiledModelData.unigramLemmaModel;
+		Double uniScore = unigramLemmaModel.getLogProb(tok.getStem());
+		Double suffixScore = smooth(compiledModelData.lemmaGuesser
+				.getTagLogProbability(tok.getToken(), t));
+
+		return uniScore * lambdas.get(0) + suffixScore * lambdas.get(1);
+	}
 }

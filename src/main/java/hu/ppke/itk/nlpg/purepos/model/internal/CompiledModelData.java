@@ -9,8 +9,9 @@ import java.util.Map;
 
 public class CompiledModelData<W, T extends Comparable<T>> {
 	public LemmaUnigramModel<W> unigramLemmaModel;
+	public ISuffixGuesser<W, ILemmaTransformation<W, Integer>> lemmaGuesser;
+	public ISuffixGuesser<String, String> suffixLemmaModel;
 	public ICombiner combiner;
-	public ISuffixGuesser<W, ILemmaTransformation<W, Integer>> lemmaTree;
 
 	public IProbabilityModel<T, T> tagTransitionModel;
 	public IProbabilityModel<T, W> standardEmissionModel;
@@ -19,7 +20,7 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 	public ISuffixGuesser<W, T> upperCaseSuffixGuesser;
 	public Map<T, Double> aprioriTagProbs;
 
-	// @Deprecated
+	@Deprecated
 	public CompiledModelData(LemmaUnigramModel<W> unigramLemmaModel,
 			ICombiner combiner, IProbabilityModel<T, T> tagTransitionModel,
 			IProbabilityModel<T, W> standardEmissionModel,
@@ -36,7 +37,7 @@ public class CompiledModelData<W, T extends Comparable<T>> {
 		this.lowerCaseSuffixGuesser = lowerCaseSuffixGuesser;
 		this.upperCaseSuffixGuesser = upperCaseSuffixGuesser;
 		this.aprioriTagProbs = aprioriTagProbs;
-		this.lemmaTree = lemmaTree;
+		this.lemmaGuesser = lemmaTree;
 	}
 
 	// @Deprecated

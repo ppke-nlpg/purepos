@@ -34,6 +34,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class Util {
 	protected static final String STEM_FILTER_FILE = "purepos_stems.txt";
 	protected static final String STEM_FILTER_PROPERTY = System
@@ -93,6 +95,16 @@ public class Util {
 		return ret;
 	}
 
+	public static <K, L> Pair<K, Double> findMax2(Map<K, Pair<L, Double>> map) {
+		Pair<K, Double> ret = null;
+		for (Map.Entry<K, Pair<L, Double>> e : map.entrySet()) {
+			if (ret == null || e.getValue().getValue() > ret.getValue()) {
+				ret = Pair.of(e.getKey(), e.getValue().getValue());
+			}
+		}
+		return ret;
+	}
+
 	public static final double UNKOWN_VALUE = -99;// Double.NEGATIVE_INFINITY;
 
 	public static void addMappings(
@@ -102,12 +114,14 @@ public class Util {
 		TagMapper mapper = new TagMapper(tagVocabulary, mappings);
 		compiledModelData.standardEmissionModel.setContextMapper(mapper);
 		compiledModelData.specTokensEmissionModel.setContextMapper(mapper);
-	
+
 		compiledModelData.tagTransitionModel.setContextMapper(mapper);
 		compiledModelData.tagTransitionModel.setElementMapper(mapper);
-	
+
 		compiledModelData.lowerCaseSuffixGuesser.setMapper(mapper);
 		compiledModelData.upperCaseSuffixGuesser.setMapper(mapper);
-	
+
 	}
+
+	public static AnalysisQueue analysisQueue = new AnalysisQueue();
 }
