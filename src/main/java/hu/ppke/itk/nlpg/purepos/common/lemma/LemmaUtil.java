@@ -31,15 +31,15 @@ public class LemmaUtil {
 
 	}
 
-	public static SuffixLemmaTransformation defaultLemmaRepresentation(
+	public static ILemmaTransformation<String, Integer> defaultLemmaRepresentation(
 			String word, String stem, Integer tag) {
 		return new SuffixLemmaTransformation(word, stem, tag);
 	}
 
-	public static SuffixLemmaTransformation defaultLemmaRepresentation(
+	public static ILemmaTransformation<String, Integer> defaultLemmaRepresentation(
 			IToken tok, ModelData<String, Integer> data) {
 		Integer t = data.tagVocabulary.getIndex(tok.getTag());
-		return new SuffixLemmaTransformation(tok.getToken(), tok.getStem(), t);
+		return defaultLemmaRepresentation(tok.getToken(), tok.getStem(), t);
 	}
 
 	public static ICombiner defaultCombiner() {

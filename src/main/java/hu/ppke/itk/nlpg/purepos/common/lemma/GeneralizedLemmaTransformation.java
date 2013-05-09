@@ -42,9 +42,8 @@ public class GeneralizedLemmaTransformation extends
 			this.toLower = toLower;
 
 			String l = toLower ? "_" : "-";
-			this.strRep = "(" + toLower + ",< -" + removeStart + "+'"
-					+ addStart + "', >-" + removeEnd + "+'" + addEnd + "' -"
-					+ tag + ")";
+			this.strRep = "(" + l + ",< -" + removeStart + "+'" + addStart
+					+ "', >-" + removeEnd + "+'" + addEnd + "' -" + tag + ")";
 			this.hashCode = this.strRep.hashCode();
 		}
 

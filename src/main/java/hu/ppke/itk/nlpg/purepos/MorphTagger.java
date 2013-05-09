@@ -96,9 +96,10 @@ public class MorphTagger extends POSTagger implements ITagger {
 				.batchConvert(tagLogProbabilities, t.getToken(),
 						model.getTagVocabulary());
 
+		boolean useMorph = true;
 		if (Util.isEmpty(stems)) {
 			// the guesser is used
-
+			useMorph = false;
 			stems = lemmaSuffixProbs.keySet();
 		}
 		// matching tags
@@ -107,8 +108,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 			if (t.getTag().equals(ct.getTag())) {
 				possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
 						.getTag()));
-				possibleStems.add(new Token(ct.getToken(), Util.toLower(ct
-						.getStem()), ct.getTag()));
+				// possibleStems.add(new Token(ct.getToken(), Util.toLower(ct
+				// .getStem()), ct.getTag()));
 			}
 		}
 
@@ -119,7 +120,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 		// most frequrent stem
 		IToken best;
-		if (possibleStems.size() == 1) {
+		if (possibleStems.size() == 1 && !Util.isUpper(t.getToken())) {
 			best = possibleStems.iterator().next();
 		} else {
 
@@ -139,6 +140,11 @@ public class MorphTagger extends POSTagger implements ITagger {
 							model.getData());
 				}
 				comp.add(Pair.of(possTok, traf));
+				if (!useMorph) {
+					IToken lowerTok = new Token(possTok.getToken(),
+							Util.toLower(possTok.getStem()), possTok.getTag());
+					comp.add(Pair.of(lowerTok, traf));
+				}
 
 			}
 			try {

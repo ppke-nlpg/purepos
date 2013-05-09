@@ -86,8 +86,9 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 			ModelData<String, Integer> modelData) {
 		LemmaUnigramModel<String> unigramLemmaModel = compiledModelData.unigramLemmaModel;
 		Double uniScore = unigramLemmaModel.getLogProb(tok.getStem());
-		Double suffixScore = smooth(compiledModelData.lemmaGuesser
-				.getTagLogProbability(tok.getToken(), t));
+		double suffScore = compiledModelData.lemmaGuesser.getTagLogProbability(
+				tok.getToken(), t);
+		Double suffixScore = smooth(suffScore);
 
 		return uniScore * lambdas.get(0) + suffixScore * lambdas.get(1);
 	}

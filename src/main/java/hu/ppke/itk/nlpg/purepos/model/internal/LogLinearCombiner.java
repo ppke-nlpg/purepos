@@ -20,7 +20,7 @@ public abstract class LogLinearCombiner implements ICombiner {
 	}
 
 	public Double smooth(Double val) {
-		if (val == null) {
+		if (val == null || val == Double.NEGATIVE_INFINITY) {
 			return Util.UNKOWN_VALUE;
 		}
 		return val;

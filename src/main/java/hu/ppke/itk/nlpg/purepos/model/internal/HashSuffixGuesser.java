@@ -166,7 +166,15 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		// TODO: are you sure to calculate with the empty suffix as well?
 		// (Brants does this, but how about Halácsy?)
 		// return getTagProbTnT(word, word.length(), tag);
-		return getTagProbHunPOS(word, tag);
+
+		Map<T, Double> ret = getTagProbabilities(word);
+		Double val = ret.get(tag);
+		if (val != null)
+			return val;
+		else
+			return 0.0;
+		// return getTagProbHunPOS(word, tag);
+
 		// Double ret = 0.0;
 		// ret = getTagProbBoosted(word, tag, 2);
 		// if (ret == 0)
