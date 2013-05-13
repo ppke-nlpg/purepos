@@ -55,19 +55,22 @@ public class TagMapper implements IMapper<Integer> {
 
 	@Override
 	public Integer map(Integer tag) {
-		String tagStr = vocabulary.getWord(tag);
-		for (TagMapping m : tagMappings) {
-			Pattern p = m.getTagPattern();
-			Matcher matcher = p.matcher(tagStr);
-			if (matcher.matches()) {
-				String replacement = m.getReplacement();
-				String repTagStr = matcher.replaceAll(replacement);
-				Integer retTag = vocabulary.getIndex(repTagStr);
-				if (retTag != null)
-					return retTag;
+		if (vocabulary.getMaximalIndex() < tag) {
+			String tagStr = vocabulary.getWord(tag);
+			for (TagMapping m : tagMappings) {
+				Pattern p = m.getTagPattern();
+				Matcher matcher = p.matcher(tagStr);
+				if (matcher.matches()) {
+					String replacement = m.getReplacement();
+					String repTagStr = matcher.replaceAll(replacement);
+					Integer retTag = vocabulary.getIndex(repTagStr);
+					if (retTag != null)
+						return retTag;
+				}
 			}
-		}
-		return tag;
+			return tag;
+		} else
+			return tag;
 
 	}
 

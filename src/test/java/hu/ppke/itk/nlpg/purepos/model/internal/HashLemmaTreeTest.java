@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@SuppressWarnings("deprecation")
 public class HashLemmaTreeTest {
 	HashLemmaTree tree = new HashLemmaTree(100);
 	IntVocabulary<String> vocabulary = new IntVocabulary<String>();

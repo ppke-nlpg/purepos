@@ -36,9 +36,10 @@ public class TagMapperTest {
 		Vocabulary<String, Integer> vocabulary = new IntVocabulary<String>();
 		Integer fn = vocabulary.addElement("[FN][NOM]");
 		Integer mn = vocabulary.addElement("[MN][NOM]");
+		Integer ige = vocabulary.addElement("[IGE][Me3]");
+		vocabulary.storeMaximalElement();
 		Integer fnlat = vocabulary.addElement("[FN|lat][NOM]");
 		Integer mnlat = vocabulary.addElement("[MN|lat][NOM]");
-		Integer ige = vocabulary.addElement("[IGE][Me3]");
 
 		TagMapping m = new TagMapping("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
 		TagMapper mapper = new TagMapper(vocabulary, Arrays.asList(m));
@@ -50,5 +51,11 @@ public class TagMapperTest {
 		List<Integer> from = Arrays.asList(fn, mnlat, fnlat);
 		List<Integer> to = Arrays.asList(fn, fn, fn);
 		Assert.assertEquals(to, mapper.map(from));
+
+		m = new TagMapping("^(.*)(MN)(.*)$", "$1FN$3");
+		mapper = new TagMapper(vocabulary, Arrays.asList(m));
+		Assert.assertEquals(fn, mapper.map(fn));
+		Assert.assertEquals(mn, mapper.map(mn));
+		Assert.assertEquals(fnlat, mapper.map(mnlat));
 	}
 }

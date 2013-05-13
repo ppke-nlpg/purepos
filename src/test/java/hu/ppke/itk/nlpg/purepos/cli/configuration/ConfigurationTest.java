@@ -57,9 +57,10 @@ public class ConfigurationTest {
 		Vocabulary<String, Integer> vocabulary = new IntVocabulary<String>();
 		Integer fn = vocabulary.addElement("[FN][NOM]");
 		Integer mn = vocabulary.addElement("[MN][NOM]");
+		Integer ige = vocabulary.addElement("[IGE][Me3]");
+		vocabulary.storeMaximalElement();
 		Integer fnlat = vocabulary.addElement("[FN|lat][NOM]");
 		Integer mnlat = vocabulary.addElement("[MN|lat][NOM]");
-		Integer ige = vocabulary.addElement("[IGE][Me3]");
 
 		TagMapper mapper = new TagMapper(vocabulary, ms);
 		Assert.assertEquals(fn, mapper.map(fnlat));

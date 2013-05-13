@@ -57,7 +57,8 @@ public class LemmaUtil {
 		rawModelData.lemmaSuffixTree.addWord(word, lemmaTrans, count,
 				lemmaTrans.minimalCutLength());
 
-		rawModelData.lemmaFreqTree.addWord(lemma, mainPosTag(tagString), count);
+		// rawModelData.lemmaFreqTree.addWord(lemma, mainPosTag(tagString),
+		// count);
 
 	}
 

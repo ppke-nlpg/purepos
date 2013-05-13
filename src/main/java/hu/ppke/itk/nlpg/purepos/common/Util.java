@@ -45,7 +45,7 @@ public class Util {
 		return !lword.equals(word);
 	}
 
-	@Deprecated
+	// @Deprecated
 	public static boolean isUpper(String word) {
 		return !toLower(word).equals(word);
 	}
