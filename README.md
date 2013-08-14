@@ -67,3 +67,7 @@ Reference
 If you use the tool, please cite the following paper: <br/>
 [**György Orosz, Attila Novák**. (2012). *PurePos -- an open source morphological disambiguator.* Proceedings of the 9th International Workshop on Natural Language Processing and Cognitive Science.](https://github.com/downloads/ppke-nlpg/purepos/purepos.pdf)
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ppke-nlpg/purepos/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
