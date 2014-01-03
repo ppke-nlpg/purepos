@@ -33,6 +33,8 @@ For further help:
 
 `$ java -jar purepos-<version>.jar -h`
 
+Python interface is also provided, for details check [the module](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/purepos.py).
+
 ### Configuration file
 
 One can provide a configuration file with `-f` that describes mappings of morphosyntactic tags.
