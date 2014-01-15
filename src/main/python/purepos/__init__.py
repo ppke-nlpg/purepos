@@ -1,1 +1,1 @@
-from purepos import *
+from purepos import PurePosTagger, PurePosTrainer, parse_text

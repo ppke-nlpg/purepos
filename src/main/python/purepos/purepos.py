@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) György Orosz
-# Author: György Orosz (oroszgy@itk.ppke.hu)
+# Author: György Orosz <oroszgy@itk.ppke.hu>
 # URL: <http://github.com/ppke-nlpg/purepos>
 # For license information, see LICENSE.TXT
 
 """
-A Python 2.x interface for PurePos.
+A Python 2.7.x interface for PurePos.
 """
 
 import os, sys
@@ -22,7 +22,6 @@ _purepos_bin = "purepos-" + _purepos_version +".one-jar.jar"
 
 _base_dir = os.path.dirname( os.path.abspath( __file__) )
 _purepos_dir = _base_dir
-_szeged_model = os.path.join(_base_dir, "szeged.model")
 sys.path.append(_base_dir)
 
 def triplet2txt(triplet):
@@ -52,6 +51,10 @@ def annot2txt(annot):
     else:
         out = txt.getvalue()
     return out
+    
+def parse_text(txt):
+    lines = txt.strip().split(u"\n")
+    return [ [ (txt2triplet(tok)) for tok in line.split()] for line in lines]
 
 def parse_scoredsent(txt):
     s_pos = txt.find(u"$$")
@@ -65,7 +68,6 @@ class PurePosBase(object):
     
     def __init__(self, model_path, mode, options=None,
                  encoding = None, verbose=False):    
-        model_path = model_path or _szeged_model
         self._encoding = encoding or _purepos_encoding
         self.verbose = verbose
         _options = options or []
@@ -126,7 +128,7 @@ class PurePosTrainer(PurePosBase):
             
 class PurePosTagger(PurePosBase):
 
-    def __init__(self, model_path=_szeged_model, multi_tag=None, encoding=None, verbose=False):
+    def __init__(self, model_path, multi_tag=None, encoding=None, verbose=False):
         options = []
         self._multitag=bool(multi_tag)
         if multi_tag:
@@ -176,10 +178,13 @@ class PurePosTagger(PurePosBase):
 
 
 if __name__ == "__main__":
-    p = PurePosTagger(sys.argv[1], verbose=False)
-    print 'Enter tokens to tag, blank line to end sentence, Ctrl-C to exit'
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("model_file")
+    args = parser.parse_args()
+    p = PurePosTagger(args.model_file, verbose=False)
+    print 'Enter one sentence per line to tag them.'
     sent = []
     while True:
-        inp = sys.stdin.readline().rstrip()
-        print p.tag(inp.decode("utf8"))
-
+        inp = sys.stdin.readline().strip()
+        print p.tag(inp.decode("utf8").split())
