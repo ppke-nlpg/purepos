@@ -33,7 +33,8 @@ For further help:
 
 `$ java -jar purepos-<version>.jar -h`
 
-Python interface is also provided, for details check [the module](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/purepos.py).
+Python interface is also provided, for details check [the module](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/purepos.py) or [the demo](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/demo.py).
+
 
 ### Configuration file
 
