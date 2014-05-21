@@ -33,6 +33,53 @@ For further help:
 
 `$ java -jar purepos-<version>.jar -h`
 
+    Usage: java -jar <purepos.jar> [options...] arguments...
+     tag|train                        : Mode selection: train for training the
+                                        tagger, tag for tagging a text with the
+                                        given model.
+     -a (--analyzer) <analyzer>       : Set the morphological analyzer. <analyzer>
+                                        can be 'none', 'integrated' or a file :
+                                        <morphologicalTableFile>. The default is to
+                                        use the integrated one. Tagging only option.
+     -b (--beam-theta) <theta>        : Set the beam-search limit. The default is
+                                        1000. Tagging only option.
+     -c (--encoding) <encoding>       : Encoding used to read the training set, or
+                                        write the results. The default is your OS
+                                        default.
+     -d (--beam-decoder)              : Use Beam Search decoder. The default is to
+                                        employ the Viterbi algorithm. Tagging only
+                                        option.
+     -e (--emission-order) <number>   : Order of emission. First order means that
+                                        the given word depends only on its tag. The
+                                        default is 2.  Training only option.
+     -f (--config-file) <file>        : Configuratoin file containg tag mappings.
+                                        Defaults to do not map any tag.
+     -g (--max-guessed) <number>      : Limit the max guessed tags for each token.
+                                        The default is 10. Tagging only option.
+     -h (--help)                      : Print this message.
+     -i (--input-file) <file>         : File containg the training set (for
+                                        tagging) or the text to be tagged (for
+                                        tagging). The default is the standard input.
+     -m (--model) <modelfile>         : Specifies a path to a model file. If an
+                                        exisiting model is given for training, the
+                                        tool performs incremental training.
+     -n (--max-results) <number>      : Set the expected maximum number of tag
+                                        sequences (with its score). The default is
+                                        1. Tagging only option.
+     -o (--output-file) <file>        : File where the tagging output is redirected.
+                                        Tagging only option.
+     -r (--rare-frequency) <treshold> : Add only words to the suffix trie with
+                                        frequency less than the given treshold. The
+                                        default is 10.  Training only option.
+     -s (--suffix-length) <length>    : Use a suffix trie for guessing unknown
+                                        words tags with the given maximum suffix
+                                        length. The default is 10.  Training only
+                                        option.
+     -t (--tag-order) <number>        : Order of tag transition. Second order means
+                                        trigram tagging. The default is 2. Training
+                                        only option.
+
+
 Python interface is also provided, for details check [the module](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/purepos.py) or [the demo](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/demo.py).
 
 
