@@ -23,8 +23,8 @@ public class ConfigurationTest {
 	protected File createFile() throws IOException {
 		String out = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
 				+ "<config>\n"
-				+ "<mapping pattern=\"(\\[)(alma)(\\])\" to=\"$1körte$2\" />"
-				+ "<mapping pattern=\"^(.*)(MN|FN)(\\|lat)(.*)$\" to=\"$1FN$4\" />"
+				+ "<tag_mapping pattern=\"(\\[)(alma)(\\])\" to=\"$1körte$2\" />"
+				+ "<tag_mapping pattern=\"^(.*)(MN|FN)(\\|lat)(.*)$\" to=\"$1FN$4\" />"
 				+ "</config>";
 		File f = File.createTempFile("config_test_", ".xml");
 		PrintStream ps = new PrintStream(f);
