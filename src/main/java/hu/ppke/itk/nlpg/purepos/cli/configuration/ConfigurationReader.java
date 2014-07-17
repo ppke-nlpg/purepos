@@ -38,6 +38,7 @@ public class ConfigurationReader {
 	private static final String TAG_MAPPING = "tag_mapping";
 	private static final String LEMMA_MAPPING = "lemma_mapping";
 	private static final String GUESSED_MARKER = "guessed_marker";
+	private static final String SUFFIX_MODEL_PARAMETERS = "suffix_model_weight";
 
 	public Configuration read(File f) throws ConfigurationException {
 		XMLConfiguration xconf = new XMLConfiguration(f);
@@ -67,7 +68,15 @@ public class ConfigurationReader {
 		if(markers.size()>0 ) {
 			guessedMarker = (String)markers.get(0).getValue();
 		}
+		
+		List<ConfigurationNode> params= xconf.getRootNode().getChildren(
+				SUFFIX_MODEL_PARAMETERS);
+		
+		Double weight = null;
+		if(params.size()>0) {
+			weight = Double.valueOf((String)params.get(0).getValue());
+		}
 
-		return new Configuration(tag_ret, lemma_ret, guessedMarker);
+		return new Configuration(tag_ret, lemma_ret, guessedMarker, weight);
 	}
 }

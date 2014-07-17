@@ -91,6 +91,15 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 		Double suffixScore = smooth(suffScore);
 
 		//TODO: this is where the lemma probabilities are combined
-		return uniScore * lambdas.get(0) + suffixScore * lambdas.get(1);
+
+		Double uniLambda = lambdas.get(0);
+		Double suffixLambda = lambdas.get(1);
+		
+		if(Util.CONFIGURATION.getWeight()!=null) {
+			suffixLambda = Util.CONFIGURATION.getWeight();
+			uniLambda = 1- suffixLambda;
+		}
+		
+		return uniScore * uniLambda + suffixScore * suffixLambda;
 	}
 }

@@ -88,8 +88,7 @@ Python interface is also provided, for details check [the module](https://github
 One can provide a configuration file with `-f`. 
 
 First of all, the user can describe mappings of morphosyntactic tags.
-A mapping is composed of two parts: a regular expression pattern and a replacement string.
-For details check our paper (Orosz et al. 2013).
+A mapping is composed of two parts: a regular expression pattern and a replacement string. For details check our paper (Orosz et al. 2013).
 
 An example configuration file which maps Latin HuMor tags (with `|lat`) to standard ones:
 
@@ -98,18 +97,25 @@ An example configuration file which maps Latin HuMor tags (with `|lat`) to stand
     <tag_mapping pattern="^(.*)(\|lat)(.*)$" to="$1$3" />
 
     
-Mapping of lemma strings is also possible. An example for deleting ``+`` and ``*`` characters is:
+Transformation of lemmata strings is also possible. An example for deleting the ``+`` character from the stems is:
     
 	<?xml version="1.0" encoding="UTF-8" ?>
 	<config>
-	<lemma_mapping pattern="[+*]" to="" /> 
+	<lemma_mapping pattern="[+]" to="" /> 
 	</config>
 	
-PurePos is able to mark guessed analyses with a given string. An example for using ``*`` as a marker is:
+PurePos is also able to mark the guessed analyses with a marker character. An example configuration file for using the ``*`` character as a marker is:
 
 	<?xml version="1.0" encoding="UTF-8" ?>
 	<config>
 	<guessed_marker>*</guessed_marker>
+	</config>
+	
+One can tune the the lemmatization model by assigning a fixed ``w`` weight to the suffix model. (In this case the score of the unigram model will be ``1-w``). An example for this:
+
+	<?xml version="1.0" encoding="UTF-8" ?>
+	<config>
+	<suffix_model_weight>1.0</suffix_model_weight>
 	</config>
     
 ### Preanalyzed input

@@ -239,7 +239,7 @@ public class PurePos implements Runnable {
 				conf = reader.read(new File(options.configFile));
 				Util.LEMMA_MAPPER = new StringMapper(conf.getLemmaMappings());
 			} else {
-				conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>(), "");
+				conf = new Configuration();
 			}
 			Util.CONFIGURATION = conf;
 			

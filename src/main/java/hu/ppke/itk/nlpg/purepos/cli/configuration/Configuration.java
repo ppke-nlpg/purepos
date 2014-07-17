@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.cli.configuration;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Configuration {
@@ -32,15 +33,25 @@ public class Configuration {
 	public String getGuessedLemmaMarker() {
 		return guessedLemmaMarker;
 	}
+	
+	public Configuration() {
+		this(new ArrayList<StringMapping>(), new ArrayList<StringMapping>(), "", null);
+	}
 
-	public Configuration(List<StringMapping> tagMappings, List<StringMapping> lemmaMappings, String guessedLemmaMarker) {
+	public Configuration(List<StringMapping> tagMappings, List<StringMapping> lemmaMappings, String guessedLemmaMarker, Double weight) {
 		this.tagMappings = tagMappings;
 		this.lemmaMappings = lemmaMappings;
 		this.guessedLemmaMarker = guessedLemmaMarker;
+		this.weight = weight;
 	}
 
 	protected List<StringMapping> tagMappings;
 	protected List<StringMapping> lemmaMappings;
+	public Double weight;
+
+	public Double getWeight() {
+		return weight;
+	}
 
 	public List<StringMapping> getTagMappings() {
 		return tagMappings;
