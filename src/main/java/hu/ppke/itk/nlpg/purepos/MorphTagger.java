@@ -86,17 +86,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 	protected Collection<IToken> simplifyLemmata(Collection<IToken> tokens) {
 		Collection<IToken> ret = new ArrayList<IToken>();
 		for(IToken t: tokens) {
-			ret.add(this.simplifyLemma(t));
+			ret.add(Util.simplifyLemma(t));
 		}
 		return ret;
-	}
-	
-	protected IToken simplifyLemma(IToken t) {
-		if(Util.LEMMA_MAPPER != null) {
-			String simplifiedLemma = Util.LEMMA_MAPPER.map(t.getStem());
-			return new ModToken(t.getToken(), t.getStem(), simplifiedLemma, t.getTag());
-		}
-		return t;
 	}
 	
 	protected IToken decodeLemma(IToken t) {

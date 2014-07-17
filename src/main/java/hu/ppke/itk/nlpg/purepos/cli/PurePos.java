@@ -81,6 +81,7 @@ public class PurePos implements Runnable {
 
 		File modelFile = new File(modelPath);
 		RawModel retModel;
+		
 		if (modelFile.exists()) {
 			System.err.println("Reading model... ");
 			retModel = SSerializer.readModel(modelFile);
@@ -120,18 +121,18 @@ public class PurePos implements Runnable {
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
 			int beamTheta, boolean useBeamSearch, String outPath,
-			String configFile) throws Exception {
+			Configuration conf) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
-
-		Configuration conf;
-		if (configFile != null) {
-			ConfigurationReader reader = new ConfigurationReader();
-			conf = reader.read(new File(configFile));
-			Util.LEMMA_MAPPER = new StringMapper(conf.getLemmaMappings());
-		} else {
-			conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>());
-		}
+//
+//		Configuration conf;
+//		if (configFile != null) {
+//			ConfigurationReader reader = new ConfigurationReader();
+//			conf = reader.read(new File(configFile));
+//			Util.LEMMA_MAPPER = new StringMapper(conf.getLemmaMappings());
+//		} else {
+//			conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>());
+//		}
 
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed,
 				Math.log(beamTheta), useBeamSearch, conf);
@@ -233,6 +234,15 @@ public class PurePos implements Runnable {
 	@Override
 	public void run() {
 		try {
+			Configuration conf;
+			if (options.configFile != null) {
+				ConfigurationReader reader = new ConfigurationReader();
+				conf = reader.read(new File(options.configFile));
+				Util.LEMMA_MAPPER = new StringMapper(conf.getLemmaMappings());
+			} else {
+				conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>());
+			}
+			
 			if (options.command.equals(TRAIN_OPT)) {
 				train(options.encoding, options.modelName, options.fromFile,
 						options.tagOrder, options.emissionOrder,
@@ -242,7 +252,7 @@ public class PurePos implements Runnable {
 						options.morphology, options.noStemming,
 						options.maxGuessed, options.maxResultsNumber,
 						options.beamTheta, options.useBeamSearch,
-						options.toFile, options.configFile);
+						options.toFile, conf);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());

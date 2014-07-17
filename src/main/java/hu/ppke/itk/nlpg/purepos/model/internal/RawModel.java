@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
+import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
@@ -123,9 +124,10 @@ public class RawModel extends Model<String, Integer> {
 		rawModeldata.tagNGramModel.addWord(tags, rawModeldata.eosTag);
 
 		for (int i = sentence.size() - 1; i >= 0; --i) {
-			String word = sentence.get(i).getToken();
-			String lemma = sentence.get(i).getStem();
-			String tagStr = sentence.get(i).getTag();
+			IToken token = Util.simplifyLemma(sentence.get(i));
+			String word = token.getToken();
+			String lemma = token.getStem();
+			String tagStr = token.getTag();
 			Integer tag = tags.get(i);
 			// TEST: creating a trie from lemmas
 			List<Integer> context = tags.subList(0, i + 1);
