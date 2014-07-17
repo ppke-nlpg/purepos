@@ -54,6 +54,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 	LemmaComparator lemmaComparator;
 	StemFilter stemFilter;
+	Boolean isLastGuessed = false;
 
 	public MorphTagger(CompiledModel<String, Integer> model,
 			IMorphologicalAnalyzer analyzer, double logTheta, double sufTheta,
@@ -75,27 +76,34 @@ public class MorphTagger extends POSTagger implements ITagger {
 		for (IToken t : res) {
 			IToken bestStemmedToken = findBestLemma(t, pos);
 			bestStemmedToken = new Token(bestStemmedToken.getToken(),
-					bestStemmedToken.getStem().replace(" ", "_"),
-					bestStemmedToken.getTag());
+					this.markGuessed(bestStemmedToken.getStem().replace(" ",
+							"_")), bestStemmedToken.getTag());
 			tmp.add(bestStemmedToken);
 			pos++;
 		}
 		return new Sentence(tmp);
 	}
-	
+
+	private String markGuessed(String lemma) {
+		 if(this.isLastGuessed) {
+			 return Util.CONFIGURATION.getGuessedLemmaMarker() + lemma;
+		 }
+		 return lemma;
+	}
+
 	protected Collection<IToken> simplifyLemmata(Collection<IToken> tokens) {
 		Collection<IToken> ret = new ArrayList<IToken>();
-		for(IToken t: tokens) {
+		for (IToken t : tokens) {
 			ret.add(Util.simplifyLemma(t));
 		}
 		return ret;
 	}
-	
+
 	protected IToken decodeLemma(IToken t) {
 		if (t instanceof ModToken) {
-			ModToken mt = (ModToken)t;
+			ModToken mt = (ModToken) t;
 			return new Token(mt.getToken(), mt.getOriginalStem(), mt.getTag());
-			
+
 		}
 		return t;
 	}
@@ -105,8 +113,10 @@ public class MorphTagger extends POSTagger implements ITagger {
 		if (Util.analysisQueue.hasAnal(position)) {
 			stems = Util.analysisQueue.getAnalysises(position);
 			stems = this.simplifyLemmata(stems);
+			this.isLastGuessed = false;
 		} else {
 			stems = analyzer.analyze(t);
+			this.isLastGuessed = false;
 		}
 
 		Map<ILemmaTransformation<String, Integer>, Double> tagLogProbabilities = model
@@ -117,6 +127,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 		boolean useMorph = true;
 		if (Util.isEmpty(stems)) {
+			this.isLastGuessed = true;
 			// the guesser is used
 			useMorph = false;
 			stems = lemmaSuffixProbs.keySet();
@@ -125,8 +136,8 @@ public class MorphTagger extends POSTagger implements ITagger {
 		Collection<IToken> possibleStems = new HashSet<IToken>();
 		for (IToken ct : stems) {
 			if (t.getTag().equals(ct.getTag())) {
-				//possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
-				//		.getTag()));
+				// possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
+				// .getTag()));
 				possibleStems.add(ct);
 				// possibleStems.add(new Token(ct.getToken(), Util.toLower(ct
 				// .getStem()), ct.getTag()));

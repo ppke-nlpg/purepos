@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.common;
 
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.ModToken;
+import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModelData;
@@ -129,6 +130,7 @@ public class Util {
 	public static StringMapper LEMMA_MAPPER = null;
 	
 	public static AnalysisQueue analysisQueue = new AnalysisQueue();
+	public static Configuration CONFIGURATION = null;
 
 	public static IToken simplifyLemma(IToken t) {
 		if(LEMMA_MAPPER != null) {

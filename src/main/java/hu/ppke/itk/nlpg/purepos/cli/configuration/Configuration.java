@@ -27,9 +27,16 @@ import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 import java.util.List;
 
 public class Configuration {
-	public Configuration(List<StringMapping> tagMappings, List<StringMapping> lemmaMappings) {
+	private String guessedLemmaMarker;
+
+	public String getGuessedLemmaMarker() {
+		return guessedLemmaMarker;
+	}
+
+	public Configuration(List<StringMapping> tagMappings, List<StringMapping> lemmaMappings, String guessedLemmaMarker) {
 		this.tagMappings = tagMappings;
 		this.lemmaMappings = lemmaMappings;
+		this.guessedLemmaMarker = guessedLemmaMarker;
 	}
 
 	protected List<StringMapping> tagMappings;

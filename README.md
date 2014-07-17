@@ -85,7 +85,9 @@ Python interface is also provided, for details check [the module](https://github
 
 ### Configuration file
 
-One can provide a configuration file with `-f` that describes mappings of morphosyntactic tags.
+One can provide a configuration file with `-f`. 
+
+First of all, the user can describe mappings of morphosyntactic tags.
 A mapping is composed of two parts: a regular expression pattern and a replacement string.
 For details check our paper (Orosz et al. 2013).
 
@@ -102,7 +104,13 @@ Mapping of lemma strings is also possible. An example for deleting ``+`` and ``*
 	<config>
 	<lemma_mapping pattern="[+*]" to="" /> 
 	</config>
+	
+PurePos is able to mark guessed analyses with a given string. An example for using ``*`` as a marker is:
 
+	<?xml version="1.0" encoding="UTF-8" ?>
+	<config>
+	<guessed_marker>*</guessed_marker>
+	</config>
     
 ### Preanalyzed input
 

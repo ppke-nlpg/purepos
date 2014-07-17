@@ -120,8 +120,7 @@ public class PurePos implements Runnable {
 
 	public static void tag(String encoding, String modelPath, String inputPath,
 			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
-			int beamTheta, boolean useBeamSearch, String outPath,
-			Configuration conf) throws Exception {
+			int beamTheta, boolean useBeamSearch, String outPath) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
 //
@@ -135,7 +134,7 @@ public class PurePos implements Runnable {
 //		}
 
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed,
-				Math.log(beamTheta), useBeamSearch, conf);
+				Math.log(beamTheta), useBeamSearch, Util.CONFIGURATION);
 
 		PrintStream output;
 		if (outPath == null) {
@@ -240,8 +239,9 @@ public class PurePos implements Runnable {
 				conf = reader.read(new File(options.configFile));
 				Util.LEMMA_MAPPER = new StringMapper(conf.getLemmaMappings());
 			} else {
-				conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>());
+				conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>(), "");
 			}
+			Util.CONFIGURATION = conf;
 			
 			if (options.command.equals(TRAIN_OPT)) {
 				train(options.encoding, options.modelName, options.fromFile,
@@ -252,7 +252,7 @@ public class PurePos implements Runnable {
 						options.morphology, options.noStemming,
 						options.maxGuessed, options.maxResultsNumber,
 						options.beamTheta, options.useBeamSearch,
-						options.toFile, conf);
+						options.toFile);
 			}
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());

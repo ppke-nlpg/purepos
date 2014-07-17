@@ -37,6 +37,7 @@ public class ConfigurationReader {
 	private static final String PATTERN = "pattern";
 	private static final String TAG_MAPPING = "tag_mapping";
 	private static final String LEMMA_MAPPING = "lemma_mapping";
+	private static final String GUESSED_MARKER = "guessed_marker";
 
 	public Configuration read(File f) throws ConfigurationException {
 		XMLConfiguration xconf = new XMLConfiguration(f);
@@ -58,8 +59,15 @@ public class ConfigurationReader {
 			String stag = (String) m.getAttributes(TAG).get(0).getValue();
 			lemma_ret.add(new StringMapping(spat, stag));
 		}
+		
+		List<ConfigurationNode> markers= xconf.getRootNode().getChildren(
+				GUESSED_MARKER);
+		
+		String guessedMarker = ""; 
+		if(markers.size()>0 ) {
+			guessedMarker = (String)markers.get(0).getValue();
+		}
 
-
-		return new Configuration(tag_ret, lemma_ret);
+		return new Configuration(tag_ret, lemma_ret, guessedMarker);
 	}
 }

@@ -5,6 +5,7 @@ Changelog
 ---
 * Lemma map interface in the configuration file
 * Tag mapping syntax is changed
+* Configuration file with markers for guessed analyses.
 
 2.0
 ---
