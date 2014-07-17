@@ -25,8 +25,9 @@ package hu.ppke.itk.nlpg.purepos.common;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModelData;
+import hu.ppke.itk.nlpg.purepos.model.internal.StringMapper;
 import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
-import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
+import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -110,18 +111,20 @@ public class Util {
 	public static void addMappings(
 			CompiledModelData<String, Integer> compiledModelData,
 			IVocabulary<String, Integer> tagVocabulary,
-			List<TagMapping> mappings) {
-		TagMapper mapper = new TagMapper(tagVocabulary, mappings);
-		compiledModelData.standardEmissionModel.setContextMapper(mapper);
-		compiledModelData.specTokensEmissionModel.setContextMapper(mapper);
+			List<StringMapping> tagMappings) {
+		TagMapper tagMapper = new TagMapper(tagVocabulary, tagMappings);
+		compiledModelData.standardEmissionModel.setContextMapper(tagMapper);
+		compiledModelData.specTokensEmissionModel.setContextMapper(tagMapper);
 
-		compiledModelData.tagTransitionModel.setContextMapper(mapper);
-		compiledModelData.tagTransitionModel.setElementMapper(mapper);
+		compiledModelData.tagTransitionModel.setContextMapper(tagMapper);
+		compiledModelData.tagTransitionModel.setElementMapper(tagMapper);
 
-		compiledModelData.lowerCaseSuffixGuesser.setMapper(mapper);
-		compiledModelData.upperCaseSuffixGuesser.setMapper(mapper);
-
+		compiledModelData.lowerCaseSuffixGuesser.setTagMapper(tagMapper);
+		compiledModelData.upperCaseSuffixGuesser.setTagMapper(tagMapper);
+		
 	}
 
+	public static StringMapper LEMMA_MAPPER = null;
+	
 	public static AnalysisQueue analysisQueue = new AnalysisQueue();
 }

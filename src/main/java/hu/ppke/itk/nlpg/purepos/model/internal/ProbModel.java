@@ -22,7 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.io.Serializable;
@@ -42,16 +42,16 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		Serializable {
 
 	private static final long serialVersionUID = -8143201121322353289L;
-	protected IMapper<W> elementMapper = null;
-	protected IMapper<Integer> contextMapper = null;
+	protected ITagMapper<W> elementMapper = null;
+	protected ITagMapper<Integer> contextMapper = null;
 
 	@Override
-	public void setElementMapper(IMapper<W> mapper) {
+	public void setElementMapper(ITagMapper<W> mapper) {
 		this.elementMapper = mapper;
 	}
 
 	@Override
-	public void setContextMapper(IMapper<Integer> mapper) {
+	public void setContextMapper(ITagMapper<Integer> mapper) {
 		this.contextMapper = mapper;
 	}
 
@@ -207,7 +207,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 	}
 
 	@Override
-	public IMapper<Integer> getContextMapper() {
+	public ITagMapper<Integer> getContextMapper() {
 		return this.contextMapper;
 	}
 

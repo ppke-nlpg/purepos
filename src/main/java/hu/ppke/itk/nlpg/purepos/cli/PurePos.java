@@ -30,10 +30,12 @@ import hu.ppke.itk.nlpg.purepos.POSTagger;
 import hu.ppke.itk.nlpg.purepos.Trainer;
 import hu.ppke.itk.nlpg.purepos.cli.configuration.Configuration;
 import hu.ppke.itk.nlpg.purepos.cli.configuration.ConfigurationReader;
+import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
-import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
+import hu.ppke.itk.nlpg.purepos.model.internal.StringMapper;
+import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
@@ -126,8 +128,9 @@ public class PurePos implements Runnable {
 		if (configFile != null) {
 			ConfigurationReader reader = new ConfigurationReader();
 			conf = reader.read(new File(configFile));
+			Util.LEMMA_MAPPER = new StringMapper(conf.getLemmaMappings());
 		} else {
-			conf = new Configuration(new LinkedList<TagMapping>());
+			conf = new Configuration(new LinkedList<StringMapping>(), new LinkedList<StringMapping>());
 		}
 
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed,

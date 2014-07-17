@@ -22,7 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.IVocabulary;
 
 import java.util.ArrayList;
@@ -32,13 +32,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TagMapper implements IMapper<Integer> {
+public class TagMapper implements ITagMapper<Integer> {
 	// LinkedHashMap<Pattern, String> mapping;
-	List<TagMapping> tagMappings;
+	List<StringMapping> tagMappings;
 	private IVocabulary<String, Integer> vocabulary;
 
 	public TagMapper(IVocabulary<String, Integer> tagVocabulary,
-			List<TagMapping> tagMappings) {
+			List<StringMapping> tagMappings) {
 		this.vocabulary = tagVocabulary;
 		this.tagMappings = tagMappings;
 		// init();
@@ -57,7 +57,7 @@ public class TagMapper implements IMapper<Integer> {
 	public Integer map(Integer tag) {
 		if (vocabulary.getMaximalIndex() < tag) {
 			String tagStr = vocabulary.getWord(tag);
-			for (TagMapping m : tagMappings) {
+			for (StringMapping m : tagMappings) {
 				Pattern p = m.getTagPattern();
 				Matcher matcher = p.matcher(tagStr);
 				if (matcher.matches()) {

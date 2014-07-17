@@ -22,7 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
 
 import java.util.HashMap;
@@ -51,10 +51,11 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	private final double thetaPlusOne;
 	// @SuppressWarnings("unused")
 	// private final Map<T, Double> aprioriProbs;
-	protected IMapper<T> mapper = null;
+	protected ITagMapper<T> mapper = null;
+	protected String lemmaMapper = null;
 
 	@Override
-	public void setMapper(IMapper<T> mapper) {
+	public void setTagMapper(ITagMapper<T> mapper) {
 		this.mapper = mapper;
 	}
 
@@ -308,7 +309,7 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	}
 
 	@Override
-	public IMapper<T> getMapper() {
+	public ITagMapper<T> getMapper() {
 		return mapper;
 	}
 

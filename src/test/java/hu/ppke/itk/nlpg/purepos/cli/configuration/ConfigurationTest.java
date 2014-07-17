@@ -2,7 +2,7 @@ package hu.ppke.itk.nlpg.purepos.cli.configuration;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.IntVocabulary;
 import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
-import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
+import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 import hu.ppke.itk.nlpg.purepos.model.internal.Vocabulary;
 
 import java.io.File;
@@ -43,7 +43,7 @@ public class ConfigurationTest {
 	public void readTest() throws IOException, ConfigurationException {
 		File f = createFile();
 		Configuration conf = reader.read(f);
-		List<TagMapping> ms = conf.getTagMappings();
+		List<StringMapping> ms = conf.getTagMappings();
 		Assert.assertEquals(2, ms.size());
 		Assert.assertEquals(ms.get(0).getTagPattern().pattern(),
 				"(\\[)(alma)(\\])");

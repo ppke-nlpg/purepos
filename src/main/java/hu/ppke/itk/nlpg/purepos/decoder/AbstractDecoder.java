@@ -25,7 +25,7 @@ package hu.ppke.itk.nlpg.purepos.decoder;
 import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
 import hu.ppke.itk.nlpg.purepos.common.SpecTokenMatcher;
 import hu.ppke.itk.nlpg.purepos.common.Util;
-import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
@@ -354,7 +354,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 	protected Collection<Integer> filterTagsWithMorphology(
 			Collection<Integer> tags, Collection<Integer> anals,
-			IMapper<Integer> mapper) {
+			ITagMapper<Integer> mapper) {
 
 		Collection<Integer> common;
 		if (anals != null) {

@@ -1,6 +1,11 @@
 Changelog
 ========
 
+2.1
+---
+* Lemma map interface in the configuration file
+* Tag mapping syntax is changed
+
 2.0
 ---
 * Beam search can be used instead of Viterbi

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model;
 
+import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
+
 import java.util.Map;
 
 /**
@@ -76,8 +78,9 @@ public interface ISuffixGuesser<W, T> {
 
 	public Map<T, Double> getSmoothedTagLogProbabilities(W word);
 
-	public void setMapper(IMapper<T> mapper);
+	public void setTagMapper(ITagMapper<T> mapper);
 
-	public IMapper<T> getMapper();
+	public ITagMapper<T> getMapper();
+
 
 }

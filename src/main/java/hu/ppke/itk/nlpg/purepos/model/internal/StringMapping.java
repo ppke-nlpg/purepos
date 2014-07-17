@@ -20,26 +20,40 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.purepos.cli.configuration;
+package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
+import java.util.regex.Pattern;
 
-import java.util.List;
-
-public class Configuration {
-	public Configuration(List<StringMapping> tagMappings, List<StringMapping> lemmaMappings) {
-		this.tagMappings = tagMappings;
-		this.lemmaMappings = lemmaMappings;
+/**
+ * Stores a tag mapping.
+ * 
+ * @author György Orosz
+ * 
+ */
+public class StringMapping {
+	/**
+	 * 
+	 * @param tagPattern
+	 *            pattern of the tag, should be an unsescaped Java regexp
+	 * @param replacement
+	 *            replacement string
+	 * 
+	 */
+	public StringMapping(String tagPattern, String replacement) {
+		// this.tagPattern = Pattern.compile(Pattern.quote(tagPattern));
+		this.tagPattern = Pattern.compile(tagPattern);
+		this.replacement = replacement;
 	}
 
-	protected List<StringMapping> tagMappings;
-	protected List<StringMapping> lemmaMappings;
+	protected Pattern tagPattern;
+	protected String replacement;
 
-	public List<StringMapping> getTagMappings() {
-		return tagMappings;
+	public Pattern getTagPattern() {
+		return tagPattern;
 	}
 
-	public List<StringMapping> getLemmaMappings() {
-		return lemmaMappings;
+	public String getReplacement() {
+		return replacement;
 	}
+
 }

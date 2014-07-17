@@ -76,10 +76,10 @@ public interface IProbabilityModel<T, W> {
 	 */
 	// @Deprecated
 	// public Map<W, Double> getWordProbs(List<T> context);
-	public abstract void setContextMapper(IMapper<Integer> mapper);
+	public abstract void setContextMapper(ITagMapper<Integer> mapper);
 
-	public abstract void setElementMapper(IMapper<W> mapper);
+	public abstract void setElementMapper(ITagMapper<W> mapper);
 
-	public abstract IMapper<Integer> getContextMapper();
+	public abstract ITagMapper<Integer> getContextMapper();
 
 }

@@ -20,40 +20,13 @@
  * Contributors:
  *     György Orosz - initial API and implementation
  ******************************************************************************/
-package hu.ppke.itk.nlpg.purepos.model.internal;
+package hu.ppke.itk.nlpg.purepos.model;
 
-import java.util.regex.Pattern;
+import java.util.Collection;
+import java.util.List;
 
-/**
- * Stores a tag mapping.
- * 
- * @author György Orosz
- * 
- */
-public class TagMapping {
-	/**
-	 * 
-	 * @param tagPattern
-	 *            pattern of the tag, should be an unsescaped Java regexp
-	 * @param replacement
-	 *            replacement string
-	 * 
-	 */
-	public TagMapping(String tagPattern, String replacement) {
-		// this.tagPattern = Pattern.compile(Pattern.quote(tagPattern));
-		this.tagPattern = Pattern.compile(tagPattern);
-		this.replacement = replacement;
-	}
+public interface ITagMapper<T> extends IMapper<T>{
 
-	protected Pattern tagPattern;
-	protected String replacement;
-
-	public Pattern getTagPattern() {
-		return tagPattern;
-	}
-
-	public String getReplacement() {
-		return replacement;
-	}
-
+	public Collection<T> filter(Collection<T> morphAnals,
+			Collection<T> possibleTags);
 }

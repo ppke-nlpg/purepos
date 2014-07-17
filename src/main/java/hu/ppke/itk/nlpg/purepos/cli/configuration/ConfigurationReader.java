@@ -22,7 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.cli.configuration;
 
-import hu.ppke.itk.nlpg.purepos.model.internal.TagMapping;
+import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -35,19 +35,31 @@ import org.apache.commons.configuration.tree.ConfigurationNode;
 public class ConfigurationReader {
 	private static final String TAG = "to";
 	private static final String PATTERN = "pattern";
-	private static final String MAPPING = "mapping";
+	private static final String TAG_MAPPING = "tag_mapping";
+	private static final String LEMMA_MAPPING = "lemma_mapping";
 
 	public Configuration read(File f) throws ConfigurationException {
 		XMLConfiguration xconf = new XMLConfiguration(f);
-		List<ConfigurationNode> mappings = xconf.getRootNode().getChildren(
-				MAPPING);
-		LinkedList<TagMapping> ret = new LinkedList<TagMapping>();
-		for (ConfigurationNode m : mappings) {
+		
+		List<ConfigurationNode> tagMappings = xconf.getRootNode().getChildren(
+				TAG_MAPPING);
+		LinkedList<StringMapping> tag_ret = new LinkedList<StringMapping>();
+		for (ConfigurationNode m : tagMappings) {
 			String spat = (String) m.getAttributes(PATTERN).get(0).getValue();
 			String stag = (String) m.getAttributes(TAG).get(0).getValue();
-			ret.add(new TagMapping(spat, stag));
+			tag_ret.add(new StringMapping(spat, stag));
+		}
+		
+		List<ConfigurationNode> lemmaMappings = xconf.getRootNode().getChildren(
+				LEMMA_MAPPING);
+		LinkedList<StringMapping> lemma_ret = new LinkedList<StringMapping>();
+		for (ConfigurationNode m : lemmaMappings) {
+			String spat = (String) m.getAttributes(PATTERN).get(0).getValue();
+			String stag = (String) m.getAttributes(TAG).get(0).getValue();
+			lemma_ret.add(new StringMapping(spat, stag));
 		}
 
-		return new Configuration(ret);
+
+		return new Configuration(tag_ret, lemma_ret);
 	}
 }

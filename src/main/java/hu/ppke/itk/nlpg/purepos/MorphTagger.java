@@ -23,6 +23,7 @@
 package hu.ppke.itk.nlpg.purepos;
 
 import hu.ppke.itk.nlpg.docmodel.IToken;
+import hu.ppke.itk.nlpg.docmodel.internal.ModToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.Util;
@@ -81,11 +82,37 @@ public class MorphTagger extends POSTagger implements ITagger {
 		}
 		return new Sentence(tmp);
 	}
+	
+	protected Collection<IToken> simplifyLemmata(Collection<IToken> tokens) {
+		Collection<IToken> ret = new ArrayList<IToken>();
+		for(IToken t: tokens) {
+			ret.add(this.simplifyLemma(t));
+		}
+		return ret;
+	}
+	
+	protected IToken simplifyLemma(IToken t) {
+		if(Util.LEMMA_MAPPER != null) {
+			String simplifiedLemma = Util.LEMMA_MAPPER.map(t.getStem());
+			return new ModToken(t.getToken(), t.getStem(), simplifiedLemma, t.getTag());
+		}
+		return t;
+	}
+	
+	protected IToken decodeLemma(IToken t) {
+		if (t instanceof ModToken) {
+			ModToken mt = (ModToken)t;
+			return new Token(mt.getToken(), mt.getOriginalStem(), mt.getTag());
+			
+		}
+		return t;
+	}
 
 	private IToken findBestLemma(IToken t, int position) {
 		Collection<IToken> stems;
 		if (Util.analysisQueue.hasAnal(position)) {
 			stems = Util.analysisQueue.getAnalysises(position);
+			stems = this.simplifyLemmata(stems);
 		} else {
 			stems = analyzer.analyze(t);
 		}
@@ -106,8 +133,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 		Collection<IToken> possibleStems = new HashSet<IToken>();
 		for (IToken ct : stems) {
 			if (t.getTag().equals(ct.getTag())) {
-				possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
-						.getTag()));
+				//possibleStems.add(new Token(ct.getToken(), ct.getStem(), ct
+				//		.getTag()));
+				possibleStems.add(ct);
 				// possibleStems.add(new Token(ct.getToken(), Util.toLower(ct
 				// .getStem()), ct.getTag()));
 			}
@@ -154,6 +182,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 				return null;
 			}
 		}
-		return best;
+		IToken ret = decodeLemma(best);
+		return ret;
 	}
 }

@@ -1,6 +1,6 @@
 package hu.ppke.itk.nlpg.purepos.common;
 
-import hu.ppke.itk.nlpg.purepos.model.IMapper;
+import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
 import java.util.List;
@@ -16,16 +16,16 @@ public class OneWordLexicalModel implements IProbabilityModel<Integer, String> {
 		this.word = word;
 	}
 
-	protected IMapper<String> elementMapper = null;
-	protected IMapper<Integer> contextMapper = null;
+	protected ITagMapper<String> elementMapper = null;
+	protected ITagMapper<Integer> contextMapper = null;
 
 	@Override
-	public void setElementMapper(IMapper<String> mapper) {
+	public void setElementMapper(ITagMapper<String> mapper) {
 		this.elementMapper = mapper;
 	}
 
 	@Override
-	public void setContextMapper(IMapper<Integer> mapper) {
+	public void setContextMapper(ITagMapper<Integer> mapper) {
 		this.contextMapper = mapper;
 	}
 
@@ -51,7 +51,7 @@ public class OneWordLexicalModel implements IProbabilityModel<Integer, String> {
 	}
 
 	@Override
-	public IMapper<Integer> getContextMapper() {
+	public ITagMapper<Integer> getContextMapper() {
 		return contextMapper;
 	}
 

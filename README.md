@@ -93,8 +93,16 @@ An example configuration file which maps Latin HuMor tags (with `|lat`) to stand
 
     <?xml version="1.0" encoding="UTF-8" ?>
     <config>
-    <mapping pattern="^(.*)(\|lat)(.*)$" to="$1$3" />
-    </config>
+    <tag_mapping pattern="^(.*)(\|lat)(.*)$" to="$1$3" />
+
+    
+Mapping of lemma strings is also possible. An example for deleting ``+`` and ``*`` characters is:
+    
+	<?xml version="1.0" encoding="UTF-8" ?>
+	<config>
+	<lemma_mapping pattern="[+*]" to="" /> 
+	</config>
+
     
 ### Preanalyzed input
 
