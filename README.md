@@ -79,8 +79,9 @@ For further help:
                                         trigram tagging. The default is 2. Training
                                         only option.
 
+### Python
 
-Python interface is also provided, for details check [the module](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/purepos.py) or [the demo](https://github.com/ppke-nlpg/purepos/blob/master/src/main/python/purepos/demo.py).
+A wrapper package for Python is available at https://github.com/ppke-nlpg/purepos.py
 
 
 ### Configuration file
