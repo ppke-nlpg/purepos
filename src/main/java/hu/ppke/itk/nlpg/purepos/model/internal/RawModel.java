@@ -124,7 +124,10 @@ public class RawModel extends Model<String, Integer> {
 		rawModeldata.tagNGramModel.addWord(tags, rawModeldata.eosTag);
 
 		for (int i = sentence.size() - 1; i >= 0; --i) {
-			IToken token = Util.simplifyLemma(sentence.get(i));
+			IToken token = sentence.get(i);
+			if (!token.getToken().equals(ModelData.BOS_TOKEN)) {
+				token = Util.simplifyLemma(token);
+			}
 			String word = token.getToken();
 			String lemma = token.getStem();
 			String tagStr = token.getTag();

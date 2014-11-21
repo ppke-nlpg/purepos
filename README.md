@@ -98,7 +98,9 @@ An example configuration file which maps Latin HuMor tags (with `|lat`) to stand
     <tag_mapping pattern="^(.*)(\|lat)(.*)$" to="$1$3" />
 	</config>
     
-Transformation of lemmata strings is also possible. An example for deleting the ``+`` character from the stems is:
+Mapping of lemmata is also possible with config files. One can e.g. use a `"+"` character to mark boundaries of compound words.  Utilizing the  configuration below:
+	1. the "+" is omitted from the lemmata during training (e.g. `word+form#word+form#NN` is learnt as `word+form#wordform#NN`)
+	2. if the preanalyzed input has any lemma separated with the marker character, corrresponding probabilites are calculated through mapping, while the output will remain as in the preanylyzed input. (e.g. `word+form{{word+form[NN]}}` is processed as calculating lemma probabilites for the lemma `wordform` while the output of the tagger will be `word+form#wordform#[NN]`)
     
 	<?xml version="1.0" encoding="UTF-8" ?>
 	<config>
