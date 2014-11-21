@@ -96,7 +96,7 @@ An example configuration file which maps Latin HuMor tags (with `|lat`) to stand
     <?xml version="1.0" encoding="UTF-8" ?>
     <config>
     <tag_mapping pattern="^(.*)(\|lat)(.*)$" to="$1$3" />
-
+	</config>
     
 Transformation of lemmata strings is also possible. An example for deleting the ``+`` character from the stems is:
     
@@ -105,7 +105,7 @@ Transformation of lemmata strings is also possible. An example for deleting the 
 	<lemma_mapping pattern="[+]" to="" /> 
 	</config>
 	
-PurePos is also able to mark the guessed analyses with a marker character. An example configuration file for using the ``*`` character as a marker is:
+PurePos is also able to mark analyses that are unknown to the analyzer used. For this one can use a marker character. An example configuration file for utilizing the ``*`` character as a marker is:
 
 	<?xml version="1.0" encoding="UTF-8" ?>
 	<config>
@@ -121,21 +121,19 @@ One can tune the the lemmatization model by assigning a fixed ``w`` weight to th
     
 ### Preanalyzed input
 
-The disambiguator tool can be pipelined with a morphological analyzer or guesser. For this, the analyzer tool must provide analyses in the following format (with or without the scores):
+The disambiguator tool can be pipelined with a morphological analyzer or guesser. For this, the analyzer must provide analyses in the following format (with or without the scores):
 
     token{{lemma1[tag1]$$score1||lemma2[tag2]$$score2}}
     token{{lemma1[tag1]||lemma2[tag2]}}
     
 Scores given in the input are incorporated as lexical log-probabilities.
+Please note, that the brackets will be part of the tag. Therefore, inputting `houses{{house[NNS]}}` will result in `houses#house#[NNS]`.
 
-Reference
+References
 ---------------
 
 If you use the tool, please cite the following papers: <br/>
 * [**PurePos 2.0: a hybrid tool for morphological disambiguation.** Orosz, G.; and Novák, A. *In Proceedings of the International Conference on Recent Advances in Natural Language Processing (RANLP 2013)*, page 539–545, Hissar, Bulgaria, 2013. INCOMA Ltd. Shoumen, BULGARIA.](http://aclweb.org/anthology//R/R13/R13-1071.pdf)
 
 * [**PurePos – an open source morphological disambiguator.** Orosz, G.; and Novák, A. In Sharp, B.; and Zock, M., editor, *In Proceedings of the 9th International Workshop on Natural Language Processing and Cognitive Science*, page 53–63, Wroclaw, 2012. ](https://github.com/downloads/ppke-nlpg/purepos/purepos.pdf)
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ppke-nlpg/purepos/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
