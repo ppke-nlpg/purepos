@@ -42,18 +42,18 @@ public class StemmedTaggedTokenReader extends AbstractDocElementReader<IToken> {
 	}
 
 	@Override
-	public IToken read(String text) {
-		try {
+	public IToken read(String text) throws ParsingException {
+		//try {
 			String[] wordParts = text.split(separator);
-			if (wordParts.length == 0)
-				return null;
+			if (wordParts.length < 3)
+				throw new ParsingException("Malformed input: '" + text + "'");
 			IToken word = new Token(wordParts[0],
 					wordParts[1].replace('_', ' '), wordParts[2]);
 			return word;
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println(text);
-			return null;
-		}
+		//} catch (Exception e) {
+		//	e.printStackTrace();
+		//	System.err.println(text);
+		//	return null;
+		//}
 	}
 }

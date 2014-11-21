@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -254,12 +255,15 @@ public class PurePos implements Runnable {
 						options.beamTheta, options.useBeamSearch,
 						options.toFile);
 			}
+		} catch (ConfigurationException e) {
+			System.err.println("Malformed configuration file: " + e.getMessage() );
+		} catch (ParsingException e) {
+			System.err.println(e.getWrappedException().getMessage() );
 		} catch (Exception e) {
 			// System.err.println(e.getMessage());
 			e.printStackTrace();
 
 			System.exit(-1);
-			// TODO: error handling
 		}
 	}
 

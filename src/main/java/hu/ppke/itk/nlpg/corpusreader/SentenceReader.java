@@ -53,6 +53,8 @@ public class SentenceReader extends AbstractDocElementReader<ISentence> {
 		List<IToken> tokens = new ArrayList<IToken>();
 		for (int i = 0; i < words.length; ++i) {
 			String wordstring = words[i];
+			if(wordstring.length() == 0)
+				throw new ParsingException("Empty word in: '" + text +"'");
 			if (wordstring.length() > 0) {
 				IToken word = wordParser.read(wordstring);
 				if (word != null)
