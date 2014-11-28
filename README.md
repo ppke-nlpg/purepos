@@ -79,6 +79,10 @@ For further help:
                                         trigram tagging. The default is 2. Training
                                         only option.
 
+### Java
+
+For details please check the Demo.java file: https://github.com/ppke-nlpg/purepos/blob/master/src/main/java/hu/ppke/itk/nlpg/purepos/Demo.java
+
 ### Python
 
 A wrapper package for Python is available at https://github.com/ppke-nlpg/purepos.py
