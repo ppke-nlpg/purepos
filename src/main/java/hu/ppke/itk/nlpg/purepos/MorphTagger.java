@@ -85,7 +85,7 @@ public class MorphTagger extends POSTagger implements ITagger {
 	}
 
 	private String markGuessed(String lemma) {
-		 if(this.isLastGuessed) {
+		 if(this.isLastGuessed && Util.CONFIGURATION != null) {
 			 return Util.CONFIGURATION.getGuessedLemmaMarker() + lemma;
 		 }
 		 return lemma;
@@ -178,12 +178,12 @@ public class MorphTagger extends POSTagger implements ITagger {
 				}
 
 			}
-			try {
+			//try {
 				best = Collections.max(comp, lemmaComparator).getKey();
-			} catch (Exception e) {
-				System.err.println(t);
-				return null;
-			}
+			//} catch (Exception e) {
+			//	System.err.println(t);
+			//	return null;
+			//}
 		}
 		IToken ret = decodeLemma(best);
 		return ret;

@@ -95,7 +95,7 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 		Double uniLambda = lambdas.get(0);
 		Double suffixLambda = lambdas.get(1);
 		
-		if(Util.CONFIGURATION.getWeight()!=null) {
+		if(Util.CONFIGURATION !=null && Util.CONFIGURATION.getWeight()!=null) {
 			suffixLambda = Util.CONFIGURATION.getWeight();
 			uniLambda = 1- suffixLambda;
 		}
