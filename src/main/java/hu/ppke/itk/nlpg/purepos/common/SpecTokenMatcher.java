@@ -39,6 +39,7 @@ public class SpecTokenMatcher implements ISpecTokenMatcher {
 
 	protected LinkedHashMap<String, Pattern> patterns = new LinkedHashMap<String, Pattern>();
 
+
 	/**
 	 * Initialize patterns from HunPos
 	 */
@@ -64,7 +65,7 @@ public class SpecTokenMatcher implements ISpecTokenMatcher {
 	}
 
 	protected void addPattern(String name, String pattern) {
-		patterns.put(name, Pattern.compile(pattern));
+		patterns.put(name, Pattern.compile(pattern, Pattern.UNICODE_CHARACTER_CLASS));
 	}
 
 }

@@ -51,24 +51,19 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 				Pair<IToken, Double> suffixMax = Util.findMax2(suffixProbs);
 				Double actUniProb = rawModeldata.lemmaUnigramModel
 						.getLogProb(tok.getStem());
-				// Pair<String, Integer> lemmaCode = SuffixCoder.decode(tok,
-				// data.tagVocabulary);
 				Double actSuffProb;
 				if (suffixProbs.containsKey(tok)) {
 					actSuffProb = suffixProbs.get(tok).getValue();
 				} else {
 					actSuffProb = Util.UNKOWN_VALUE;
 				}
-				Double uniProp = actUniProb - uniMax.getValue(), suffProp = actSuffProb
-						- suffixMax.getValue();
+				Double uniProp = actUniProb - uniMax.getValue();
+				Double suffProp = actSuffProb - suffixMax.getValue();
 				if (uniProp > suffProp) {
-					// lambdaU += suffProp;// uniProp - suffProp;
 					lambdaU += uniProp - suffProp;
 				} else if (suffProp > uniProp) {
-					// lambdaS += uniProp; // suffProp - uniProp;
 					lambdaS += suffProp - uniProp;
 				}
-
 			}
 
 		}
@@ -77,7 +72,6 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 		lambdaS = lambdaS / sum;
 		lambdas.add(lambdaU);
 		lambdas.add(lambdaS);
-		// return lambdas;
 	}
 
 	@Override

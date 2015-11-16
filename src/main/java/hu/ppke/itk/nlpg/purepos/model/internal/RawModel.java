@@ -135,6 +135,7 @@ public class RawModel extends Model<String, Integer> {
 			// TEST: creating a trie from lemmas
 			List<Integer> context = tags.subList(0, i + 1);
 			List<Integer> prevTags = context.subList(0, context.size() - 1);
+
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
 				LemmaUtil.storeLemma(word, lemma, tag, tagStr, rawModeldata);

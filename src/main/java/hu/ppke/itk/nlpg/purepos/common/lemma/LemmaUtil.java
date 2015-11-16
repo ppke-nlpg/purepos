@@ -16,15 +16,24 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class LemmaUtil {
 
-	public static Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> batchConvert(
+	public static Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>>
+	batchConvert(
 			Map<ILemmaTransformation<String, Integer>, Double> probMap,
-			String word, IVocabulary<String, Integer> vocab) {
+			String word,
+			IVocabulary<String, Integer> vocab)
+	{
 
 		Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> ret = new HashMap<IToken, Pair<ILemmaTransformation<String, Integer>, Double>>();
 		for (Map.Entry<ILemmaTransformation<String, Integer>, Double> entry : probMap
 				.entrySet()) {
 			IToken lemma = entry.getKey().convert(word, vocab);
-			ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
+			Pair<ILemmaTransformation<String, Integer>, Double> ent = ret.get(lemma);
+			if (ent == null) {
+				ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
+			} else if (ent.getRight() < entry.getValue()) {
+				ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
+			}
+
 		}
 
 		return ret;
@@ -37,9 +46,15 @@ public class LemmaUtil {
 	}
 
 	public static ILemmaTransformation<String, Integer> defaultLemmaRepresentation(
-			IToken tok, ModelData<String, Integer> data) {
+			IToken tok,
+			ModelData<String, Integer> data
+	) {
+
+
 		Integer t = data.tagVocabulary.getIndex(tok.getTag());
 		return defaultLemmaRepresentation(tok.getToken(), tok.getStem(), t);
+
+
 	}
 
 	public static ICombiner defaultCombiner() {

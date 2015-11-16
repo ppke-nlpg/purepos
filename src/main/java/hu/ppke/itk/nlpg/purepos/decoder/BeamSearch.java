@@ -91,8 +91,9 @@ public class BeamSearch extends AbstractDecoder {
 	private MinMaxPriorityQueue<History> updateBeam(
 			MinMaxPriorityQueue<History> beam,
 			Map<NGram<Integer>, Map<Integer, Pair<Double, Double>>> probs) {
-		MinMaxPriorityQueue<History> newBeam = MinMaxPriorityQueue.create();
 
+
+		MinMaxPriorityQueue<History> newBeam = MinMaxPriorityQueue.create();
 		for (History h : beam) {
 			NGram<Integer> context = h.getTagSeq();
 			Double oldProb = h.getLogProb();

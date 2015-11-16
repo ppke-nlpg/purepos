@@ -45,6 +45,7 @@ public class HashLemmaTree extends
 	public void addWord(String suffString,
 			ILemmaTransformation<String, Integer> tag, int count) {
 		increment(suffString, tag, count);
+		System.exit(-521); // Ez a kód nem fut le.
 	}
 
 	// TODO: the relative probabilities just left out, it should be calculated

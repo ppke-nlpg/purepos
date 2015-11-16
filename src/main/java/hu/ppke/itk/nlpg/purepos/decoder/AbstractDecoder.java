@@ -165,8 +165,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 					model.getTagVocabulary());
 			if (userAnals.useProbabilties(position)) {
 				IProbabilityModel<Integer, String> newWordModel = userAnals
-						.getLexicalModelForWord(position,
-								model.getTagVocabulary());
+						.getLexicalModelForWord(position, model.getTagVocabulary());
 				// newWordModel.setContextMapper(model.getStandardEmissionModel()
 				// .getContextMapper());
 				return getNextForSeenToken(prevTagsSet, newWordModel, wordForm,
@@ -443,6 +442,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 
 	protected List<Pair<List<Integer>, Double>> cleanResults(
 			List<Pair<List<Integer>, Double>> tagSeqList) {
+
 		List<Pair<List<Integer>, Double>> ret = new ArrayList<Pair<List<Integer>, Double>>();
 		for (Pair<List<Integer>, Double> element : tagSeqList) {
 			List<Integer> tagSeq = element.getKey();

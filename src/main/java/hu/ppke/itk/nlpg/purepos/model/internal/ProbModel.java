@@ -72,7 +72,7 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		// for a context which is greater then the size of the model, the
 		// context is cut and the greatest context probability is calculated
 		// String d = context.toString() + " " + word.toString();
-		if (elementMapper != null) {
+ 		if (elementMapper != null) {
 			word = elementMapper.map(word);
 		}
 		if (contextMapper != null) {

@@ -77,7 +77,8 @@ public class BeamedViterbi extends AbstractDecoder {
 	// }
 
 	public List<Pair<List<Integer>, Double>> beamedSearch(
-			final NGram<Integer> start, final List<String> observations,
+			final NGram<Integer> start,
+			final List<String> observations,
 			int resultsNumber) {
 		HashMap<NGram<Integer>, Node> beam = new HashMap<NGram<Integer>, Node>();
 
@@ -85,13 +86,6 @@ public class BeamedViterbi extends AbstractDecoder {
 		boolean isFirst = true;
 		int pos = 0;
 		for (String obs : observations) {
-			// System.err.println(obs);
-
-			// logger.trace("Current observation " + obs);
-			// logger.trace("\tCurrent states:");
-			// for (Entry<NGram<Integer>, Node> entry : beam.entrySet()) {
-			// logger.trace("\t\t" + entry.getKey() + " - " + entry.getValue());
-			// }
 
 			HashMap<NGram<Integer>, Node> newBeam = new HashMap<NGram<Integer>, Node>();
 
@@ -115,15 +109,8 @@ public class BeamedViterbi extends AbstractDecoder {
 					obsProbs.put(context.add(tag), entry.getValue().getRight());
 				}
 			}
-			// for (Integer t : nextProbs.keySet()) {
-			// logger.trace("\t\tNext node:" + context + t);
-			// logger.trace("\t\tnode currentprob:"
-			// + (beam.get(context) + nextProbs.get(t).getLeft()));
-			// logger.trace("\t\tnode emissionprob:"
-			// + nextProbs.get(t).getRight());
-			// logger.trace("\n");
-			// // logger.trace("\t\tNext node:" + context + t);
-			// }
+
+
 			for (Cell<NGram<Integer>, Integer, Double> cell : nextProbs
 					.cellSet()) {
 				Integer nextTag = cell.getColumnKey();
@@ -134,26 +121,16 @@ public class BeamedViterbi extends AbstractDecoder {
 				double newVal = transVal + beam.get(context).getWeight();
 				update(newBeam, newState, newVal, from);
 			}
-			// adding observation probabilities
-			// logger.trace("beam" + newBeam);
+
 			if (nextProbs.size() > 1)
 				for (NGram<Integer> tagSeq : newBeam.keySet()) {
-					// Integer tag = tagSeq.getLast();
 					Node node = newBeam.get(tagSeq);
-					// Double prevVal = node.getWeight();
-
 					Double obsProb = obsProbs.get(tagSeq);
-					// logger.trace("put to beam: " + context + "(from) "
-					// + tagSeq + " " + prevVal + "+" + obsProb);
 					node.setWeight(obsProb + node.getWeight());
 				}
 
 			beam = prune(newBeam);
 			isFirst = false;
-			// for (Entry<NGram<Integer>, Node> e : beam.entrySet()) {
-			// logger.trace("\t\tNode state: " + e.getKey() + " "
-			// + e.getValue());
-			// }
 			++pos;
 		}
 		return findMax(beam, resultsNumber);
@@ -180,12 +157,8 @@ public class BeamedViterbi extends AbstractDecoder {
 
 	}
 
-	private HashMap<NGram<Integer>, Node> prune(
-			final HashMap<NGram<Integer>, Node> beam) {
-
+	private HashMap<NGram<Integer>, Node> prune(final HashMap<NGram<Integer>, Node> beam) {
 		HashMap<NGram<Integer>, Node> ret = new HashMap<NGram<Integer>, Node>();
-		// System.err.println(beam);
-		// try {
 		Node maxNode = Collections.max(beam.values());
 		Double max = maxNode.getWeight();
 		for (NGram<Integer> key : beam.keySet()) {
@@ -195,12 +168,7 @@ public class BeamedViterbi extends AbstractDecoder {
 				ret.put(key, actNode);
 			}
 		}
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// System.err.println(beam);
-		// }
 		return ret;
-
 	}
 
 	private void update(HashMap<NGram<Integer>, Node> beam,
