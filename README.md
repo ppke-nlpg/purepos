@@ -12,7 +12,7 @@ Compiling
 **Dependencies:** Maven 2
 
 1. Clone the repository
-2. `$ mvn package`
+2. `$ mvn package -DskipTests`
 
 Usage
 ---------
