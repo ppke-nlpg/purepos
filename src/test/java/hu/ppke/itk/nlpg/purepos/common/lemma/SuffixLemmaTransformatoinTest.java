@@ -24,13 +24,13 @@ public class SuffixLemmaTransformatoinTest {
 
 	}
 
-	@Test
-	public void conversionTest() {
-		SuffixLemmaTransformation t = new SuffixLemmaTransformation("alma",
-				"alom", 1);
-		Assert.assertEquals("alma", t.postprocess("alma"));
-		Assert.assertEquals("alma", t.postprocess("alma-"));
-		Assert.assertEquals("-", t.postprocess("-"));
-	}
+//	@Test
+//	public void conversionTest() {
+//		SuffixLemmaTransformation t = new SuffixLemmaTransformation("alma",
+//				"alom", 1);
+//		Assert.assertEquals("alma", t.postprocess("alma"));
+//		Assert.assertEquals("alma", t.postprocess("alma-"));
+//		Assert.assertEquals("-", t.postprocess("-"));
+//	}
 
 }

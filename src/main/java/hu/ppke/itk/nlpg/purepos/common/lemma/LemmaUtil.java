@@ -27,12 +27,13 @@ public class LemmaUtil {
 		for (Map.Entry<ILemmaTransformation<String, Integer>, Double> entry : probMap
 				.entrySet()) {
 			IToken lemma = entry.getKey().convert(word, vocab);
-			Pair<ILemmaTransformation<String, Integer>, Double> ent = ret.get(lemma);
-			if (ent == null) {
-				ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
-			} else if (ent.getRight() < entry.getValue()) {
-				ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
-			}
+			ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
+//			Pair<ILemmaTransformation<String, Integer>, Double> ent = ret.get(lemma);
+//			if (ent == null) {
+//				ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
+//			} else if (ent.getRight() < entry.getValue()) {
+//				ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
+//			}
 
 		}
 

@@ -117,6 +117,8 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 		// mret.put(tag, 0.0);
 		// }
 		for (int i = word.length(); i >= 0; --i) {
+			// TODO: HA a kötjel, vagy egyéb guesser-jellegű probléma merül fel, azt itt kell kezelni,
+			// nem pedig mindenféle postprocess gányolással.
 			String suff = word.substring(i);
 			MutablePair<HashMap<T, Integer>, Integer> suffixValue = freqTable
 					.get(suff);

@@ -46,18 +46,17 @@ public abstract class AbstractLemmaTransformation<R> implements
 	@Override
 	public Pair<String, Integer> analyze(String word) {
 		Pair<String, Integer> ret = encode(word, representation);
-		return Pair.of(postprocess(ret.getLeft()), ret.getRight());
-
+		return Pair.of(ret.getLeft(), ret.getRight());
+//		return Pair.of(postprocess(ret.getLeft()), ret.getRight());
 	}
 
-	protected String postprocess(String lemma) {
-		int length = lemma.length();
-		if (length > 1 && lemma.charAt(length - 1) == '-') {
-			return lemma.substring(0, length - 1);
-		}
-		return lemma;
-
-	}
+//	protected String postprocess(String lemma) {
+//		int length = lemma.length();
+//		if (length > 1 && lemma.charAt(length - 1) == '-') {
+//			return lemma.substring(0, length - 1);
+//		}
+//		return lemma;
+//	}
 
 	@Override
 	public String toString() {
