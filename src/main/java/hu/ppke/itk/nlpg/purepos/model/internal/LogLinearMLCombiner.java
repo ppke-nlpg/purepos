@@ -14,11 +14,11 @@ public class LogLinearMLCombiner extends LogLinearCombiner {
 	@Override
 	public void calculateParameters(IDocument doc, RawModelData rawModeldata,
 			ModelData<String, Integer> data) {
-		// TODO Auto-generated method stub
-		lambdas = new ArrayList<Double>();
-		lambdas.add(0.0);
-		lambdas.add(0.1);
-
+		if (lambdas == null || lambdas.size() < 2) {
+			lambdas = new ArrayList<Double>(2);
+			lambdas.add(0.0);
+			lambdas.add(0.1);
+		}
 	}
 
 	@Override

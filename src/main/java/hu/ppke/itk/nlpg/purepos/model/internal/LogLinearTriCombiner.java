@@ -35,8 +35,14 @@ public class LogLinearTriCombiner extends LogLinearCombiner {
 				.createGuesser(theta);
 		LemmaUnigramModel<String> lemmaUnigramModel = rawModeldata.lemmaUnigramModel;
 
-		lambdas = new ArrayList<Double>(2);
 		Double lambdaS = 1.0, lambdaU = 1.0, lambdaL = 1.0;
+		if (lambdas != null && lambdas.size() > 1) {
+			lambdaS = lambdas.get(0);
+			lambdaU = lambdas.get(1);
+			lambdaL = lambdas.get(2);
+		}
+		lambdas = new ArrayList<Double>(3);
+
 		for (ISentence sentence : doc.getSentences()) {
 			for (IToken tok : sentence) {
 				Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> suffixProbs = LemmaUtil

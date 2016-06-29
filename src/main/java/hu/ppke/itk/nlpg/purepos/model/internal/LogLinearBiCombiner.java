@@ -31,8 +31,12 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
 		ISuffixGuesser<String, ILemmaTransformation<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaSuffixTree
 				.createGuesser(theta);
-		lambdas = new ArrayList<Double>(2);
 		Double lambdaS = 1.0, lambdaU = 1.0;
+		if (lambdas != null && lambdas.size() > 1) {
+			lambdaS = lambdas.get(0);
+			lambdaU = lambdas.get(1);
+		}
+		lambdas = new ArrayList<Double>(2);
 		for (ISentence sentence : doc.getSentences()) {
 			for (IToken tok : sentence) {
 				Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> suffixProbs = LemmaUtil
@@ -67,6 +71,7 @@ public class LogLinearBiCombiner extends LogLinearCombiner {
 			}
 
 		}
+
 		double sum = lambdaU + lambdaS;
 		lambdaU = lambdaU / sum;
 		lambdaS = lambdaS / sum;
