@@ -139,6 +139,9 @@ Please note, that the brackets will be part of the tag. Therefore, inputting `ho
 References
 ---------------
 
+This tool is also [integrated](https://github.com/dlt-rilmta/hunlp-GATE)
+into the [e-magyar](http://www.e-magyar.hu) language processing system. It is called emTag.
+
 If you use the tool, please cite the following papers: <br/>
 
 * [**PurePos 2.0: a hybrid tool for morphological disambiguation.** Orosz, G.; and Novák, A. *In Proceedings of the International Conference on Recent Advances in Natural Language Processing (RANLP 2013)*, page 539–545, Hissar, Bulgaria, 2013. INCOMA Ltd. Shoumen, BULGARIA.](http://aclweb.org/anthology//R/R13/R13-1071.pdf)
