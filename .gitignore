@@ -2,9 +2,10 @@
 /.README.md~
 *.class
 *.orig
-*.java 
 .classpath
 .project
 .settings/
 target/
 res/
+/nbproject/
+/nb-configuration.xml

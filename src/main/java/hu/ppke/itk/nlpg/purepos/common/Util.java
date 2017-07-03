@@ -129,7 +129,6 @@ public class Util {
 
 	public static StringMapper LEMMA_MAPPER = null;
 	
-	public static AnalysisQueue analysisQueue = new AnalysisQueue();
 	public static Configuration CONFIGURATION = null;
 
 	public static IToken simplifyLemma(IToken t) {
