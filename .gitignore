@@ -7,4 +7,5 @@
 .settings/
 target/
 res/
+/nbproject/
 /nb-configuration.xml

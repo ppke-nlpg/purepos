@@ -15,16 +15,18 @@ public class UtilTest {
 		final Thread t1 = new Thread("long") {
 			@Override
 			public void run() {
+				AnalysisQueue analysisQueue = new AnalysisQueue();
 				while (!isInterrupted()) {
-					Util.analysisQueue.init(200000);
+					analysisQueue.init(200000);
 				}
 			}
 		};
 		final Thread t2 = new Thread("short") {
 			@Override
 			public void run() {
+				AnalysisQueue analysisQueue = new AnalysisQueue();
 				while (!isInterrupted()) {
-					Util.analysisQueue.init(1);
+					analysisQueue.init(1);
 				}
 			}
 		};

@@ -60,6 +60,7 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 	protected double logTheta;
 	protected double sufTheta;
 	protected int maxGuessedTags;
+	private final AnalysisQueue userAnals;
 
 	protected Set<Integer> tags;
 	String tab = "\t";
@@ -73,6 +74,11 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 		this.sufTheta = sufTheta;
 		this.maxGuessedTags = maxGuessedTags;
 		this.tags = model.getTagVocabulary().getTagIndeces();
+		this.userAnals = new AnalysisQueue();
+	}
+
+	public AnalysisQueue getUserAnals() {
+		return userAnals;
 	}
 
 	/**
@@ -159,7 +165,6 @@ public abstract class AbstractDecoder extends Decoder<String, Integer> {
 			}
 		}
 
-		AnalysisQueue userAnals = Util.analysisQueue;
 		if (userAnals.hasAnal(position)) {
 			Set<Integer> newTags = userAnals.getTags(position,
 					model.getTagVocabulary());

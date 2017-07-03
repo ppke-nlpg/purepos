@@ -26,6 +26,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.ModToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
+import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaComparator;
@@ -110,9 +111,10 @@ public class MorphTagger extends POSTagger implements ITagger {
 
 	private IToken findBestLemma(IToken t, int position) {
 		Collection<IToken> stems;
-		if (Util.analysisQueue.hasAnal(position)) {
-			stems = Util.analysisQueue.getAnalysises(position);
-			stems = this.simplifyLemmata(stems);
+		AnalysisQueue analysisQueue = decoder.getUserAnals();
+		if (analysisQueue.hasAnal(position)) {
+			stems = analysisQueue.getAnalysises(position);
+			stems = simplifyLemmata(stems);
 			this.isLastGuessed = false;
 		} else {
 			stems = analyzer.analyze(t);
