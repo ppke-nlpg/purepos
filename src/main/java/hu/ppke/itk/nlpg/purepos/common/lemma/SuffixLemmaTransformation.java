@@ -33,38 +33,23 @@ public class SuffixLemmaTransformation extends
 		super(word, lemma, tag);
 	}
 
-	private static final int SHIFT = 100;
-
-	@Override
-	protected Pair<String, Integer> decode(String word, String stem, Integer tag) {
+	protected Pair<String, Integer> specifyParameters(String word, String lemma, Integer tag, Integer casing) {
 		int i;
-		for (i = 0; i < word.length() && i < stem.length(); ++i) {
-			if (word.charAt(i) != stem.charAt(i)) {
+		for (i = 0; i < word.length() && i < lemma.length(); ++i) {
+			if (word.charAt(i) != lemma.charAt(i)) {
 				break;
 			}
 		}
-		String wordSuff = word.substring(i);
-		int cutSize = wordSuff.length();
-		String lemmaSuff = stem.substring(i);
 
-		int code = SHIFT * tag + cutSize;
+		String wordStuff = word.substring(i);
+		int removeEnd = wordStuff.length();
+		String lemmaStuff = lemma.substring(i);
+		int addEnd = lemmaStuff.length();
 
-		return Pair.of(lemmaSuff, code);
+		int code = createCode(tag,casing,0,removeEnd,addEnd);
+
+		return Pair.of(lemmaStuff, code);
 	}
 
-	@Override
-	protected Pair<String, Integer> encode(String word,
-			Pair<String, Integer> representation) {
-		int tagCode = representation.getRight() / SHIFT;
-		int cutSize = representation.getRight() % SHIFT;
-		String add = representation.getLeft();
-		String lemma = word.substring(0, word.length() - cutSize) + add;
-		return Pair.of(lemma, tagCode);
-	}
-
-	@Override
-	public int minimalCutLength() {
-		return representation.getRight() % SHIFT;
-	}
 
 }

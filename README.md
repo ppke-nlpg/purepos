@@ -62,6 +62,11 @@ For further help:
                                               tagging). The default is the standard input.
      -if (--input-format) <format>          : Set the format of the input file: 'vert' for vertical,
                                               'ord' for ordinary. The default is ordinary.
+     -l  (--lemma-transformation) <class>   : Chooses between the LemmaTransformation classes:
+                                              "suffix" or "generalized". The default is the suffix.
+     -lt (--lemma-threshold) <length>       : Sets the threshold of the GeneralizedLemmaTransformation's 
+                                              decode function. Only an option, when the transformation 
+                                              type is "generalized".
      -m  (--model) <modelfile>              : Specifies a path to a model file. If an
                                               existing model is given for training, the
                                               tool performs incremental training.

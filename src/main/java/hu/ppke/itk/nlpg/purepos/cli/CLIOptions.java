@@ -92,6 +92,12 @@ public class CLIOptions {
 
 	@Option(name = "-of", aliases = "--output-format", usage = "Set the format of the output file: vert for vertical, ord for ordinary. The default is ordinary.", metaVar = "<file>")
 	String outputFormat = "ord";
+
+	@Option(name = "-l", aliases = "--lemma-transformation", usage = "Chooses between the LemmaTransformation classes: \"suffix\" or \"generalized\". The default is the \"suffix\".")
+	String lemmaTransformationType = "suffix";
+	@Option(name = "-lt", aliases = "--lemma-threshold", usage ="Sets the threshold of the GeneralizedLemmaTransformation's decode function. Only an option, when the transformation type is \"generalized\".", metaVar = "<threshold>")
+	int lemmaThreshold = 2;
+
 	// Other stuff
 	String formatMessage = "";
 
@@ -104,6 +110,8 @@ public class CLIOptions {
 		s += "morphology: " + morphology + "\n";
 		s += "noStemming: " + noStemming + "\n";
 		s += "maxGuessed: " + maxGuessed + "\n";
+		s += "lemmaTransformationType: " + lemmaTransformationType + "\n";
+		s += "lemmaThreshold: " + lemmaThreshold + "\n";
 		s += "toFile: " + toFile + "\n";
 		s += "outputFormat: " + outputFormat + "\n";
 		s += "command: " + command + "\n";

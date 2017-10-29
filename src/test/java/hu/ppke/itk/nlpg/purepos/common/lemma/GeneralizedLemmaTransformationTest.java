@@ -5,11 +5,13 @@ import junit.framework.Assert;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Ignore;
 import org.junit.Test;
+import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaTransformationTestVectorReader.LemmaTransformationTestVector;
+
+import java.io.FileNotFoundException;
 
 public class GeneralizedLemmaTransformationTest {
 
 	@Test
-	@Ignore
 	public void substringTest() {
 		Assert.assertEquals(Pair.of(0, 2),
 				GeneralizedLemmaTransformation.longestSubstring("alma", "alom"));
@@ -30,92 +32,28 @@ public class GeneralizedLemmaTransformationTest {
 
 	@Test
 	public void reverseTest() {
-		Assert.assertEquals(Pair.of("alom", 1),
-				new GeneralizedLemmaTransformation("alma", "alom", 1)
-						.analyze("alma"));
+		try {
+			LemmaTransformationTestVector testVector = LemmaTransformationTestVectorReader.read(
+					".\\src\\test\\java\\hu\\ppke\\itk\\nlpg\\purepos\\common\\lemma\\GeneralizedLemmaTransformation_TestVector.txt");
+			int threshold = 2; // 2 is the default value, if you change it, the expected values must be recalculated
+			System.out.println("GeneralziedLemmaTransformation test. Used threshold: "+ GeneralizedLemmaTransformation.threshold);
+			for (int i = 0; i < testVector.token.length; i++) {
 
-		String word = "katonát", lemma = "katona";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "legjobb";
-		lemma = "jó";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "Alma";
-		lemma = "alom";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "szebb";
-		lemma = "szép";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "legszebb";
-		lemma = "szép";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "leköt";
-		lemma = "köt";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "övé";
-		lemma = "ő";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "övé";
-		lemma = "ő";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "értem";
-		lemma = "én";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "enyém";
-		lemma = "én";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "áztam";
-		lemma = "ázik";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "késem";
-		lemma = "késik";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "hozzá";
-		lemma = "ő";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
-
-		word = "<,";
-		lemma = ",";
-		Assert.assertEquals(Pair.of(lemma, 1),
-				new GeneralizedLemmaTransformation(word, lemma, 1)
-						.analyze(word));
+				System.out.println("Test Case "+(i+1)+"#\n"+"token: "+testVector.token[i]+"\nlemma: "+testVector.lemma[i]
+						+"\ncode: "+testVector.expectedCode[i]+"\n");
+				// creating the class
+				GeneralizedLemmaTransformation t = new GeneralizedLemmaTransformation(testVector.token[i], testVector.lemma[i], 1,threshold);
+				// testing the decode function
+				Assert.assertEquals(testVector.expectedLemmaStuff[i], t.representation.getLeft());
+				Assert.assertEquals(testVector.expectedCode[i], t.representation.getRight());
+				// testing the encode function
+				Pair<String, Integer> analyzed = t.analyze(testVector.token[i]);
+				Assert.assertEquals(testVector.lemma[i], analyzed.getLeft());
+				Assert.assertEquals(new Integer(1), analyzed.getRight());
+			}
+			;
+		} catch (FileNotFoundException e){
+			e.printStackTrace();
+		}
 	}
-
 }
