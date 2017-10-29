@@ -74,11 +74,10 @@ public class PurePos implements Runnable {
 		this.options = options;
 	}
 
-	public static void train(String encoding, String modelPath,
-			String inputPath, int tagOrder, int emissionOrder, int suffLength,
-			int rareFreq) throws ParsingException, Exception {
+	public static void train(String encoding, String modelPath, String inputPath, String inputFormat, int tagOrder,
+							 int emissionOrder, int suffLength, int rareFreq) throws ParsingException, Exception {
 		Scanner sc = createScanner(encoding, inputPath, false);
-		Trainer trainer = new Trainer(sc, new CorpusReader());
+		Trainer trainer = new Trainer(sc, new CorpusReader(inputFormat));
 
 		File modelFile = new File(modelPath);
 		RawModel retModel;
@@ -119,9 +118,9 @@ public class PurePos implements Runnable {
 		return sc;
 	}
 
-	public static void tag(String encoding, String modelPath, String inputPath,
+	public static void tag(String encoding, String modelPath, String inputPath, String inputFormat,
 			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
-			int beamTheta, boolean useBeamSearch, String outPath) throws Exception {
+			int beamTheta, boolean useBeamSearch, String outPath, String outputFormat) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
 //
@@ -144,7 +143,7 @@ public class PurePos implements Runnable {
 			output = new PrintStream(new File(outPath), encoding);
 		}
 		System.err.println("Tagging:");
-		t.tag(input, output, maxresnum);
+		t.tag(input, inputFormat, output, outputFormat, maxresnum);
 	}
 
 	public static ITagger createTagger(String modelPath, String analyzer,
@@ -246,14 +245,15 @@ public class PurePos implements Runnable {
 			
 			if (options.command.equals(TRAIN_OPT)) {
 				train(options.encoding, options.modelName, options.fromFile,
-						options.tagOrder, options.emissionOrder,
+						options.inputFormat,options.tagOrder,options.emissionOrder,
 						options.suffixLength, options.rareFreq);
 			} else if (options.command.equals(TAG_OPT)) {
 				tag(options.encoding, options.modelName, options.fromFile,
-						options.morphology, options.noStemming,
-						options.maxGuessed, options.maxResultsNumber,
-						options.beamTheta, options.useBeamSearch,
-						options.toFile);
+						options.inputFormat, options.morphology,
+						options.noStemming, options.maxGuessed,
+						options.maxResultsNumber, options.beamTheta,
+						options.useBeamSearch, options.toFile,
+						options.outputFormat);
 			}
 		} catch (ConfigurationException e) {
 			System.err.println("Malformed configuration file: " + e.getMessage() );

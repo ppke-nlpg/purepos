@@ -22,6 +22,7 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos;
 
+import hu.ppke.itk.nlpg.corpusreader.CorpusReader;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
@@ -35,6 +36,7 @@ import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
 
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +49,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Joiner;
 
+import static hu.ppke.itk.nlpg.corpusreader.CorpusReader.*;
+
 /**
  * Standard POS tagger implementation
  * 
@@ -57,6 +61,7 @@ public class POSTagger implements ITagger {
 	IMorphologicalAnalyzer analyzer;
 	protected final AbstractDecoder decoder;
 	protected final CompiledModel<String, Integer> model;
+	protected String outputFormat;
 
 	public POSTagger(final CompiledModel<String, Integer> model,
 			double logTheta, double sufTheta, int maxGuessedTags) {
@@ -145,8 +150,8 @@ public class POSTagger implements ITagger {
 	}
 
 	@Override
-	public void tag(Scanner scanner, PrintStream ps) {
-		tag(scanner, ps, 1);
+	public void tag(Scanner scanner, String inputFormat, PrintStream ps, String outputFormat) {
+		tag(scanner, inputFormat, ps, outputFormat, 1);
 	}
 
 	protected String tagAndFormat(String line, int maxResNum) {
@@ -160,15 +165,173 @@ public class POSTagger implements ITagger {
 	}
 
 	@Override
-	public void tag(Scanner scanner, PrintStream ps, int maxResultsNumber) {
+	public void tag(Scanner scanner, String inputFormat, PrintStream ps, String outputFormat, int maxResultsNumber) {
+		this.outputFormat = outputFormat;
+		if(inputFormat.equals(ORDINARY) ){
+			tagOrdinaryFile(scanner, ps, maxResultsNumber);
+		} else if (inputFormat.equals(VERT)){
+			tagVerticalFile(scanner, ps, maxResultsNumber);
+		}
+	}
+
+	/*
+	 * Function to get the data from the input. Inside calls the tagAndFormat() function for tagging.
+	 * If the desired output format is not vertical, then it prints too. If it's vertical, for the further actions see
+	 * the createVerticalFle() function.
+	 */
+	protected void tagOrdinaryFile(Scanner scanner, PrintStream ps, int maxResultsNumber){
 		String line;
+		List<String> sentences = new ArrayList<String>();
 		while (scanner.hasNext()) {
 			line = scanner.nextLine();
-			String sentString = tagAndFormat(line, maxResultsNumber);
-			ps.println(sentString);
-
+			if (line.length() > 0) {
+				// removing the comments
+				String[] origWords = line.split("\\s");
+				String parsedLine = "";
+				for (String word : origWords){
+					if(!(word.startsWith(CorpusReader.XML_TAG_OPENER) && word.endsWith(CorpusReader.XML_TAG_CLOSER))){
+						parsedLine += word+" ";
+					}
+				}
+				String sentence = tagAndFormat(parsedLine.substring(0,parsedLine.length()-1), maxResultsNumber);
+				if (this.outputFormat.equals(VERT)) {
+					sentences.add(sentence);
+				} else {
+					String[] taggedWords = sentence.split("\\s");
+					String newline = "";
+					int j = 0;
+					for (int i = 0;i < origWords.length;i++){
+						if (origWords[i].startsWith(CorpusReader.XML_TAG_OPENER) &&
+								origWords[i].endsWith(CorpusReader.XML_TAG_CLOSER)){
+							newline += origWords[i]+" ";
+						} else {
+							newline += taggedWords[j]+" ";
+							j++;
+						}
+					}
+					ps.println(newline.substring(0,newline.length()-1));
+				}
+			} else {
+				if (this.outputFormat.equals(VERT)) {
+					sentences.add("");
+				} else {
+					ps.println();
+				}
+			}
 		}
+		if(this.outputFormat.equals(VERT)){
+			createVerticalFile(ps,sentences);
+		}
+	}
 
+	/*
+	 * Function to get the data from a vertical input. Inside calls the tagAndFormat() function for tagging.
+	 * If the desired output format is not vertical, then it prints too. If it's vertical,
+	 * for the further actions see the writeVerticalFle() function.
+	 */
+	protected void tagVerticalFile(Scanner scanner, PrintStream ps, int maxResultsNumber){
+		List<String> sentences = new ArrayList<String>();
+		List<String> lines = new ArrayList<String>();
+
+		String line;
+		String sentence = "";
+		int emptylinecounter = 0;
+		while (scanner.hasNext()) {
+			line = scanner.nextLine();
+			if (line.length() > 0 && !(line.startsWith(XML_TAG_OPENER) && line.endsWith(XML_TAG_CLOSER))){
+				if (AnalysisQueue.isPreanalysed(line)){
+					line = line.replace("\t",""); // transforming the line to match the ordinary pre-analyzed input
+				} else {
+					line = line.replace('\t', '#'); // transforming the line to look like an ordinary input
+				}
+				sentence += line + " ";
+				emptylinecounter = 0;
+			}
+			if ((line.length() == 0 || !scanner.hasNext())) {
+				if (!sentence.equals("")) {
+					String taggedSentence = tagAndFormat(sentence.substring(0, sentence.length() - 1), maxResultsNumber);
+					if (this.outputFormat.equals(VERT)) {
+						sentences.add(taggedSentence);
+					} else {
+						ps.println(taggedSentence);
+					}
+				}
+				if(this.outputFormat.equals(ORDINARY)) {
+					if (line.length() == 0) {
+						emptylinecounter++;
+					}
+					if (emptylinecounter == 2) {
+						ps.println();
+						emptylinecounter = 0;
+					}
+				}
+				sentence = "";
+			}
+			if(this.outputFormat.equals(VERT)){
+				lines.add(line);
+			}
+		}
+		if(this.outputFormat.equals(VERT)){
+			writeVerticalFile(ps,sentences,lines);
+		}
+	}
+
+	/*
+	 * Function to write the analyzed data to vertical formatted output.
+	 * Usable when the input was in vertical format too to keep the original tags, attributes and structure.
+	 * ps: the desired output stream
+	 * sentences: list of Strings, each object contains one already tagged sentence
+	 * lines: list of Strings, each object contains one line of the input
+	 */
+	protected void writeVerticalFile(PrintStream ps, List<String> sentences, List<String> lines){
+		List<String> words = sentences2words(sentences);
+		Iterator<String> word = words.iterator();
+		for (String line: lines) {
+			if (line.length() > 0 && !(line.startsWith(XML_TAG_OPENER) && line.endsWith(XML_TAG_CLOSER))) {
+				ps.println(word.next());
+			} else {
+				ps.println(line);
+			}
+		}
+	}
+
+	/*
+	 * Function to create an vertical formatted output.
+	 * Usable when the input was in other non-xml like format.
+	 */
+	protected void createVerticalFile(PrintStream ps, List<String> sentences){
+		int sentence_size = sentences.size();
+		for(int i = 0; i < sentence_size; i++){
+			String sentence = sentences.get(i);
+			if(sentence.length() > 0){
+				List<String> words = Arrays.asList(sentence.split("\\s"));
+				int words_size = words.size();
+				for (int j = 0; j< words_size; j++) {
+					ps.println(words.get(j).replace('#', '\t'));
+					if (j == words_size-1 && i != sentence_size-1){
+						ps.println();
+					}
+				}
+			} else {
+				ps.println();
+			}
+		}
+	}
+
+	/*
+	 * Function to split the sentences into words and replace the separator character with tabulators if the output format is vertical.
+	 */
+	protected List<String> sentences2words (List<String> sentences){
+		List<String> splitWords = new ArrayList<String>();
+		String[] words;
+
+		for(String sentence:sentences){
+			words = sentence.split("\\s");
+			for (String word: words){
+				splitWords.add(word.replace('#', '\t'));
+			}
+		}
+		return splitWords;
 	}
 
 	protected String sentences2string(List<ISentence> sents) {

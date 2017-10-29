@@ -30,8 +30,9 @@ public class Demo {
 		
 		Scanner inputScanner = new Scanner(System.in);
 		PrintStream taggerOutput = new PrintStream(System.out, true);
-		
-		tagger.tag(inputScanner, taggerOutput);
+		String inputFormat = "ord";
+		String outputFormat = "ord";
+		tagger.tag(inputScanner, inputFormat, taggerOutput, outputFormat);
 
 	}
 

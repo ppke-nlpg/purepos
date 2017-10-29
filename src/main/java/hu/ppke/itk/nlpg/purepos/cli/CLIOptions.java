@@ -40,7 +40,7 @@ public class CLIOptions {
 	int emissionOrder = 2;
 	@Option(name = "-s", aliases = "--suffix-length", usage = "Use a suffix trie for guessing unknown words tags with the given maximum suffix length. The default is 10.  Training only option.", metaVar = "<length>")
 	int suffixLength = 10;
-	@Option(name = "-r", aliases = "--rare-frequency", usage = "Add only words to the suffix trie with frequency less than the given treshold. The default is 10.  Training only option.", metaVar = "<treshold>")
+	@Option(name = "-r", aliases = "--rare-frequency", usage = "Add only words to the suffix trie with frequency less than the given threshold. The default is 10.  Training only option.", metaVar = "<threshold>")
 	int rareFreq = 10;
 
 	// Tagging options
@@ -57,6 +57,7 @@ public class CLIOptions {
 	int maxGuessed = 10;
 	@Option(name = "-n", aliases = "--max-results", usage = "Set the expected maximum number of tag sequences (with its score). The default is 1. Tagging only option.", metaVar = "<number>")
 	int maxResultsNumber = 1;
+
 
 	@Option(name = "-b", aliases = "--beam-theta", usage = "Set the beam-search limit. The default is 1000. Tagging only option.", metaVar = "<theta>")
 	int beamTheta = 1000;
@@ -77,15 +78,20 @@ public class CLIOptions {
 	@Option(name = "-m", aliases = "--model", usage = "Specifies a path to a model file. If an exisiting model is given for training, the tool performs incremental training.", metaVar = "<modelfile>", required = true)
 	String modelName;
 
-	@Option(name = "-i", aliases = "--input-file", usage = "File containg the training set (for tagging) or the text to be tagged (for tagging). The default is the standard input.", metaVar = "<file>")
+	@Option(name = "-i", aliases = "--input-file", usage = "File containing the training set (for tagging) or the text to be tagged (for tagging). The default is the standard input.", metaVar = "<file>")
 	String fromFile = null;
 
 	@Option(name = "-d", aliases = "--beam-decoder", usage = "Use Beam Search decoder. The default is to employ the Viterbi algorithm. Tagging only option.")
 	boolean useBeamSearch = false;
 
-	@Option(name = "-f", aliases = "--config-file", usage = "Configuratoin file containg tag mappings. Defaults to do not map any tag.", metaVar = "<file>")
+	@Option(name = "-f", aliases = "--config-file", usage = "Configuration file containg tag mappings. Defaults to do not map any tag.", metaVar = "<file>")
 	String configFile = null;
 
+	@Option(name = "-if", aliases = "--input-format", usage = "Set the format of the input file: vert for vertical, ord for ordinary. The default is ordinary.", metaVar = "<file>")
+	String inputFormat = "ord";
+
+	@Option(name = "-of", aliases = "--output-format", usage = "Set the format of the output file: vert for vertical, ord for ordinary. The default is ordinary.", metaVar = "<file>")
+	String outputFormat = "ord";
 	// Other stuff
 	String formatMessage = "";
 
@@ -99,11 +105,13 @@ public class CLIOptions {
 		s += "noStemming: " + noStemming + "\n";
 		s += "maxGuessed: " + maxGuessed + "\n";
 		s += "toFile: " + toFile + "\n";
+		s += "outputFormat: " + outputFormat + "\n";
 		s += "command: " + command + "\n";
 		s += "encoding: " + encoding + "\n";
 		s += "printHelp: " + printHelp + "\n";
 		s += "modelName: " + modelName + "\n";
 		s += "fromFile: " + fromFile + "\n";
+		s += "inputFormat: " + inputFormat + "\n";
 		return s;
 
 	}

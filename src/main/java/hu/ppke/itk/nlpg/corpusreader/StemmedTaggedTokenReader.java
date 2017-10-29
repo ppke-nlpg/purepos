@@ -26,7 +26,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 
 /**
- * Reader class for reading a tagged, unstemmed token.
+ * Reader class for reading a tagged, stemmed token.
  * 
  * @author György Orosz
  * 
