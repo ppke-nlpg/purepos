@@ -77,9 +77,10 @@ public class Trainer implements ITrainer {
 
 	@Override
 	public RawModel trainModel(int tagOrder, int emissionOrder,
-			int maxSuffixLength, int rareFrequency) {
+			int maxSuffixLength, int rareFrequency,String lemmaTransformationType, int lemmaThreshold ) {
 		RawModel m = new RawModel(tagOrder, emissionOrder, maxSuffixLength,
 				rareFrequency);
+		m.setLemmaVariables(lemmaTransformationType,lemmaThreshold);
 		return trainModel(m);
 	}
 

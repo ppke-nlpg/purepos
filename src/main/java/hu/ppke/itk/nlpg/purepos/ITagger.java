@@ -36,6 +36,7 @@ import java.util.Scanner;
  */
 public interface ITagger {
 
+
 	public ISentence tagSentence(List<String> sentence);
 
 	public List<ISentence> tagSentence(List<String> sentence,
@@ -45,8 +46,8 @@ public interface ITagger {
 
 	public List<ISentence> tagSentence(String sentence, int maxResultsNumber);
 
-	public void tag(Scanner scanner, PrintStream ps);
+	public void tag(Scanner scanner, String inputFormat, PrintStream ps, String outputFormat);
 
-	public void tag(Scanner scanner, PrintStream ps, int maxResultsNumber);
+	public void tag(Scanner scanner, String inputFormat, PrintStream ps, String outputFormat, int maxResultsNumber);
 
 }

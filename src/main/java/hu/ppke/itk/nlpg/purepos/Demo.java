@@ -20,18 +20,21 @@ public class Demo {
 		int maxGuessed = 10;
 		boolean useBeamSearch = false;
 		IMorphologicalAnalyzer analyzer = new NullAnalyzer();
-		
+
+		String lemmaTransformationType = "suffix"; 	// default value from console input
+		int lemmaThreshold = 2;						// default value from console input
 		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
 		CompiledModel<String, Integer> model = rawmodel
-				.compile(new Configuration());
+				.compile(new Configuration(), lemmaTransformationType, lemmaThreshold);
 		
 		ITagger tagger = new MorphTagger(model, analyzer, beamLogTheta, suffixLogTheta,
 				maxGuessed, useBeamSearch);
 		
 		Scanner inputScanner = new Scanner(System.in);
 		PrintStream taggerOutput = new PrintStream(System.out, true);
-		
-		tagger.tag(inputScanner, taggerOutput);
+		String inputFormat = "ord";
+		String outputFormat = "ord";
+		tagger.tag(inputScanner, inputFormat, taggerOutput, outputFormat);
 
 	}
 

@@ -1,0 +1,18 @@
+alma	alom	om	1000202
+tűnt	tűnik	ik	1000102
+Bokrot	Bokor	or	1000302
+Almával	alma	a	-1001000401
+legszebb	szép	ép	1030302
+legrosszabb	rossz		1030300
+budapesti	Budapest		1001000100
+hozzá	ő	ő	1000501
+késem	késik	ik	1000202
+<,	,	,	1000201
+övé	ő	ő	1000301
+áztam	ázik	ik	1000302
+enyém	én	én	1000502
+értem	én	én	1000502
+leköt	köt		1020000
+szebb	szép	ép	1000302
+katonát	katona	a	1000201
+Mindezeket	mindez		-1001000400

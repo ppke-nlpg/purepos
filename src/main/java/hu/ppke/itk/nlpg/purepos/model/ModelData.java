@@ -18,6 +18,8 @@ public class ModelData<W, T extends Comparable<T>> implements Serializable {
 	public IVocabulary<String, T> tagVocabulary;
 	public T eosIndex;
 	public T bosIndex;
+	public String lemmaTransformationType;
+	public int lemmaThreshold;
 
 	public static final String EOS_TAG = "</S>";
 	public static final String BOS_TAG = "<S>";

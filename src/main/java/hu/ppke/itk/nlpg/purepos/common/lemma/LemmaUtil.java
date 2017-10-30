@@ -16,6 +16,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class LemmaUtil {
 
+	public static String suffix = "suffix";
+	public static String generalized = "generalized";
+
 	public static Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>>
 	batchConvert(
 			Map<ILemmaTransformation<String, Integer>, Double> probMap,
@@ -42,7 +45,12 @@ public class LemmaUtil {
 	}
 
 	public static ILemmaTransformation<String, Integer> defaultLemmaRepresentation(
-			String word, String stem, Integer tag) {
+			String word, String stem, Integer tag, ModelData<String, Integer> data) {
+		if (data.lemmaTransformationType.equals(generalized)){
+			//System.out.println("Using GeneralizedLemmaTransformation..."); //debug
+			return new GeneralizedLemmaTransformation(word,stem,tag,data.lemmaThreshold);
+		}
+		//System.out.println("Using SuffixLemmaTransformation..."); //debug
 		return new SuffixLemmaTransformation(word, stem, tag);
 	}
 
@@ -53,7 +61,7 @@ public class LemmaUtil {
 
 
 		Integer t = data.tagVocabulary.getIndex(tok.getTag());
-		return defaultLemmaRepresentation(tok.getToken(), tok.getStem(), t);
+		return defaultLemmaRepresentation(tok.getToken(), tok.getStem(), t , data);
 
 
 	}
@@ -63,13 +71,13 @@ public class LemmaUtil {
 	}
 
 	public static void storeLemma(String word, String lemma, Integer tag,
-			String tagString, AbstractRawModelData<String, Integer> rawModelData) {
+			String tagString, AbstractRawModelData<String, Integer> rawModelData,ModelData<String, Integer> data ) {
 
 		rawModelData.lemmaUnigramModel.increment(lemma);
 
 		int count = 1;
 		ILemmaTransformation<String, Integer> lemmaTrans = defaultLemmaRepresentation(
-				word, lemma, tag);
+				word, lemma, tag, data);
 		rawModelData.lemmaSuffixTree.addWord(word, lemmaTrans, count,
 				lemmaTrans.minimalCutLength());
 

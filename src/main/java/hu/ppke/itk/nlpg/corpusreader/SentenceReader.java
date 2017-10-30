@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class SentenceReader extends AbstractDocElementReader<ISentence> {
 
-	private final AbstractDocElementReader<IToken> wordParser;
+	private final AbstractDocElementReader<IToken> wordParser; // tokenReader object
 
 	SentenceReader(AbstractDocElementReader<IToken> wordParser) {
 		this.wordParser = wordParser;
@@ -55,7 +55,8 @@ public class SentenceReader extends AbstractDocElementReader<ISentence> {
 			String wordstring = words[i];
 			if(wordstring.length() == 0)
 				throw new ParsingException("Empty word in: '" + text +"'");
-			if (wordstring.length() > 0) {
+			if (wordstring.length() > 0 && !(wordstring.startsWith(CorpusReader.XML_TAG_OPENER) &&
+					wordstring.endsWith(CorpusReader.XML_TAG_CLOSER))) {
 				IToken word = wordParser.read(wordstring);
 				if (word != null)
 					tokens.add(word);

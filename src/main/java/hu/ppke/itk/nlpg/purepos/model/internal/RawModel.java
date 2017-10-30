@@ -138,7 +138,7 @@ public class RawModel extends Model<String, Integer> {
 
 			if (!(word.equals(Model.getBOSToken()) || word.equals(Model
 					.getEOSToken()))) {
-				LemmaUtil.storeLemma(word, lemma, tag, tagStr, rawModeldata);
+				LemmaUtil.storeLemma(word, lemma, tag, tagStr, rawModeldata, data);
 
 				rawModeldata.tagNGramModel.addWord(prevTags, tag);
 
@@ -248,8 +248,32 @@ public class RawModel extends Model<String, Integer> {
 	//
 	// }
 
-	public CompiledModel<String, Integer> compile(Configuration conf) {
+	public void setLemmaVariables(String lemmaTransformationType, int lemmaThreshold){
+		if(data.lemmaTransformationType == null) {
+
+			data.lemmaTransformationType = lemmaTransformationType;
+
+			if (lemmaTransformationType.equals(LemmaUtil.generalized)) {
+				// relevant only when GeneralizedLemmaTransformation class used
+				data.lemmaThreshold = lemmaThreshold;
+			}
+		} else {
+			if(!lemmaTransformationType.equals(data.lemmaTransformationType)){
+				System.err.println("The requested lemmaTransformationType doesn't match the default from the model file. "
+						+ data.lemmaTransformationType + " will used." );
+			}
+			if((lemmaThreshold != data.lemmaThreshold) && lemmaTransformationType.equals(LemmaUtil.generalized)){
+				// relevant only when GeneralizedLemmaTransformation class used
+				System.err.println("The requested lemmaThreshold doesn't match the default from the model file. "+
+				data.lemmaThreshold + " will used.");
+			}
+		}
+	}
+
+	public CompiledModel<String, Integer> compile(Configuration conf, String lemmaTransformationType, int lemmaThreshold) {
 		data.tagVocabulary.storeMaximalElement();
+		setLemmaVariables(lemmaTransformationType,lemmaThreshold);
+
 		CompiledModelData<String, Integer> compiledModelData = RawModelData
 				.compile(this.rawModeldata);
 

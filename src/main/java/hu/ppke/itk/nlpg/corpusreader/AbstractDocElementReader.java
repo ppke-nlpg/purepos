@@ -42,6 +42,8 @@ public abstract class AbstractDocElementReader<C extends IDocElement>
 	protected String lineSeparator = "\n";// System.getProperty("line.separator");
 	protected String fileEncoding = "UTF-8";
 	protected String separator;
+	protected String inputFormat;
+
 
 	@Override
 	public C readFromFile(File file) throws ParsingException {

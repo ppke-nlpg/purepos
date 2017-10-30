@@ -75,10 +75,10 @@ public class PurePos implements Runnable {
 	}
 
 	public static void train(String encoding, String modelPath,
-			String inputPath, int tagOrder, int emissionOrder, int suffLength,
-			int rareFreq) throws ParsingException, Exception {
+			String inputPath, String inputFormat, int tagOrder, int emissionOrder, int suffLength,
+			int rareFreq, String lemmaTransformationType, int lemmaThreshold) throws ParsingException, Exception {
 		Scanner sc = createScanner(encoding, inputPath, false);
-		Trainer trainer = new Trainer(sc, new CorpusReader());
+		Trainer trainer = new Trainer(sc, new CorpusReader(inputFormat));
 
 		File modelFile = new File(modelPath);
 		RawModel retModel;
@@ -87,11 +87,12 @@ public class PurePos implements Runnable {
 			System.err.println("Reading model... ");
 			retModel = SSerializer.readModel(modelFile);
 			System.err.println("Training model... ");
+			retModel.setLemmaVariables(lemmaTransformationType,lemmaThreshold);
 			retModel = trainer.trainModel(retModel);
 		} else {
 			System.err.println("Training model... ");
 			retModel = trainer.trainModel(tagOrder, emissionOrder, suffLength,
-					rareFreq);
+					rareFreq, lemmaTransformationType,lemmaThreshold);
 		}
 		System.err.println(trainer.getStat().getStat(retModel));
 
@@ -119,9 +120,10 @@ public class PurePos implements Runnable {
 		return sc;
 	}
 
-	public static void tag(String encoding, String modelPath, String inputPath,
+	public static void tag(String encoding, String modelPath, String inputPath, String inputFormat,
 			String analyzer, boolean noStemming, int maxGuessed, int maxresnum,
-			int beamTheta, boolean useBeamSearch, String outPath) throws Exception {
+			int beamTheta, boolean useBeamSearch, String outPath, String outputFormat, String lemmaTransformationType,
+		    int lemmaThreshold) throws Exception {
 		Scanner input = createScanner(encoding, inputPath,
 				analyzer.equals(PRE_MA));
 //
@@ -135,7 +137,7 @@ public class PurePos implements Runnable {
 //		}
 
 		ITagger t = createTagger(modelPath, analyzer, noStemming, maxGuessed,
-				Math.log(beamTheta), useBeamSearch, Util.CONFIGURATION);
+				Math.log(beamTheta), useBeamSearch, Util.CONFIGURATION, lemmaTransformationType, lemmaThreshold);
 
 		PrintStream output;
 		if (outPath == null) {
@@ -144,12 +146,13 @@ public class PurePos implements Runnable {
 			output = new PrintStream(new File(outPath), encoding);
 		}
 		System.err.println("Tagging:");
-		t.tag(input, output, maxresnum);
+		t.tag(input, inputFormat, output, outputFormat, maxresnum);
 	}
 
 	public static ITagger createTagger(String modelPath, String analyzer,
 			boolean noStemming, int maxGuessed, double beamLogTheta,
-			boolean useBeamSearch, Configuration conf) throws Exception {
+			boolean useBeamSearch, Configuration conf, String lemmaTransformationType,
+		    int lemmaThreshold) throws Exception {
 		IMorphologicalAnalyzer ma;
 		if (analyzer.equals(INTEGRATED_MA)) {
 			// TODO: set lex files through environment vars
@@ -180,7 +183,7 @@ public class PurePos implements Runnable {
 		System.err.println("Reading model... ");
 		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
 		System.err.println("Compiling model... ");
-		CompiledModel<String, Integer> model = rawmodel.compile(conf);
+		CompiledModel<String, Integer> model = rawmodel.compile(conf, lemmaTransformationType, lemmaThreshold);
 		ITagger t;
 
 		// double beamLogTheta = Math.log(1000);
@@ -246,14 +249,17 @@ public class PurePos implements Runnable {
 			
 			if (options.command.equals(TRAIN_OPT)) {
 				train(options.encoding, options.modelName, options.fromFile,
-						options.tagOrder, options.emissionOrder,
-						options.suffixLength, options.rareFreq);
+						options.inputFormat,options.tagOrder, options.emissionOrder,
+						options.suffixLength, options.rareFreq, options.lemmaTransformationType,
+						options.lemmaThreshold);
 			} else if (options.command.equals(TAG_OPT)) {
 				tag(options.encoding, options.modelName, options.fromFile,
-						options.morphology, options.noStemming,
-						options.maxGuessed, options.maxResultsNumber,
-						options.beamTheta, options.useBeamSearch,
-						options.toFile);
+						options.inputFormat, options.morphology,
+						options.noStemming, options.maxGuessed,
+						options.maxResultsNumber, options.beamTheta,
+						options.useBeamSearch, options.toFile,
+						options.outputFormat, options.lemmaTransformationType,
+						options.lemmaThreshold);
 			}
 		} catch (ConfigurationException e) {
 			System.err.println("Malformed configuration file: " + e.getMessage() );

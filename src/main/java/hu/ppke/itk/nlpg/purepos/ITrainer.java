@@ -34,7 +34,7 @@ import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
 public interface ITrainer {
 
 	public RawModel trainModel(int tagOrder, int emissionOrder,
-			int maxSuffixLength, int rareFrequency);
+			int maxSuffixLength, int rareFrequency, String lemmaTransformationType, int lemmaThreshold);
 
 	public RawModel trainModel(RawModel model);
 
