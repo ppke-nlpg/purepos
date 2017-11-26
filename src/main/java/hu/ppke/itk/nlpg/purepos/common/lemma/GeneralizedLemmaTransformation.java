@@ -74,7 +74,7 @@ public class GeneralizedLemmaTransformation extends
 
 
 	@Override
-	protected Pair<String, Integer> specifyParameters(String word, String lemma, Integer tag, Integer casing) {
+	protected Pair<String, Long> specifyParameters(String word, String lemma, Integer tag, Integer casing) {
 		int removeStart;
 		int removeEnd;
 		String addStart = "";
@@ -94,7 +94,7 @@ public class GeneralizedLemmaTransformation extends
 			addEnd = lemma.substring(posLemma_Word.getLeft()+posLemma_Word.getRight());
 		}
 
-		int code = createCode(tag,casing,removeStart,removeEnd,addEnd.length());
+		long code = createCode(tag,casing,removeStart,removeEnd,addEnd.length());
 		String lemmaStuff = addStart+addEnd;
 		return Pair.of(lemmaStuff, code);
 	}
