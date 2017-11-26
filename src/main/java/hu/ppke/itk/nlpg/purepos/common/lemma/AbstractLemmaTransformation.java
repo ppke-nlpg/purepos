@@ -34,9 +34,9 @@ public abstract class AbstractLemmaTransformation<R> implements
 	private static final long serialVersionUID = -919727645396686443L;
 	protected Pair<String,Long> representation;
 	public static long TAG_SHIFT = 10000000L;
-	public static long CASING_SHIFT = 1000000;
-	public static long REMOVE_START_SHIFT = 10000;
-	public static long REMOVE_END_SHIFT = 100;
+	public static long CASING_SHIFT = 1000000L;
+	public static long REMOVE_START_SHIFT = 10000L;
+	public static long REMOVE_END_SHIFT = 100L;
 
 
 	public AbstractLemmaTransformation(String word, String lemma, Integer tag) {
@@ -195,28 +195,23 @@ public abstract class AbstractLemmaTransformation<R> implements
 
 
 	public int getTag(){
-		long ret = Math.abs(representation.getRight()) / TAG_SHIFT;
-		return (int) ret;
+		return (int) (Math.abs(representation.getRight()) / TAG_SHIFT);
 	}
 
 	public int getCasing(){
-		long ret = (representation.getRight() % TAG_SHIFT) / CASING_SHIFT;
-		return (int) ret;
+		return (int) ((representation.getRight() % TAG_SHIFT) / CASING_SHIFT);
 	}
 
 	public int getRemoveStart() {
-		long ret = (Math.abs(representation.getRight()) % CASING_SHIFT) / REMOVE_START_SHIFT;
-		return (int) ret;
+		return (int) ((Math.abs(representation.getRight()) % CASING_SHIFT) / REMOVE_START_SHIFT);
 	}
 
 	public int minimalCutLength() { // getRemoveEnd
-		long ret = (Math.abs(representation.getRight()) % REMOVE_START_SHIFT) / REMOVE_END_SHIFT;
-		return (int) ret;
+		return (int) ((Math.abs(representation.getRight()) % REMOVE_START_SHIFT) / REMOVE_END_SHIFT);
 	}
 
 	public int getAddEnd(){
-		long ret = Math.abs(representation.getRight()) % REMOVE_END_SHIFT;
-		return (int) ret;
+		return (int) (Math.abs(representation.getRight()) % REMOVE_END_SHIFT);
 	}
 
 	public String getRemovedFromStart(int removeEnd){
