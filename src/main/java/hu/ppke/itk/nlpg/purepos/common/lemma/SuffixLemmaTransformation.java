@@ -33,7 +33,7 @@ public class SuffixLemmaTransformation extends
 		super(word, lemma, tag);
 	}
 
-	protected Pair<String, Integer> specifyParameters(String word, String lemma, Integer tag, Integer casing) {
+	protected Pair<String, Long> specifyParameters(String word, String lemma, Integer tag, Integer casing) {
 		int i;
 		for (i = 0; i < word.length() && i < lemma.length(); ++i) {
 			if (word.charAt(i) != lemma.charAt(i)) {
@@ -46,8 +46,7 @@ public class SuffixLemmaTransformation extends
 		String lemmaStuff = lemma.substring(i);
 		int addEnd = lemmaStuff.length();
 
-		int code = createCode(tag,casing,0,removeEnd,addEnd);
-
+		long code = createCode(tag,casing,0,removeEnd,addEnd);
 		return Pair.of(lemmaStuff, code);
 	}
 

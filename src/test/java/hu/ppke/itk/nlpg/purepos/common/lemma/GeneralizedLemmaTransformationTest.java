@@ -42,14 +42,14 @@ public class GeneralizedLemmaTransformationTest {
 				System.out.println("Test Case "+(i+1)+"#\n"+"token: "+testVector.token[i]+"\nlemma: "+testVector.lemma[i]
 						+"\ncode: "+testVector.expectedCode[i]+"\n");
 				// creating the class
-				GeneralizedLemmaTransformation t = new GeneralizedLemmaTransformation(testVector.token[i], testVector.lemma[i], 1,threshold);
+				GeneralizedLemmaTransformation t = new GeneralizedLemmaTransformation(testVector.token[i], testVector.lemma[i], testVector.expectedTag[i],threshold);
 				// testing the decode function
 				Assert.assertEquals(testVector.expectedLemmaStuff[i], t.representation.getLeft());
 				Assert.assertEquals(testVector.expectedCode[i], t.representation.getRight());
 				// testing the encode function
 				Pair<String, Integer> analyzed = t.analyze(testVector.token[i]);
 				Assert.assertEquals(testVector.lemma[i], analyzed.getLeft());
-				Assert.assertEquals(new Integer(1), analyzed.getRight());
+				Assert.assertEquals(testVector.expectedTag[i], analyzed.getRight());
 			}
 			;
 		} catch (FileNotFoundException e){

@@ -1,18 +1,18 @@
-alma	alom	om	1000202
-tűnt	tűnik	ik	1000102
-Bokrot	Bokor	or	1000302
-Almával	alma	a	-1001000401
-legszebb	szép	szép	1000804
-legrosszabb	rossz	rossz	1001105
-budapesti	Budapest		1001000100
-hozzá	ő	ő	1000501
-késem	késik	ik	1000202
-<,	,	,	1000201
-övé	ő	ő	1000301
-áztam	ázik	ik	1000302
-enyém	én	én	1000502
-értem	én	n	1000401
-leköt	köt	köt	1000503
-szebb	szép	ép	1000302
-katonát	katona	a	1000201
-Mindezeket	mindez		-1001000400
+alma	alom	om	10000202	1
+tűnt	tűnik	ik	110000102	11
+Bokrot	Bokor	or	1110000302	111
+Almával	alma	a	-999991000401	99999
+legszebb	szép	szép	11110000804	1111
+legrosszabb	rossz	rossz	10001105	1
+budapesti	Budapest		891000100	89
+hozzá	ő	ő	501	0
+késem	késik	ik	10000202	1
+<,	,	,	10000201	1
+Őt	ő		-11000100	1
+áZtam	ázik	zik	40000403	4
+enyém	én	én	1210000502	121
+értem	én	n	12340000401	1234
+leköt	köt	köt	8880000503	888
+szebb	szép	ép	4560000302	456
+katonát	katona	a	7640000201	764
+Mindezeket	mindez		-53411000400	5341
