@@ -11,8 +11,6 @@ public interface ILemmaTransformation<W, T extends Comparable<T>> extends
 		Serializable {
 	public Pair<String, T> analyze(W word);
 
-	public int minimalCutLength();
-
 	public IToken convert(W word, IVocabulary<W, T> vocab);
 
 	@Override

@@ -46,7 +46,7 @@ public class SuffixLemmaTransformation extends
 		String lemmaStuff = lemma.substring(i);
 		int addEnd = lemmaStuff.length();
 
-		long code = createCode(tag,casing,0,removeEnd,addEnd);
+		long code = Transformation.createCode(tag,casing,0,removeEnd,addEnd);
 		return Pair.of(lemmaStuff, code);
 	}
 

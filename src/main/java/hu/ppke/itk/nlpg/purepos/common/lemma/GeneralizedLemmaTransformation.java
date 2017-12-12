@@ -94,7 +94,7 @@ public class GeneralizedLemmaTransformation extends
 			addEnd = lemma.substring(posLemma_Word.getLeft()+posLemma_Word.getRight());
 		}
 
-		long code = createCode(tag,casing,removeStart,removeEnd,addEnd.length());
+		long code = Transformation.createCode(tag,casing,removeStart,removeEnd,addEnd.length());
 		String lemmaStuff = addStart+addEnd;
 		return Pair.of(lemmaStuff, code);
 	}

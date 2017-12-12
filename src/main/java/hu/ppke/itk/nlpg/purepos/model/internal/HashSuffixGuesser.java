@@ -22,13 +22,17 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.lemma.Transformation;
+import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.SuffixGuesser;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Suffix guesser implementation for String suffixes with a HashTable
@@ -314,5 +318,34 @@ public class HashSuffixGuesser<T> extends SuffixGuesser<String, T> {
 	public ITagMapper<T> getMapper() {
 		return mapper;
 	}
+
+
+	public void print(PrintStream ps,String name, String mode){
+		ps.println(name);
+		for (Map.Entry<String, MutablePair<HashMap<T, Integer>, Integer>> entry : freqTable.entrySet()){
+			ps.println("\t\"" + entry.getKey() + "\" : " + entry.getValue().right);
+			for (Map.Entry<T,Integer> entry1 : entry.getValue().left.entrySet()){
+				String entry1_key = entry1.getKey().toString();
+				String key = "";
+				if (mode.equals("tag")){
+
+					key = Transformation.decodeTag(entry1_key,Util.tagVocabulary);
+
+				} else if (mode.equals("transformation")){
+
+					Pair<String,Long> representation = Transformation.parse(entry1_key);
+					int tagID = Transformation.getTag(representation.getRight());
+					key = Transformation.decodeTag(tagID,Util.tagVocabulary) + " " + Transformation.transformation_toString(representation) + " " + entry1_key;
+
+				} else if (mode.equals("POStag")){
+
+					key = entry1_key;
+
+				}
+				ps.println("\t\t"+ key + " : " + entry1.getValue() + " : " + Util.formatDecimal(getTagLogProbability(entry.getKey(),entry1.getKey())));
+			}
+		}
+	}
+
 
 }

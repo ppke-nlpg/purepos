@@ -35,7 +35,6 @@ import hu.ppke.itk.nlpg.purepos.common.serializer.SSerializer;
 import hu.ppke.itk.nlpg.purepos.model.internal.CompiledModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.RawModel;
 import hu.ppke.itk.nlpg.purepos.model.internal.StringMapper;
-import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 import hu.ppke.itk.nlpg.purepos.morphology.IMorphologicalAnalyzer;
 import hu.ppke.itk.nlpg.purepos.morphology.MorphologicalTable;
 import hu.ppke.itk.nlpg.purepos.morphology.NullAnalyzer;
@@ -47,7 +46,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -63,6 +61,7 @@ import org.kohsuke.args4j.CmdLineParser;
 public class PurePos implements Runnable {
 	private static final String TAG_OPT = "tag";
 	private static final String TRAIN_OPT = "train";
+	private static final String DUMP_OPT = "dump";
 	private static final String PRE_MA = "pre";
 	private static final String NONE_MA = "none";
 	private static final String INTEGRATED_MA = "integrated";
@@ -234,6 +233,30 @@ public class PurePos implements Runnable {
 		return (IMorphologicalAnalyzer) humorClass.newInstance();
 	}
 
+	public static void dump(String modelPath, String lemmaTransformationType,
+							int lemmaThreshold, String outPath, String encoding,
+							boolean separatePrint, boolean dot) throws Exception {
+
+		System.err.println("Reading model... ");
+		RawModel rawmodel = SSerializer.readModel(new File(modelPath));
+		System.err.println("Compiling model... ");
+		CompiledModel<String, Integer> model = rawmodel.compile(Util.CONFIGURATION);
+
+		PrintStream output;
+		if (outPath == null) {
+			output = new PrintStream(System.out, true, encoding);
+		} else {
+			output = new PrintStream(new File(outPath), encoding);
+		}
+		Util.tagVocabulary = rawmodel.getTagVocabulary();
+		System.err.println("Creating dump from the model file...");
+		if (!separatePrint) {
+			model.getCompiledData().print(output, rawmodel.getRawData(),dot);
+		} else {
+			model.getCompiledData().print_separated(rawmodel.getRawData(),dot);
+		}
+	}
+
 	@Override
 	public void run() {
 		try {
@@ -260,6 +283,9 @@ public class PurePos implements Runnable {
 						options.useBeamSearch, options.toFile,
 						options.outputFormat, options.lemmaTransformationType,
 						options.lemmaThreshold);
+			} else if (options.command.equals(DUMP_OPT)){
+				dump(options.modelName, options.lemmaTransformationType,options.lemmaThreshold, options.toFile,
+						options.encoding, options.separatePrint, options.dot);
 			}
 		} catch (ConfigurationException e) {
 			System.err.println("Malformed configuration file: " + e.getMessage() );

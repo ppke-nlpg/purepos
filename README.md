@@ -34,9 +34,9 @@ For further help:
 `$ java -jar purepos-<version>.jar -h`
 
     Usage: java -jar <purepos.jar> [options...] arguments...
-     tag|train                              : Mode selection: train for training the
+     tag|train|dump                         : Mode selection: train for training the
                                               tagger, tag for tagging a text with the
-                                              given model.
+                                              given model. Dump for getting the model printed.
      -a  (--analyzer) <analyzer>            : Set the morphological analyzer. <analyzer>
                                               can be 'none', 'integrated' or a file :
                                               <morphologicalTableFile>. The default is to
@@ -49,6 +49,8 @@ For further help:
      -d  (--beam-decoder)                   : Use Beam Search decoder. The default is to
                                               employ the Viterbi algorithm. Tagging only
                                               option.
+	 -dot 									: The model objects will printed in dot format. 
+											  Dump only option.
      -e  (--emission-order) <number>        : Order of emission. First order means that
                                               the given word depends only on its tag. The
                                               default is 2.  Training only option.
@@ -78,6 +80,9 @@ For further help:
      -of (--output-format) <format>         : Set the format of the output file: 'vert' for vertical,
                                               'ord' for ordinary. The default is ordinary.
                                               Tagging only option.
+	 -ps (--print-separately)				: If enabled, the model objects will printed into dedicated
+	                                          files, named after their object name. Dump only option.
+											  The default is false.
      -r  (--rare-frequency) <threshold>     : Add only words to the suffix trie with
                                               frequency less than the given threshold. The
                                               default is 10.  Training only option.

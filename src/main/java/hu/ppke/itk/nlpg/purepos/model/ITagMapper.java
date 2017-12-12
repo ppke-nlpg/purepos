@@ -23,10 +23,11 @@
 package hu.ppke.itk.nlpg.purepos.model;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface ITagMapper<T> extends IMapper<T>{
 
 	public Collection<T> filter(Collection<T> morphAnals,
 			Collection<T> possibleTags);
+
+	IVocabulary<String, Integer> getVocabulary();
 }

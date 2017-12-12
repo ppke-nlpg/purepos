@@ -2,8 +2,9 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.IToken;
-import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.AbstractLemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class LogLinearMLCombiner extends LogLinearCombiner {
 	}
 
 	@Override
-	public Double combine(IToken tok, ILemmaTransformation<String, Integer> t,
+	public Double combine(IToken tok, AbstractLemmaTransformation<Pair<String,Integer>> t,
 			CompiledModelData<String, Integer> compiledModelData,
 			ModelData<String, Integer> modelData) {
 		LemmaUnigramModel<String> unigramLemmaModel = compiledModelData.unigramLemmaModel;

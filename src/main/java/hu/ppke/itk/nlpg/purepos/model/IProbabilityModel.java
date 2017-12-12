@@ -22,6 +22,9 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model;
 
+import org.apache.commons.lang3.tuple.MutablePair;
+
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -81,5 +84,9 @@ public interface IProbabilityModel<T, W> {
 	public abstract void setElementMapper(ITagMapper<W> mapper);
 
 	public abstract ITagMapper<Integer> getContextMapper();
+	/*
+	public String getReprString();
 
+	public HashMap<String,MutablePair<HashMap<String,String>,String>> getNodes();
+	*/
 }

@@ -22,9 +22,11 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.common.lemma.Transformation;
 import hu.ppke.itk.nlpg.purepos.model.INGramModel;
-import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -218,7 +221,7 @@ public class NGramModel<W> extends INGramModel<Integer, W> implements
 	}
 
 	@Override
-	public IProbabilityModel<Integer, W> createProbabilityModel() {
+	public ProbModel<W> createProbabilityModel() {
 		// logger.trace("NGramModel: " + getReprString());
 		calculateNGramLamdas();
 		return new ProbModel<W>(root, lambdas);
@@ -239,9 +242,105 @@ public class NGramModel<W> extends INGramModel<Integer, W> implements
 		}
 		return ret;
 	}
-
+	@Override
 	public String getReprString() {
 		calculateNGramLamdas();
-		return "tree:\n" + root.getReprString() + "lambdas: " + lambdas;
+		return root.getReprString() + "lambdas: " + lambdas;
+	}
+
+	@Override
+	public HashMap<String,MutablePair<HashMap<String,String>,String>> getNodes(){
+		return root.getNodes("");
+	}
+
+	@Override
+	public ArrayList<Pair<String, String>> getEdges() {
+		HashMap<String,ArrayList<String>> graph = root.getEdges("");
+		ArrayList<Pair<String,String>> ret = new ArrayList<Pair<String, String>>();
+
+		for (Entry<String,ArrayList<String>> node : graph.entrySet()){
+			String key = node.getKey();
+			for (String child : node.getValue()) {
+				ret.add(Pair.of(key, child));
+			}
+		}
+		return ret;
+	}
+
+	public void print(PrintStream ps,HashMap<String,MutablePair<HashMap<String,String>,String>> compiled,
+					  boolean dot, String name, String mode){
+		String header = "digraph " + name + " {";
+		String footer = "}";
+
+		ps.println(header);
+		if (dot){
+			NGramModel.printNodesDot(getNodes(),compiled,ps, mode);
+		} else {
+			NGramModel.printNodes(getNodes(),compiled,ps, mode);
+		}
+		NGramModel.printEdges(getEdges(),ps);
+		ps.println(footer);
+
+	}
+
+	protected static void printNodes(HashMap<String,MutablePair<HashMap<String,String>,String>> raw,
+							  HashMap<String,MutablePair<HashMap<String,String>,String>> compiled,
+							  PrintStream ps, String mode){
+		String newline = "\n";
+		String tab = "\t";
+		for(Map.Entry<String,MutablePair<HashMap<String,String>,String>> raw_entry: raw.entrySet()){
+			String node = "";
+			node += tab + raw_entry.getKey()  + " freq: "+ raw_entry.getValue().right;
+			for (Map.Entry<String,String> word : raw_entry.getValue().left.entrySet()){
+				String key = "";
+				if (mode.equals("tag")){
+					 key = Transformation.decodeTag(word.getKey(),Util.tagVocabulary);
+				} else {
+					 key = word.getKey();
+				}
+				node += newline+tab+tab+ "\"" + key + "\" : " + word.getValue();
+				String freq = compiled.get(raw_entry.getKey()).left.get(word.getKey());
+				if(!freq.equals("0.0")){
+					node += " : " + freq;
+				}
+			}
+			ps.println(node);
+		}
+	}
+
+	protected static void printNodesDot(HashMap<String,MutablePair<HashMap<String,String>,String>> raw,
+									 HashMap<String,MutablePair<HashMap<String,String>,String>> compiled,
+									 PrintStream ps, String mode){
+
+		String newline = "\\n";
+		for(Map.Entry<String,MutablePair<HashMap<String,String>,String>> raw_entry: raw.entrySet()){
+			String node = "";
+			node += "\t\"" + raw_entry.getKey() +"\"" + "[label = \""+ raw_entry.getKey() + newline + "freq: "+ raw_entry.getValue().right + newline;
+			for (Map.Entry<String,String> word : raw_entry.getValue().left.entrySet()){
+				String key = "";
+				if (mode.equals("tag")){
+					key = Transformation.decodeTag(word.getKey(),Util.tagVocabulary);
+				} else {
+					key = word.getKey();
+				}
+				node += key + " : " + word.getValue();
+				String freq = compiled.get(raw_entry.getKey()).left.get(word.getKey());
+				if(!freq.equals("0.0")){
+					node += " : " + freq;
+				}
+				node += newline;
+			}
+			node += "\"];";
+			ps.println(node);
+		}
+	}
+
+	protected static void printEdges(ArrayList<Pair<String, String>> edges, PrintStream ps){
+		String edge_str = "->";
+		String mark = "\"";
+
+		for(Pair<String,String> edge: edges){
+			ps.println("\t"+ mark + edge.getLeft() + mark + edge_str + mark + edge.getRight() + mark);
+		}
 	}
 }

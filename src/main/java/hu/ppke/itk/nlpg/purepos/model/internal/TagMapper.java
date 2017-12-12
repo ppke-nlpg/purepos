@@ -44,6 +44,10 @@ public class TagMapper implements ITagMapper<Integer> {
 		// init();
 	}
 
+	public IVocabulary<String, Integer> getVocabulary(){
+		return this.vocabulary;
+	}
+
 	// private void init() {
 	// add("^(.*)(MN|FN)(\\|lat)(.*)$", "$1FN$4");
 	// }

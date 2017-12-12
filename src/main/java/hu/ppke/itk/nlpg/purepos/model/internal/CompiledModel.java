@@ -22,12 +22,12 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.AbstractLemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
-import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.Model;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 
 	protected CompiledModelData<W, T> compiledData;
 
-	public ISuffixGuesser<W, ILemmaTransformation<W, Integer>> getLemmaGuesser() {
+	public ISuffixGuesser<W, AbstractLemmaTransformation<Pair<W,Integer>>> getLemmaGuesser() {
 		return compiledData.lemmaGuesser;
 	}
 
@@ -89,7 +89,7 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 	/**
 	 * @return the tagTransitionModel
 	 */
-	public IProbabilityModel<T, T> getTagTransitionModel() {
+	public ProbModel<T> getTagTransitionModel() {
 		return compiledData.tagTransitionModel;
 	}
 
@@ -104,14 +104,14 @@ public class CompiledModel<W, T extends Comparable<T>> extends Model<W, T> {
 	/**
 	 * @return the standardEmissionModel
 	 */
-	public IProbabilityModel<T, W> getStandardEmissionModel() {
+	public ProbModel<W> getStandardEmissionModel() {
 		return compiledData.standardEmissionModel;
 	}
 
 	/**
 	 * @return the specTokensEmissionModel
 	 */
-	public IProbabilityModel<T, W> getSpecTokensEmissionModel() {
+	public ProbModel<W> getSpecTokensEmissionModel() {
 		return compiledData.specTokensEmissionModel;
 	}
 
