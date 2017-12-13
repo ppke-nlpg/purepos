@@ -22,9 +22,16 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
+import hu.ppke.itk.nlpg.purepos.common.Util;
+import hu.ppke.itk.nlpg.purepos.common.lemma.Transformation;
+import org.apache.commons.lang3.tuple.MutablePair;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static hu.ppke.itk.nlpg.purepos.common.Util.tagVocabulary;
 
 /**
  * Trie node, storing frequencies / probabilities of a given n-gram part
@@ -200,7 +207,6 @@ public abstract class TrieNode<I, N extends Number, W> implements Serializable {
 	public N getWord(W word) {
 		return words.get(word);
 	}
-
 	@Override
 	public String toString() {
 		return "(id:" + getId() // + ", childs:" + childNodes.toString()
@@ -208,19 +214,89 @@ public abstract class TrieNode<I, N extends Number, W> implements Serializable {
 	}
 
 	public String getReprString() {
-		return getReprString("\t");
+		return getReprString("\t",0);
 	}
 
-	public String getReprString(String tab) {
-		String ret = tab;
-		ret += "(id:" + getId() + ", freq:" + num;
+	public String getReprString(String tab, int m) {
+		String ret = "";
+		for (int i = 0; i< m; i++){
+			ret += tab;
+		}
+		String id_ = id.toString();
+		if (id_.equals("-1")){
+			ret += "root";
+		} else {
+			ret += Transformation.decodeTag(id_,Util.tagVocabulary);
+		}
+		ret += ": " + getNum();
 		ret += ", words:" + words.toString();
 		if (childNodes != null && childNodes.size() > 0) {
-			ret += ", childs:\n";
+			ret += "\n";
 			for (TrieNode<I, N, W> node : childNodes.values())
-				ret += node.getReprString(tab + tab);
+				ret += node.getReprString(tab ,m+1);
+			for (int i = 0; i< m; i++){
+				ret += tab;
+			}
 		}
-		ret += tab + ")\n";
+		ret += ")\n";
 		return ret;
+	}
+
+	public HashMap<String,MutablePair<HashMap<String,String>,String>> getNodes(String parentTag){
+			HashMap<String,MutablePair<HashMap<String,String>,String>> storage = new HashMap<String, MutablePair<HashMap<String, String>, String>>();
+			String tag = createTag(parentTag);
+
+			storage.put(tag,getNode());
+
+			if (childNodes != null && childNodes.size() > 0) {
+				for (TrieNode<I, N, W> child : childNodes.values()) {
+					storage.putAll(child.getNodes(tag));
+				}
+			}
+
+			return storage;
+	}
+
+	protected String createTag(String parentTag){
+		String tag = "";
+		if (getId().toString().equals("-1")){
+			tag = "root";
+		} else {
+			if(!parentTag.equals("root")){
+				tag += parentTag + " ";
+			}
+			tag += Transformation.decodeTag(this.id.toString(),Util.tagVocabulary);
+		}
+		return tag;
+	}
+
+	protected MutablePair<HashMap<String,String>,String> getNode(){
+		HashMap<String,String> words = new HashMap<String, String>();
+		for (HashMap.Entry<W,N> word: this.words.entrySet()){
+			words.put(word.getKey().toString(),word.getValue().toString());
+		}
+		return new MutablePair<HashMap<String, String>, String>(words,getNum().toString());
+	}
+
+	public HashMap<String,ArrayList<String>> getEdges(String parentTag){
+
+		HashMap<String,ArrayList<String>> storage = new HashMap<String,ArrayList<String>>();
+		ArrayList<String> childs = new ArrayList<String>();
+
+		String tag = createTag(parentTag);
+
+		if (childNodes != null && childNodes.size() > 0) {
+			for (TrieNode<I, N, W> child : childNodes.values()) {
+				String childName = "";
+				if (!getId().toString().equals("-1")){
+					childName += tag + " ";
+				}
+				childName += Transformation.decodeTag(child.id.toString(), Util.tagVocabulary);
+				childs.add(childName);
+				storage.putAll(child.getEdges(tag));
+			}
+		}
+		storage.put(tag, childs);
+		return storage;
 	}
 }

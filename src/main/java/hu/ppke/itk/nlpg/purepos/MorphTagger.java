@@ -28,7 +28,7 @@ import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
 import hu.ppke.itk.nlpg.purepos.common.Util;
-import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.AbstractLemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaComparator;
 import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaUtil;
 import hu.ppke.itk.nlpg.purepos.decoder.StemFilter;
@@ -121,9 +121,9 @@ public class MorphTagger extends POSTagger implements ITagger {
 			this.isLastGuessed = false;
 		}
 
-		Map<ILemmaTransformation<String, Integer>, Double> tagLogProbabilities = model
+		Map<AbstractLemmaTransformation<Pair<String,Integer>>, Double> tagLogProbabilities = model
 				.getLemmaGuesser().getTagLogProbabilities(t.getToken());
-		Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> lemmaSuffixProbs = LemmaUtil
+		Map<IToken, Pair<AbstractLemmaTransformation<Pair<String,Integer>>, Double>> lemmaSuffixProbs = LemmaUtil
 				.batchConvert(tagLogProbabilities, t.getToken(),
 						model.getTagVocabulary());
 
@@ -160,11 +160,11 @@ public class MorphTagger extends POSTagger implements ITagger {
 			if (stemFilter != null) {
 				possibleStems = stemFilter.filterStem(possibleStems);
 			}
-			List<Pair<IToken, ILemmaTransformation<String, Integer>>> comp = new LinkedList<Pair<IToken, ILemmaTransformation<String, Integer>>>();
+			List<Pair<IToken, AbstractLemmaTransformation<Pair<String,Integer>>>> comp = new LinkedList<Pair<IToken, AbstractLemmaTransformation<Pair<String,Integer>>>>();
 			for (IToken possTok : possibleStems) {
-				Pair<ILemmaTransformation<String, Integer>, Double> pair = lemmaSuffixProbs
+				Pair<AbstractLemmaTransformation<Pair<String,Integer>>, Double> pair = lemmaSuffixProbs
 						.get(possTok);
-				ILemmaTransformation<String, Integer> traf;
+				AbstractLemmaTransformation<Pair<String,Integer>> traf;
 				if (pair != null) {
 					traf = pair.getKey();
 

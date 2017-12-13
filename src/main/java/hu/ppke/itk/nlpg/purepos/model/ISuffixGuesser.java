@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.model;
 
 import hu.ppke.itk.nlpg.purepos.model.internal.TagMapper;
 
+import java.io.PrintStream;
 import java.util.Map;
 
 /**
@@ -82,5 +83,5 @@ public interface ISuffixGuesser<W, T> {
 
 	public ITagMapper<T> getMapper();
 
-
+	public void print(PrintStream ps,String name, String mode);
 }

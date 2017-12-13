@@ -1,10 +1,11 @@
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.common.Statistics;
-import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.AbstractLemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 import hu.ppke.itk.nlpg.purepos.model.INGramModel;
 import hu.ppke.itk.nlpg.purepos.model.SuffixTree;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,7 +20,7 @@ public abstract class AbstractRawModelData<W, T extends Comparable<T>>
 	public INGramModel<T, W> stdEmissionNGramModel;
 	public INGramModel<T, W> specEmissionNGramModel;
 	public T eosTag;
-	public SuffixTree<W, ILemmaTransformation<W, Integer>> lemmaSuffixTree;
+	public SuffixTree<W, AbstractLemmaTransformation<Pair<W,Integer>>> lemmaSuffixTree;
 	public SuffixTree<W, String> lemmaFreqTree;
 	public LemmaUnigramModel<W> lemmaUnigramModel;
 	public HashSuffixTree<T> lowerSuffixTree;

@@ -3,6 +3,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 import hu.ppke.itk.nlpg.purepos.common.Util;
 import hu.ppke.itk.nlpg.purepos.model.ICombiner;
 
+import java.io.PrintStream;
 import java.util.List;
 
 public abstract class LogLinearCombiner implements ICombiner {
@@ -33,4 +34,10 @@ public abstract class LogLinearCombiner implements ICombiner {
 		return mp1 * lambda1 + mp2 * lambda2;
 	}
 
+	public void print (PrintStream ps, String name){
+		ps.println(name + " lambdas.size: " + lambdas.size());
+		for(double e : lambdas){
+			ps.println(e);
+		}
+	}
 }

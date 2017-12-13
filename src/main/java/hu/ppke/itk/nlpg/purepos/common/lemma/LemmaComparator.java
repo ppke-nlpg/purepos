@@ -10,7 +10,7 @@ import java.util.Comparator;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class LemmaComparator implements
-		Comparator<Pair<IToken, ILemmaTransformation<String, Integer>>> {
+		Comparator<Pair<IToken, AbstractLemmaTransformation<Pair<String,Integer>>>> {
 
 	/**
 	 * 
@@ -26,8 +26,8 @@ public class LemmaComparator implements
 	}
 
 	@Override
-	public int compare(Pair<IToken, ILemmaTransformation<String, Integer>> t1,
-			Pair<IToken, ILemmaTransformation<String, Integer>> t2) {
+	public int compare(Pair<IToken, AbstractLemmaTransformation<Pair<String,Integer>>> t1,
+			Pair<IToken, AbstractLemmaTransformation<Pair<String,Integer>>> t2) {
 		ICombiner combiner = compiledModelData.combiner;
 		Double finalScore1 = combiner.combine(t1.getKey(), t1.getValue(),
 				compiledModelData, modelData);

@@ -22,10 +22,11 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model.internal;
 
-import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.AbstractLemmaTransformation;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class HashLemmaTree extends
-		HashSuffixTree<ILemmaTransformation<String, Integer>> {
+		HashSuffixTree<AbstractLemmaTransformation<Pair<String,Integer>>> {
 
 	/**
 	 * 
@@ -43,7 +44,7 @@ public class HashLemmaTree extends
 
 	@Override
 	public void addWord(String suffString,
-			ILemmaTransformation<String, Integer> tag, int count) {
+						AbstractLemmaTransformation<Pair<String,Integer>> tag, int count) {
 		increment(suffString, tag, count);
 		System.exit(-521); // Ez a kód nem fut le.
 	}

@@ -65,8 +65,16 @@ public class CLIOptions {
 	@Option(name = "-o", aliases = "--output-file", usage = "File where the tagging output is redirected. Tagging only option.", metaVar = "<file>")
 	String toFile;
 
+	// dump options
+	@Option(name = "-ps", aliases = "--print-separately", usage = "The model objects will printed separately. The default is false. Dump only option.",metaVar = "<file>" )
+	boolean separatePrint = false;
+
+	@Option(name = "-dot", usage = "The model objects will printed in dot \"friendly\" format.",metaVar = "<file>" )
+	boolean dot = false;
+
 	// Common options
-	@Argument(metaVar = "tag|train", usage = "Mode selection: train for training the tagger, tag for tagging a text with the given model.", required = true)
+	@Argument(metaVar = "tag|train|dump", usage = "Mode selection: train for training the tagger, tag for tagging a text with the given model, dump for getting statistics from the model",
+			required = true)
 	String command;
 
 	@Option(name = "-c", aliases = "--encoding", usage = "Encoding used to read the training set, or write the results. The default is your OS default.", metaVar = "<encoding>")

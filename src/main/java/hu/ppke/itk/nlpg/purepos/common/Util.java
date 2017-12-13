@@ -34,6 +34,7 @@ import hu.ppke.itk.nlpg.purepos.model.internal.StringMapping;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,8 @@ public class Util {
 	protected static final String STEM_FILTER_FILE = "purepos_stems.txt";
 	protected static final String STEM_FILTER_PROPERTY = System
 			.getProperty("stems.path");
+
+	public static IVocabulary<String, Integer> tagVocabulary;
 
 	public static boolean isUpper(String lword, String word) {
 		return !lword.equals(word);
@@ -124,7 +127,8 @@ public class Util {
 
 		compiledModelData.lowerCaseSuffixGuesser.setTagMapper(tagMapper);
 		compiledModelData.upperCaseSuffixGuesser.setTagMapper(tagMapper);
-		
+
+		tagVocabulary = tagMapper.getVocabulary();
 	}
 
 	public static StringMapper LEMMA_MAPPER = null;
@@ -137,5 +141,14 @@ public class Util {
 			return new ModToken(t.getToken(), t.getStem(), simplifiedLemma, t.getTag());
 		}
 		return t;
+	}
+
+	public static String formatDecimal(double num){
+		return Util.formatDecimal("#.####################",num);
+	}
+
+	public static String formatDecimal(String pattern, double num){
+		DecimalFormat formatter = new DecimalFormat(pattern);
+		return formatter.format(num);
 	}
 }

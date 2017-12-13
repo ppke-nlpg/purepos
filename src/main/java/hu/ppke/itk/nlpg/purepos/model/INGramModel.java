@@ -22,7 +22,14 @@
  ******************************************************************************/
 package hu.ppke.itk.nlpg.purepos.model;
 
+import hu.ppke.itk.nlpg.purepos.model.internal.ProbModel;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +98,7 @@ public abstract class INGramModel<C, W> implements Serializable {
 	 * 
 	 * @return
 	 */
-	public abstract IProbabilityModel<C, W> createProbabilityModel();
+	public abstract ProbModel<W> createProbabilityModel();
 
 	/**
 	 * Returns the words which are added to the model, with their frequency.
@@ -107,4 +114,12 @@ public abstract class INGramModel<C, W> implements Serializable {
 	 */
 	public abstract Map<W, Double> getWordAprioriProbs();
 
-}
+	public abstract String getReprString();
+
+	public abstract ArrayList<Pair<String, String>> getEdges();
+
+	public abstract HashMap<String,MutablePair<HashMap<String,String>,String>> getNodes();
+
+	public abstract void print(PrintStream ps,HashMap<String,MutablePair<HashMap<String,String>,String>> compiled,
+							   boolean dot, String name, String mode);
+	}

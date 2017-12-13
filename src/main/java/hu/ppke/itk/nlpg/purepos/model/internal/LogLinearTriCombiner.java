@@ -4,7 +4,7 @@ import hu.ppke.itk.nlpg.docmodel.IDocument;
 import hu.ppke.itk.nlpg.docmodel.ISentence;
 import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.purepos.common.Util;
-import hu.ppke.itk.nlpg.purepos.common.lemma.ILemmaTransformation;
+import hu.ppke.itk.nlpg.purepos.common.lemma.AbstractLemmaTransformation;
 import hu.ppke.itk.nlpg.purepos.common.lemma.LemmaUtil;
 import hu.ppke.itk.nlpg.purepos.model.ISuffixGuesser;
 import hu.ppke.itk.nlpg.purepos.model.ModelData;
@@ -29,7 +29,7 @@ public class LogLinearTriCombiner extends LogLinearCombiner {
 		Map<Integer, Double> aprioriProbs = rawModeldata.tagNGramModel
 				.getWordAprioriProbs();
 		Double theta = SuffixTree.calculateTheta(aprioriProbs);
-		ISuffixGuesser<String, ILemmaTransformation<String, Integer>> lemmaSuffixGuesser = rawModeldata.lemmaSuffixTree
+		ISuffixGuesser<String, AbstractLemmaTransformation<Pair<String,Integer>>> lemmaSuffixGuesser = rawModeldata.lemmaSuffixTree
 				.createGuesser(theta);
 		ISuffixGuesser<String, String> lemmaProb = rawModeldata.lemmaFreqTree
 				.createGuesser(theta);
@@ -45,7 +45,7 @@ public class LogLinearTriCombiner extends LogLinearCombiner {
 
 		for (ISentence sentence : doc.getSentences()) {
 			for (IToken tok : sentence) {
-				Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> suffixProbs = LemmaUtil
+				Map<IToken, Pair<AbstractLemmaTransformation<Pair<String,Integer>>, Double>> suffixProbs = LemmaUtil
 						.batchConvert(lemmaSuffixGuesser
 								.getTagLogProbabilities(tok.getToken()), tok
 								.getToken(), data.tagVocabulary);
@@ -105,7 +105,7 @@ public class LogLinearTriCombiner extends LogLinearCombiner {
 	}
 
 	@Override
-	public Double combine(IToken tok, ILemmaTransformation<String, Integer> t,
+	public Double combine(IToken tok, AbstractLemmaTransformation<Pair<String,Integer>> t,
 			CompiledModelData<String, Integer> compiledModelData,
 			ModelData<String, Integer> modelData) {
 		LemmaUnigramModel<String> unigramLemmaModel = compiledModelData.unigramLemmaModel;

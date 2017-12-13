@@ -24,12 +24,15 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.model.ITagMapper;
 import hu.ppke.itk.nlpg.purepos.model.IProbabilityModel;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.ListIterator;
+import java.util.List;
 import java.util.Map;
+
 
 /**
  * Implements a probability model for n-grams. Tags are represented as Integers.
@@ -206,9 +209,14 @@ public class ProbModel<W> implements IProbabilityModel<Integer, W>,
 		return root.getReprString();
 	}
 
-	@Override
+
 	public ITagMapper<Integer> getContextMapper() {
 		return this.contextMapper;
 	}
+
+
+	public HashMap<String,MutablePair<HashMap<String,String>,String>> getNodes(){
+		return this.root.getNodes("");
+	};
 
 }

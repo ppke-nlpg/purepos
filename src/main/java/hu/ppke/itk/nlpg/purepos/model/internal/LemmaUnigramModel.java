@@ -24,6 +24,7 @@ package hu.ppke.itk.nlpg.purepos.model.internal;
 
 import hu.ppke.itk.nlpg.purepos.common.Util;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -65,5 +66,21 @@ public class LemmaUnigramModel<W> implements Serializable {
 			return Math.log(prob);
 		}
 		return Util.UNKOWN_VALUE;
+	}
+
+	public int getSumFreq(){
+		int ret = 0;
+		for(HashMap.Entry<W,Integer> entry : counterMap.entrySet()){
+			ret += entry.getValue();
+		}
+		return ret;
+	}
+
+	public void print(PrintStream ps,String name){
+		ps.println(name + " sum_freq: " + getSumFreq() +" {");
+		for (HashMap.Entry<W,Integer> entry : counterMap.entrySet()) {
+			ps.println("\t\"" + entry.getKey() + "\" : " + entry.getValue() + " : " + Util.formatDecimal(getLogProb(entry.getKey())));
+		}
+		ps.println("}");
 	}
 }

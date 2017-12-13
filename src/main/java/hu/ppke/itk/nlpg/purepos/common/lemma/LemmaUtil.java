@@ -19,15 +19,14 @@ public class LemmaUtil {
 	public static String suffix = "suffix";
 	public static String generalized = "generalized";
 
-	public static Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>>
+	public static Map<IToken, Pair<AbstractLemmaTransformation<Pair<String,Integer>>, Double>>
 	batchConvert(
-			Map<ILemmaTransformation<String, Integer>, Double> probMap,
+			Map<AbstractLemmaTransformation<Pair<String,Integer>>, Double> probMap,
 			String word,
 			IVocabulary<String, Integer> vocab)
 	{
-
-		Map<IToken, Pair<ILemmaTransformation<String, Integer>, Double>> ret = new HashMap<IToken, Pair<ILemmaTransformation<String, Integer>, Double>>();
-		for (Map.Entry<ILemmaTransformation<String, Integer>, Double> entry : probMap
+		Map<IToken, Pair<AbstractLemmaTransformation<Pair<String,Integer>>, Double>> ret = new HashMap<IToken, Pair<AbstractLemmaTransformation<Pair<String,Integer>>, Double>>();
+		for (Map.Entry<AbstractLemmaTransformation<Pair<String,Integer>>, Double> entry : probMap
 				.entrySet()) {
 			IToken lemma = entry.getKey().convert(word, vocab);
 			ret.put(lemma, Pair.of(entry.getKey(), entry.getValue()));
@@ -44,7 +43,7 @@ public class LemmaUtil {
 
 	}
 
-	public static ILemmaTransformation<String, Integer> defaultLemmaRepresentation(
+	public static AbstractLemmaTransformation<Pair<String,Integer>> defaultLemmaRepresentation(
 			String word, String stem, Integer tag, ModelData<String, Integer> data) {
 		if (data.lemmaTransformationType.equals(generalized)){
 			//System.out.println("Using GeneralizedLemmaTransformation..."); //debug
@@ -54,7 +53,7 @@ public class LemmaUtil {
 		return new SuffixLemmaTransformation(word, stem, tag);
 	}
 
-	public static ILemmaTransformation<String, Integer> defaultLemmaRepresentation(
+	public static AbstractLemmaTransformation<Pair<String,Integer>> defaultLemmaRepresentation(
 			IToken tok,
 			ModelData<String, Integer> data
 	) {
@@ -76,10 +75,10 @@ public class LemmaUtil {
 		rawModelData.lemmaUnigramModel.increment(lemma);
 
 		int count = 1;
-		ILemmaTransformation<String, Integer> lemmaTrans = defaultLemmaRepresentation(
+		AbstractLemmaTransformation<Pair<String,Integer>> lemmaTrans = defaultLemmaRepresentation(
 				word, lemma, tag, data);
 		rawModelData.lemmaSuffixTree.addWord(word, lemmaTrans, count,
-				lemmaTrans.minimalCutLength());
+				Transformation.minimalCutLength(lemmaTrans.representation.getRight()));
 
 		// rawModelData.lemmaFreqTree.addWord(lemma, mainPosTag(tagString),
 		// count);

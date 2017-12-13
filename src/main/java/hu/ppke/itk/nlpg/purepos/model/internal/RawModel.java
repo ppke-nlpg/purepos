@@ -56,6 +56,10 @@ public class RawModel extends Model<String, Integer> {
 		return rawModeldata.stat;
 	}
 
+	public RawModelData getRawData() {
+		return rawModeldata;
+	}
+
 	// public List<Double> getLemmaLambdas() {
 	// return rawModeldata.lemmaLambdas;
 	// }
@@ -140,17 +144,17 @@ public class RawModel extends Model<String, Integer> {
 					.getEOSToken()))) {
 				LemmaUtil.storeLemma(word, lemma, tag, tagStr, rawModeldata, data);
 
-				rawModeldata.tagNGramModel.addWord(prevTags, tag);
+				rawModeldata.tagNGramModel.addWord(prevTags, tag); // tagTransitionModel
 
 				rawModeldata.stat.incrementTokenCount();
 
 				data.standardTokensLexicon.addToken(word, tag);
-				rawModeldata.stdEmissionNGramModel.addWord(context, word);
+				rawModeldata.stdEmissionNGramModel.addWord(context, word); // standardEmissionModel
 
 				String specName;
 				if ((specName = specMatcher.matchLexicalElement(word)) != null) {
 					rawModeldata.specEmissionNGramModel.addWord(context,
-							specName);
+							specName); // specTokensEmissionModel
 					// this is how it should have been used:
 					data.specTokensLexicon.addToken(specName, tag);
 					// this is how it is used in HunPOS:
@@ -271,8 +275,12 @@ public class RawModel extends Model<String, Integer> {
 	}
 
 	public CompiledModel<String, Integer> compile(Configuration conf, String lemmaTransformationType, int lemmaThreshold) {
-		data.tagVocabulary.storeMaximalElement();
 		setLemmaVariables(lemmaTransformationType,lemmaThreshold);
+		return compile(conf);
+	}
+
+	public CompiledModel<String, Integer> compile(Configuration conf) {
+		data.tagVocabulary.storeMaximalElement();
 
 		CompiledModelData<String, Integer> compiledModelData = RawModelData
 				.compile(this.rawModeldata);
@@ -281,6 +289,6 @@ public class RawModel extends Model<String, Integer> {
 				conf.getTagMappings());
 
 		return new CompiledModel<String, Integer>(compiledModelData, this.data);
-
 	}
+
 }
