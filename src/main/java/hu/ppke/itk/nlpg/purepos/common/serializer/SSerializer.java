@@ -41,4 +41,15 @@ public class SSerializer {
 		return f.delete();
 	}
 
+	public static void writeModelEx(RawModel m, String to) throws Exception {
+		serializer.writeModel(m, new File(to));
+	}
+
+	public static RawModel readModelEx(String from) throws Exception {
+		return serializer.readModel(new File(from));
+	}
+
+	static boolean deleteModelEx(String f) {
+		return new File(f).delete();
+	}
 }
