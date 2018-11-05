@@ -23,10 +23,13 @@
 package hu.ppke.itk.nlpg.purepos;
 
 import hu.ppke.itk.nlpg.docmodel.ISentence;
+import hu.ppke.itk.nlpg.purepos.common.TAnalysisItem;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Interface for a POS tagger implementation
@@ -45,6 +48,10 @@ public interface ITagger {
 	public ISentence tagSentence(String sentence);
 
 	public List<ISentence> tagSentence(String sentence, int maxResultsNumber);
+
+	public ISentence tagSentenceEx(ArrayList<Pair<String, ArrayList<TAnalysisItem>>> sentence);
+
+	public List<ISentence> tagSentenceEx(ArrayList<Pair<String, ArrayList<TAnalysisItem>>> sentence, int maxResultsNumber);
 
 	public void tag(Scanner scanner, String inputFormat, PrintStream ps, String outputFormat);
 

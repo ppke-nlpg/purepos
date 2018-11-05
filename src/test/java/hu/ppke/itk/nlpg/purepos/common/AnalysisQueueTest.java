@@ -95,7 +95,7 @@ public class AnalysisQueueTest {
 		aq.init(5);
 
 		aq.addWord("alma{{alma[FN][NOM]$$0.9||alom[FN][Pse3]$$0.1}}", 1);
-		Assert.assertEquals(2, aq.anals.get(1).keySet().size());
+		Assert.assertEquals(2, aq.anals.get(1).size());
 		Map<String, Double> anals = aq.getAnals(1);
 		Assert.assertEquals(true, anals.containsKey("alma[FN][NOM]"));
 		Assert.assertEquals(true, anals.containsKey("alom[FN][Pse3]"));
@@ -112,7 +112,7 @@ public class AnalysisQueueTest {
 		Assert.assertEquals(true, aq.useProbabilties(1));
 
 		aq.addWord("alma{{alma[FN][NOM]||alom[FN][Pse3]}}", 0);
-		Assert.assertEquals(2, aq.anals.get(0).keySet().size());
+		Assert.assertEquals(2, aq.anals.get(0).size());
 		anals = aq.getAnals(0);
 		Assert.assertEquals(true, anals.containsKey("alma[FN][NOM]"));
 		Assert.assertEquals(true, anals.containsKey("alom[FN][Pse3]"));

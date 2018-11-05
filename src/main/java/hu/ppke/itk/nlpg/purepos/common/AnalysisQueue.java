@@ -46,12 +46,12 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 public class AnalysisQueue {
 	// (position, (tag+stem, prob)
-	protected ArrayList<Map<String, Double>> anals;
+	protected List<List<TAnalysisItem>> anals;
 	// (tag, (stem, prob))
 	// protected ArrayList<Map<String, Double>> stems;
 	// if the input contains probability information
-	protected ArrayList<Boolean> useProb;
-	protected ArrayList<String> words;
+	protected List<Boolean> useProb;
+	protected List<String> words, allWords;
 
 	// protected static String alnumPat = "\\p{L}\\p{N}";
 	// protected static String punctPat = "\\p{P}";
@@ -69,10 +69,11 @@ public class AnalysisQueue {
 	// + "\\{\\{(" + analPat + "(\\|\\|" + analPat + ")*" + ")\\}\\}");
 
 	public void init(int capacity) {
-		anals = new ArrayList<Map<String, Double>>(capacity);
+		anals = new ArrayList<List<TAnalysisItem>>(capacity);
 		// stems = new ArrayList<Map<String, Double>>(capacity);
 		useProb = new ArrayList<Boolean>(capacity);
 		words = new ArrayList<String>(capacity);
+		allWords = new ArrayList<String>(capacity);
 		for (int i = 0; i < capacity; ++i) {
 			anals.add(null);
 			// stems.add(null);
@@ -82,14 +83,19 @@ public class AnalysisQueue {
 	}
 
 	public void addWord(String input, Integer position) {
+		if (!isPreanalysed(input)) {
+			allWords.add(input);
+			return;
+		}
+
 		Pair<String, List<String>> res = parse(input);
-		String word = res.getLeft();
-		List<String> analsList = res.getRight();
+		words.set(position, res.getLeft());
+		allWords.add(res.getLeft());
 
-		words.set(position, word);
-		anals.set(position, new HashMap<String, Double>());
+		List<TAnalysisItem> anals1 = new ArrayList<TAnalysisItem>();
+		anals.set(position, anals1);
 
-		for (String anal : analsList) {
+		for (String anal : res.getRight()) {
 			int indexOfValSep = anal.indexOf("$$");
 			String lemmaTag = anal;
 			double prob = 1;
@@ -98,10 +104,16 @@ public class AnalysisQueue {
 				prob = Double.parseDouble(anal.substring(indexOfValSep + 2));
 				lemmaTag = anal.substring(0, indexOfValSep);
 			}
-			anals.get(position).put(lemmaTag, prob);
-
+			anals1.add(new TAnalysisItem(anal2lemma(lemmaTag), anal2tag(lemmaTag), prob));
 		}
 
+	}
+
+	public void addWord(String word, ArrayList<TAnalysisItem> analsList, Integer position) {
+		allWords.add(word);
+		if (analsList.isEmpty()) return;
+		words.set(position, word);
+		anals.set(position, analsList);
 	}
 
 	public boolean hasAnal(Integer position) {
@@ -109,7 +121,11 @@ public class AnalysisQueue {
 	}
 
 	public Map<String, Double> getAnals(Integer position) {
-		return anals.get(position);
+		Map<String, Double> ret = new HashMap<String, Double>();
+		for (TAnalysisItem entry : anals.get(position)) {
+			ret.put(entry.getLemma()+entry.getTag(), entry.getProb());
+		}
+		return ret;
 	}
 
 	public boolean useProbabilties(Integer position) {
@@ -128,17 +144,19 @@ public class AnalysisQueue {
 	protected Map<Integer, Double> transformTags(Integer position,
 			IVocabulary<String, Integer> tagVocabulary) {
 		Map<Integer, Double> retMap = new HashMap<Integer, Double>();
-		for (Map.Entry<String, Double> entry : this.anals.get(position)
-				.entrySet()) {
-			String tagStr = anal2tag(entry.getKey());
-			Integer tag = tagVocabulary.getIndex(tagStr);
+		for (TAnalysisItem entry : anals.get(position)) {
+			Integer tag = tagVocabulary.getIndex(entry.getTag());
 			if (tag == null) {
-				tag = tagVocabulary.addElement(tagStr);
+				tag = tagVocabulary.addElement(entry.getTag());
 			}
-			retMap.put(tag, entry.getValue());
+			retMap.put(tag, entry.getProb());
 
 		}
 		return retMap;
+	}
+
+	public List<String> getAllWords() {
+		return allWords;
 	}
 
 	public Set<Integer> getTags(Integer position,
@@ -149,15 +167,14 @@ public class AnalysisQueue {
 	}
 
 	public Set<IToken> getAnalysises(Integer position) {
-		Set<String> fanals = anals.get(position).keySet();
 		Set<IToken> ret = new HashSet<IToken>();
-		for (String fa : fanals) {
-			ret.add(new Token(words.get(position), anal2lemma(fa), anal2tag(fa)));
+		for (TAnalysisItem entry : anals.get(position)) {
+			ret.add(new Token(words.get(position), entry.getLemma(), entry.getTag()));
 		}
 		return ret;
 	}
 
-	public static Pair<String, List<String>> parse(String token) {
+	protected static Pair<String, List<String>> parse(String token) {
 		int wordRB = token.indexOf("{{");
 		int analRB = token.indexOf("}}");
 		String word = token.substring(0, wordRB);
@@ -170,15 +187,15 @@ public class AnalysisQueue {
 		return word.indexOf("{{") > 0 && word.lastIndexOf("}}") > 0;
 	}
 
-	public static String clean(String word) {
+	protected static String clean(String word) {
 		return word.substring(0, word.indexOf("{{"));
 	}
 
-	public static String anal2tag(String anal) {
+	protected static String anal2tag(String anal) {
 		return anal.substring(anal.indexOf("["));
 	}
 
-	public static String anal2lemma(String anal) {
+	protected static String anal2lemma(String anal) {
 		return anal.substring(0, anal.indexOf("["));
 	}
 }

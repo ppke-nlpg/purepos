@@ -28,6 +28,7 @@ import hu.ppke.itk.nlpg.docmodel.IToken;
 import hu.ppke.itk.nlpg.docmodel.internal.Sentence;
 import hu.ppke.itk.nlpg.docmodel.internal.Token;
 import hu.ppke.itk.nlpg.purepos.common.AnalysisQueue;
+import hu.ppke.itk.nlpg.purepos.common.TAnalysisItem;
 import hu.ppke.itk.nlpg.purepos.decoder.AbstractDecoder;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamSearch;
 import hu.ppke.itk.nlpg.purepos.decoder.BeamedViterbi;
@@ -84,19 +85,24 @@ public class POSTagger implements ITagger {
 
 	protected static List<String> preprocessSentence(List<String> sentence, AnalysisQueue analysisQueue) {
 		analysisQueue.init(sentence.size());
-		ArrayList<String> ret = new ArrayList<String>(sentence.size());
 		int i = 0;
 		for (String word : sentence) {
-			if (AnalysisQueue.isPreanalysed(word)) {
-				analysisQueue.addWord(word, i);
-				ret.add(AnalysisQueue.clean(word));
-			} else {
-				ret.add(word);
-			}
+			analysisQueue.addWord(word, i);
+			++i;
+		}
+		return analysisQueue.getAllWords();
+	}
+
+	protected static List<String> preprocessSentenceEx(ArrayList<Pair<String, ArrayList<TAnalysisItem>>> sentence,
+													   AnalysisQueue analysisQueue) {
+		analysisQueue.init(sentence.size());
+		int i = 0;
+		for (Pair<String, ArrayList<TAnalysisItem>> word : sentence) {
+			analysisQueue.addWord(word.getLeft(), word.getRight(), i);
 			++i;
 		}
 
-		return ret;
+		return analysisQueue.getAllWords();
 	}
 
 	@Override
@@ -106,12 +112,11 @@ public class POSTagger implements ITagger {
 
 	@Override
 	public List<ISentence> tagSentence(List<String> sentence, int maxRes) {
-		sentence = preprocessSentence(sentence, decoder.getUserAnals());
-		List<Pair<List<Integer>, Double>> tagList = decoder.decode(sentence,
-				maxRes);
+		List<String> plain_sent = preprocessSentence(sentence, decoder.getUserAnals());
+		List<Pair<List<Integer>, Double>> tagList = decoder.decode(plain_sent, maxRes);
 		List<ISentence> ret = new ArrayList<ISentence>();
 		for (Pair<List<Integer>, Double> tags : tagList) {
-			List<IToken> tokens = merge(sentence, tags.getKey());
+			List<IToken> tokens = merge(plain_sent, tags.getKey());
 			Sentence sent = new Sentence(tokens);
 			sent.setScore(tags.getValue());
 			ret.add(sent);
@@ -147,6 +152,25 @@ public class POSTagger implements ITagger {
 		List<ISentence> sents = tagSentence(
 				Arrays.asList(sentence.split("\\s")), maxRes);
 		return sents;
+	}
+
+	@Override
+	public ISentence tagSentenceEx(ArrayList<Pair<String, ArrayList<TAnalysisItem>>> sentence) {
+		return tagSentenceEx(sentence, 1).get(0);
+	}
+
+	@Override
+	public List<ISentence> tagSentenceEx(ArrayList<Pair<String, ArrayList<TAnalysisItem>>> sentence, int maxRes) {
+		List<String> plain_sent = preprocessSentenceEx(sentence, decoder.getUserAnals());
+		List<Pair<List<Integer>, Double>> tagList = decoder.decode(plain_sent, maxRes);
+		List<ISentence> ret = new ArrayList<ISentence>();
+		for (Pair<List<Integer>, Double> tags : tagList) {
+			List<IToken> tokens = merge(plain_sent, tags.getKey());
+			Sentence sent = new Sentence(tokens);
+			sent.setScore(tags.getValue());
+			ret.add(sent);
+		}
+		return ret;
 	}
 
 	@Override

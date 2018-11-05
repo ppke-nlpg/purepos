@@ -27,7 +27,7 @@ public class ConfigurationTest {
 				+ "<tag_mapping pattern=\"^(.*)(MN|FN)(\\|lat)(.*)$\" to=\"$1FN$4\" />"
 				+ "</config>";
 		File f = File.createTempFile("config_test_", ".xml");
-		PrintStream ps = new PrintStream(f);
+		PrintStream ps = new PrintStream(f, "UTF-8");
 		ps.print(out);
 		ps.close();
 		return f;
