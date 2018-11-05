@@ -2,6 +2,8 @@ package hu.ppke.itk.nlpg.purepos.common.lemma;
 
 import junit.framework.Assert;
 
+import java.io.File;
+import com.google.common.base.Joiner;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +36,7 @@ public class GeneralizedLemmaTransformationTest {
 	public void reverseTest() {
 		try {
 			LemmaTransformationTestVector testVector = LemmaTransformationTestVectorReader.read(
-					".\\src\\test\\java\\hu\\ppke\\itk\\nlpg\\purepos\\common\\lemma\\GeneralizedLemmaTransformation_TestVector.txt");
+					Joiner.on(File.separator).join(".", "src", "test", "java", "hu", "ppke", "itk", "nlpg", "purepos", "common", "lemma", "GeneralizedLemmaTransformation_TestVector.txt"));
 			int threshold = 2; // 2 is the default value, if you change it, the expected values must be recalculated
 			System.out.println("GeneralziedLemmaTransformation test. Used threshold: "+ GeneralizedLemmaTransformation.threshold);
 			for (int i = 0; i < testVector.token.length; i++) {

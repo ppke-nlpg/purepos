@@ -45,7 +45,7 @@ public class LemmaUtil {
 
 	public static AbstractLemmaTransformation<Pair<String,Integer>> defaultLemmaRepresentation(
 			String word, String stem, Integer tag, ModelData<String, Integer> data) {
-		if (data.lemmaTransformationType.equals(generalized)){
+		if (data.lemmaTransformationType != null && data.lemmaTransformationType.equals(generalized)){
 			//System.out.println("Using GeneralizedLemmaTransformation..."); //debug
 			return new GeneralizedLemmaTransformation(word,stem,tag,data.lemmaThreshold);
 		}

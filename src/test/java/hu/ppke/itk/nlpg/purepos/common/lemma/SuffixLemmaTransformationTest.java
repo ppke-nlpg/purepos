@@ -1,5 +1,7 @@
 package hu.ppke.itk.nlpg.purepos.common.lemma;
 
+import java.io.File;
+import com.google.common.base.Joiner;
 import junit.framework.Assert;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
@@ -15,7 +17,7 @@ public class SuffixLemmaTransformationTest {
 
 		try {
 			LemmaTransformationTestVector testVector = LemmaTransformationTestVectorReader.read(
-					".\\src\\test\\java\\hu\\ppke\\itk\\nlpg\\purepos\\common\\lemma\\SuffixLemmaTransformation_TestVector.txt");
+					Joiner.on(File.separator).join(".", "src", "test", "java", "hu", "ppke", "itk", "nlpg", "purepos", "common", "lemma", "SuffixLemmaTransformation_TestVector.txt"));
 
 			for (int i = 0; i < testVector.token.length; i++) {
 				System.out.println("Test Case "+(i+1)+"#\n"+"token: "+testVector.token[i]+"\nlemma: "+testVector.lemma[i]
